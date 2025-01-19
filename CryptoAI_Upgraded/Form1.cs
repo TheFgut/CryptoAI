@@ -22,8 +22,8 @@ namespace CryptoAI_Upgraded
         {
             choosedLocalDatasets = new List<LocalKlinesDataset>();
             InitializeComponent();
-            trainAI_But.Enabled = false;
-            InitializeKerasAsync();
+            //trainAI_But.Enabled = false;
+            //InitializeKerasAsync();
         }
 
         private void OpenLoadDataWindowBut_Click(object sender, EventArgs e)

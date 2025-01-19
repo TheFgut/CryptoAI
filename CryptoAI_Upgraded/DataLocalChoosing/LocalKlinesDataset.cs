@@ -42,9 +42,9 @@ namespace CryptoAI_Upgraded.DataLocalChoosing
         public KlinesDay LoadKlinesFromCache()
         {
             if (cachedKlines != null) return cachedKlines;
-            LocalLoaderAndSaverBSON<KlinesDay> loader = new LocalLoaderAndSaverBSON<KlinesDay>(Application.CommonAppDataPath, fileName);
+            LocalLoaderAndSaverBSON<KlinesDay> loader = new LocalLoaderAndSaverBSON<KlinesDay>(filePath);
             KlinesDay? dayData = loader.Load();
-            if (dayData == null) throw new Exception("LocalKlinesDataset LoadKlines failed");
+            if (dayData == null) throw new Exception($"LocalKlinesDataset LoadKlines failed from path {loader.fullPath}");
             cachedKlines = dayData;
             return dayData;
         }

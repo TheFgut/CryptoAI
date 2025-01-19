@@ -11,11 +11,17 @@ namespace CryptoAI_Upgraded.DataSaving
 {
     internal class LocalLoaderAndSaverBSON<T> where T : class
     {
-        private string fullPath;
+        public string fullPath { get; private set; }
         public LocalLoaderAndSaverBSON(string path, string fileName)
         {
             fullPath = $"{path}\\{fileName}.bson";
         }
+
+        public LocalLoaderAndSaverBSON(string path)
+        {
+            fullPath = path;
+        }
+
 
         public void Save(T dataToSerialize)
         {
@@ -34,10 +40,19 @@ namespace CryptoAI_Upgraded.DataSaving
             using (var fileStream = File.OpenRead(fullPath))
             using (var bsonReader = new BsonDataReader(fileStream))
             {
-                var serializer = new JsonSerializer();
+                try
+                {
+                    var serializer = new JsonSerializer();
 
-                T? data = serializer.Deserialize<T>(bsonReader);
-                return data;
+                    T? data = serializer.Deserialize<T>(bsonReader);
+                    return data;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Data loading failed {ex.Message}\n {ex.StackTrace}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return null;
+                }
+
             }
         }
     }

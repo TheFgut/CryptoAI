@@ -59,6 +59,7 @@ namespace CryptoAI_Upgraded.DataLocalChoosing
             {
                 string fileName = Path.GetFileNameWithoutExtension(filePath);
                 if (datasets.FirstOrDefault(dataset => dataset.fileName == fileName) != null) continue;//ignoring
+
                 LocalKlinesDataset localDataset = new LocalKlinesDataset(filePath);
                 if(pair == null) pair = localDataset.pair;
                 else if(localDataset.pair != pair)

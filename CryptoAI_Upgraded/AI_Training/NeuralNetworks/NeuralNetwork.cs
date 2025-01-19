@@ -142,7 +142,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                         inputBatches.Add(input);
                         outputBatches.Add(expectedOutput);
                     }
-                    if (inputBatches.Count == 0 || outputBatches.Count == 0) continue;
+                    if (inputBatches.Count == 0 || outputBatches.Count == 0) break;
                     // Тренируем модель на текущем батче
                     var loss = model.TrainOnBatch(np.array(Normalize(ConvertListTo3DArray(inputBatches))),
                         np.array(Normalize(ConvertListTo3DArray(outputBatches))));
