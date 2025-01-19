@@ -1,7 +1,6 @@
 ﻿using Binance.Net.Objects.Models.Futures;
 using CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating;
 using CryptoAI_Upgraded.AI_Training.NeuralNetworks;
-using CryptoAI_Upgraded.DataLocalChoosing;
 using CryptoAI_Upgraded.Datasets.DataWalkers;
 using Keras.Layers;
 using Keras.Models;
@@ -17,7 +16,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using CryptoAI_Upgraded.AI_Training.NeuralNetworks.UI;
+using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
 
 namespace CryptoAI_Upgraded.AI_Training
 {
@@ -29,12 +29,12 @@ namespace CryptoAI_Upgraded.AI_Training
         private NeuralNetworkCreatorWindow? networkCreaterForm;
         private NeuralNetwork? neuralNetwork;
 
-        public AI_TrainWindow(List<LocalKlinesDataset> datasets)
+        public AI_TrainWindow()
         {
-            if (datasets == null) throw new Exception("AI_TrainWindow.Contsruct failed. datasets cant be null");
-            this.datasets = datasets;
             InitializeComponent();
+            networkManagePanel1.onNetworkChanges += AssingModel;
             AssingModel(null);
+            datasets = datasetsManagerPanel1.choosedLocalDatasets;
         }
 
         public void StartTraining()
@@ -87,18 +87,16 @@ namespace CryptoAI_Upgraded.AI_Training
 
             if (token.IsCancellationRequested)//cancellation of task
             {
-                StartLearningBecomeAwailable();
                 token.ThrowIfCancellationRequested();
             }
             else
             {
                 trainingTask = null;
-                StartLearningBecomeAwailable();
             }
             timer.Stop();
             Invoke((Action)(() =>
             {
-                MessageBox.Show($"Training duration: {timer.ElapsedMilliseconds/1000f} seconds", "Training finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($"Training duration: {timer.ElapsedMilliseconds / 1000f} seconds", "Training finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 TrainingProgressBar.Value = 0;
             }));
         }
@@ -134,32 +132,6 @@ namespace CryptoAI_Upgraded.AI_Training
         {
             StopTraining();
             StopLearningBut.Enabled = false;
-        }
-
-        private void StartLearningBecomeAwailable()
-        {
-
-            try
-            {
-                StartLearningBut.Enabled = true;
-            }
-            catch (Exception ex)
-            {
-                Invoke((Action)(() =>
-                {
-                    MessageBox.Show($"Exception during execution fo training {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }));
-            }
-        }
-
-        private void CreateNetworkBut_Click(object sender, EventArgs e)
-        {
-            if (networkCreaterForm == null)
-            {
-                networkCreaterForm = new NeuralNetworkCreatorWindow(AssingModel);
-                networkCreaterForm.FormClosed += (sender, args) => networkCreaterForm = null;
-                networkCreaterForm.Show();
-            }
         }
 
         private void AssingModel(NeuralNetwork? model)

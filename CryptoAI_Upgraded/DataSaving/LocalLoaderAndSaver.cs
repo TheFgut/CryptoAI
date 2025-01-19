@@ -25,7 +25,6 @@ namespace CryptoAI_Upgraded.DataSaving
 
         public void Save(T dataToSerialize)
         {
-
             using (var fileStream = File.OpenWrite(fullPath))
             using (var bsonWriter = new BsonDataWriter(fileStream))
             {

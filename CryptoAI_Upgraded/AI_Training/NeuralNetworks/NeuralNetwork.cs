@@ -6,6 +6,9 @@ using CryptoAI_Upgraded.Datasets;
 using System.Drawing.Text;
 using System.Reflection;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
+using CryptoAI_Upgraded.DataSaving;
+using System.IO;
 
 namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 {
@@ -13,8 +16,22 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
     {
         public int inputsCount => neuralData.inputCount;
         public int outputCount => neuralData.outputCount;
-        
-        private Sequential model;
+        public int neuronsCount 
+        {
+            get 
+            {
+                int count = 0;
+                foreach (var layer in neuralData.networkLayers)
+                {
+                    count += layer.neuronsCount;
+                }
+                return count;
+            } 
+        }
+        public int layersCount => neuralData.networkLayers.Length;
+
+        private LocalLoaderAndSaverBSON<NNData>? loader;
+        private BaseModel model;
         private NNData neuralData;
         #region creation
         public NeuralNetwork(BindingList<NNLayerConfig> config)
@@ -22,6 +39,16 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             if(config == null || config.Count < 2) throw new ArgumentNullException("NeuralNetwork.Creation failed. config cant be null or count cant be less than 2");
             this.model = CreateNetwork(config);
             neuralData = new NNData(config);
+        }
+
+        public NeuralNetwork(string loadPath)
+        {
+            if (string.IsNullOrEmpty(loadPath)) throw new ArgumentNullException("NeuralNetwork.Creation failed. loadPath cant be null or empty");
+            model = Keras.Models.Sequential.LoadModel(loadPath);
+            loader = new LocalLoaderAndSaverBSON<NNData>(loadPath, "config");
+            NNData? neuralData = loader.Load();
+            if (neuralData == null) throw new Exception("NeuralNetwork.Constructor Network loading failed");
+            this.neuralData = neuralData;
         }
 
         private Sequential CreateNetwork(BindingList<NNLayerConfig> config)
@@ -162,7 +189,12 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             //Console.WriteLine(predictions.repr);
         }
 
-        double[,,] Normalize(double[,,] data)
+        /// <summary>
+        /// converts data values in range between -1 and 1
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        private double[,,] Normalize(double[,,] data)
         {
             double min = data.Cast<double>().Min(); // Минимум в массиве
             double max = data.Cast<double>().Max(); // Максимум в массиве
@@ -223,17 +255,32 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             }
             return transformedArray;
         }
+
+        public void Save(string path)
+        {
+            model.Save(path);
+            loader = new LocalLoaderAndSaverBSON<NNData>(path, "config");
+            loader.Save(neuralData);
+        }
     }
 
     public class NNData
     {
-        public int inputCount { get; set;}
-        public int outputCount { get; set; }
+        public NNLayerConfig[] networkLayers { get; set; }
+        [JsonIgnore] public int inputCount => networkLayers[0].neuronsCount;
+        [JsonIgnore] public int outputCount => networkLayers[networkLayers.Length - 1].neuronsCount;
+
+        /// <summary>
+        /// for serialization. Do not use!
+        /// </summary>
+        public NNData()
+        {
+
+        }
 
         public NNData(BindingList<NNLayerConfig> config)
         {
-            inputCount = config[0].neuronsCount;
-            outputCount = config[config.Count - 1].neuronsCount;
+            networkLayers = config.ToArray();
         }
     }
 }

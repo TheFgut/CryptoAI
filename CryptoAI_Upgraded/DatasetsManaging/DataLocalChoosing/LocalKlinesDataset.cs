@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace CryptoAI_Upgraded.DataLocalChoosing
+namespace CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing
 {
     public class LocalKlinesDataset
     {
@@ -25,7 +25,7 @@ namespace CryptoAI_Upgraded.DataLocalChoosing
             this.filePath = filePath;
             string[] elements = filePath.Split('\\').Last().Split('_');
             pair = elements[0];
-            if (!Enum.TryParse<KlineInterval>(elements[1], out KlineInterval interval))
+            if (!Enum.TryParse(elements[1], out KlineInterval interval))
                 throw new Exception("LocalKlinesDataset.Construction interval parse failed");
             this.interval = interval;
 
@@ -56,7 +56,7 @@ namespace CryptoAI_Upgraded.DataLocalChoosing
         /// <exception cref="Exception"></exception>
         public KlinesDay LoadKlinesIndependant()
         {
-            LocalLoaderAndSaverBSON<KlinesDay> loader = new LocalLoaderAndSaverBSON<KlinesDay>(Application.CommonAppDataPath, fileName);
+            LocalLoaderAndSaverBSON<KlinesDay> loader = new LocalLoaderAndSaverBSON<KlinesDay>(filePath);
             KlinesDay? dayData = loader.Load();
             if (dayData == null) throw new Exception("LocalKlinesDataset LoadKlines failed");
             return dayData;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,6 +18,7 @@ namespace CryptoAI_Upgraded.DataLocalChoosing
     public partial class LoadLocalDatasetsForm : Form
     {
         private List<LocalKlinesDataset> datasets;
+        public Action? onDatasetsChanged { get; set; }
         public LoadLocalDatasetsForm(List<LocalKlinesDataset> datasets)
         {
             if (datasets == null) throw new Exception("LoadLocalDatasetsForm.Contsruct failed. datasets cant be null");
@@ -39,6 +41,7 @@ namespace CryptoAI_Upgraded.DataLocalChoosing
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.Title = "Выберите файлы";
+                openFileDialog.InitialDirectory = DataPaths.datasetsPath;
                 openFileDialog.Multiselect = true;
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
@@ -116,6 +119,7 @@ namespace CryptoAI_Upgraded.DataLocalChoosing
                 }
                 UpdateDaysCounter(datasets.Count);
             }
+            onDatasetsChanged?.Invoke();
         }
 
         private void CheckSelection(object? sender, EventArgs e)

@@ -19,10 +19,12 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating
     public partial class NeuralNetworkCreatorWindow : Form
     {
         private Action<NeuralNetwork> onNetworkCreatedAction;
-        public NeuralNetworkCreatorWindow(Action<NeuralNetwork> onNetworkCreatedAction)
+        private bool closeAfterCreation;
+        public NeuralNetworkCreatorWindow(Action<NeuralNetwork> onNetworkCreatedAction, bool closeAfterCreation = true)
         {
             if (onNetworkCreatedAction == null) throw new Exception("NeuralNetworkCreatorWindow.Creation failed. onNetworkCreatedAction cant be null");
             this.onNetworkCreatedAction = onNetworkCreatedAction;
+            this.closeAfterCreation = closeAfterCreation;
             InitializeComponent();
             InitializeDataGrid();
         }
@@ -96,6 +98,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating
         {
             BindingList<NNLayerConfig> config = (BindingList<NNLayerConfig>)LayersGrid.DataSource;       
             onNetworkCreatedAction?.Invoke(new NeuralNetwork(config));
+            if (closeAfterCreation) Close();
         }
     }
 }

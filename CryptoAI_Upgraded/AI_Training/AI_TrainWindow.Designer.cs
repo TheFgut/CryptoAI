@@ -33,10 +33,11 @@
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             StartLearningBut = new Button();
             StopLearningBut = new Button();
-            CreateNetworkBut = new Button();
             TrainingProgressBar = new ProgressBar();
             errorsChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             rundCountBox = new TextBox();
+            networkManagePanel1 = new NeuralNetworks.UI.NetworkManagePanel();
+            datasetsManagerPanel1 = new DatasetsManaging.UI.DatasetsManagerPanel();
             ((System.ComponentModel.ISupportInitialize)errorsChart).BeginInit();
             SuspendLayout();
             // 
@@ -59,16 +60,6 @@
             StopLearningBut.Text = "Stop";
             StopLearningBut.UseVisualStyleBackColor = true;
             StopLearningBut.Click += StopLearningBut_Click;
-            // 
-            // CreateNetworkBut
-            // 
-            CreateNetworkBut.Location = new Point(586, 415);
-            CreateNetworkBut.Name = "CreateNetworkBut";
-            CreateNetworkBut.Size = new Size(202, 23);
-            CreateNetworkBut.TabIndex = 2;
-            CreateNetworkBut.Text = "Create network";
-            CreateNetworkBut.UseVisualStyleBackColor = true;
-            CreateNetworkBut.Click += CreateNetworkBut_Click;
             // 
             // TrainingProgressBar
             // 
@@ -101,15 +92,32 @@
             rundCountBox.TabIndex = 5;
             rundCountBox.Text = "100";
             // 
+            // networkManagePanel1
+            // 
+            networkManagePanel1.Location = new Point(510, 12);
+            networkManagePanel1.Name = "networkManagePanel1";
+            networkManagePanel1.onNetworkChanges = null;
+            networkManagePanel1.Size = new Size(278, 300);
+            networkManagePanel1.TabIndex = 7;
+            // 
+            // datasetsManagerPanel1
+            // 
+            datasetsManagerPanel1.BackColor = SystemColors.ControlDark;
+            datasetsManagerPanel1.Location = new Point(583, 318);
+            datasetsManagerPanel1.Name = "datasetsManagerPanel1";
+            datasetsManagerPanel1.Size = new Size(205, 152);
+            datasetsManagerPanel1.TabIndex = 8;
+            // 
             // AI_TrainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 470);
+            ClientSize = new Size(805, 483);
+            Controls.Add(datasetsManagerPanel1);
+            Controls.Add(networkManagePanel1);
             Controls.Add(rundCountBox);
             Controls.Add(errorsChart);
             Controls.Add(TrainingProgressBar);
-            Controls.Add(CreateNetworkBut);
             Controls.Add(StopLearningBut);
             Controls.Add(StartLearningBut);
             Name = "AI_TrainWindow";
@@ -123,9 +131,10 @@
 
         private Button StartLearningBut;
         private Button StopLearningBut;
-        private Button CreateNetworkBut;
         private ProgressBar TrainingProgressBar;
         private System.Windows.Forms.DataVisualization.Charting.Chart errorsChart;
         private TextBox rundCountBox;
+        private NeuralNetworks.UI.NetworkManagePanel networkManagePanel1;
+        private DatasetsManaging.UI.DatasetsManagerPanel datasetsManagerPanel1;
     }
 }

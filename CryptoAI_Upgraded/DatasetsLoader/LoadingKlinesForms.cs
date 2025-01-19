@@ -74,7 +74,7 @@ namespace CryptoAI_Upgraded
             if (result != null)
             {
                 string name = $"{pair}_{interval}_{from.Month}.{from.Day}.{from.Year}";
-                LocalLoaderAndSaverBSON<KlinesDay> saver = new LocalLoaderAndSaverBSON<KlinesDay>(Application.CommonAppDataPath, name);
+                LocalLoaderAndSaverBSON<KlinesDay> saver = new LocalLoaderAndSaverBSON<KlinesDay>(DataPaths.datasetsPath, name);
                 KlinesDay dataPacked = new KlinesDay(result, interval, pair);
                 saver.Save(dataPacked);
             }

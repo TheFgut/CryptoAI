@@ -131,6 +131,7 @@
             Controls.Add(OpenLoadDataWindowBut);
             Name = "Form1";
             Text = "Form1";
+            Shown += Form1_Shown;
             ((System.ComponentModel.ISupportInitialize)courseGraphic).EndInit();
             ResumeLayout(false);
         }

@@ -4,6 +4,7 @@ using CryptoAI_Upgraded.DataLocalChoosing;
 using CryptoAI_Upgraded.DataSaving;
 using CryptoAI_Upgraded.Datasets;
 using CryptoAI_Upgraded.DatasetsAnalasys;
+using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
 using Keras.Layers;
 using Keras.Models;
 using Numpy;
@@ -23,7 +24,6 @@ namespace CryptoAI_Upgraded
             choosedLocalDatasets = new List<LocalKlinesDataset>();
             InitializeComponent();
             //trainAI_But.Enabled = false;
-            //InitializeKerasAsync();
         }
 
         private void OpenLoadDataWindowBut_Click(object sender, EventArgs e)
@@ -75,29 +75,31 @@ namespace CryptoAI_Upgraded
         {
             if (aiTrainWindow == null)
             {
-                aiTrainWindow = new AI_TrainWindow(choosedLocalDatasets);
+                aiTrainWindow = new AI_TrainWindow();
                 aiTrainWindow.FormClosed += (sender, args) => aiTrainWindow = null;
                 aiTrainWindow.Show();
             }
         }
 
-        public void InitializeKerasAsync()
+        public async Task WarmUpKerasAsync()
         {
-            Task.Run(() =>
+            await Task.Run(() =>
             {
-                // Создаем минимальный слой для прогрева
-                var denseLayer = new Dense(10, activation: "relu");
+                // Простая модель для прогрева
+                var dummyModel = new Sequential();
+                dummyModel.Add(new Dense(10, activation: "relu", input_shape: new Keras.Shape(10)));
 
-                // Фиктивный входной тензор
-                var inputTensor = np.random.rand(1, 5); // Один пример с 5 входами
-
-                Invoke(ActivateTrainButtons);
             });
         }
 
         private void ActivateTrainButtons()
         {
             trainAI_But.Enabled = true;
+        }
+
+        private void Form1_Shown(object sender, EventArgs e)
+        {
+            //await WarmUpKerasAsync();
         }
     }
 }

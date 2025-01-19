@@ -1,6 +1,6 @@
-﻿using CryptoAI_Upgraded.DataLocalChoosing;
-using CryptoAI_Upgraded.DataSaving;
+﻿using CryptoAI_Upgraded.DataSaving;
 using CryptoAI_Upgraded.Datasets;
+using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
