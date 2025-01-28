@@ -1,4 +1,5 @@
 using Binance.Net.Interfaces;
+using CryptoAI_Upgraded.AI_Prediction;
 using CryptoAI_Upgraded.AI_Training;
 using CryptoAI_Upgraded.DataLocalChoosing;
 using CryptoAI_Upgraded.DataSaving;
@@ -19,10 +20,12 @@ namespace CryptoAI_Upgraded
         private DatasetGraphicDisplayForm? datasetsDisplay;
         private DatasetCourseChangeAnalysis? datasetsCourseAnalysis;
         private AI_TrainWindow? aiTrainWindow;
+        private AIPredictorForm? aiPredictor;
         public Form1()
         {
             choosedLocalDatasets = new List<LocalKlinesDataset>();
             InitializeComponent();
+            Keras.Keras.DisablePySysConsoleLog = true;
             //trainAI_But.Enabled = false;
         }
 
@@ -100,6 +103,16 @@ namespace CryptoAI_Upgraded
         private void Form1_Shown(object sender, EventArgs e)
         {
             //await WarmUpKerasAsync();
+        }
+
+        private void AIPredictorBut_Click(object sender, EventArgs e)
+        {
+            if (aiPredictor == null)
+            {
+                aiPredictor = new AIPredictorForm();
+                aiPredictor.FormClosed += (sender, args) => aiPredictor = null;
+                aiPredictor.Show();
+            }
         }
     }
 }

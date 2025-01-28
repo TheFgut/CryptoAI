@@ -38,6 +38,7 @@
             DisplayGraphics = new Button();
             AnalyzeCourseChangeBut = new Button();
             trainAI_But = new Button();
+            AIPredictorBut = new Button();
             ((System.ComponentModel.ISupportInitialize)courseGraphic).BeginInit();
             SuspendLayout();
             // 
@@ -117,11 +118,22 @@
             trainAI_But.UseVisualStyleBackColor = true;
             trainAI_But.Click += trainAI_But_Click;
             // 
+            // AIPredictorBut
+            // 
+            AIPredictorBut.Location = new Point(160, 12);
+            AIPredictorBut.Name = "AIPredictorBut";
+            AIPredictorBut.Size = new Size(99, 23);
+            AIPredictorBut.TabIndex = 7;
+            AIPredictorBut.Text = "AI predictor";
+            AIPredictorBut.UseVisualStyleBackColor = true;
+            AIPredictorBut.Click += AIPredictorBut_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(AIPredictorBut);
             Controls.Add(trainAI_But);
             Controls.Add(AnalyzeCourseChangeBut);
             Controls.Add(DisplayGraphics);
@@ -145,5 +157,6 @@
         private Button DisplayGraphics;
         private Button AnalyzeCourseChangeBut;
         private Button trainAI_But;
+        private Button AIPredictorBut;
     }
 }

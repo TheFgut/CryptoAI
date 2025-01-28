@@ -13,7 +13,7 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
         {
         }
 
-        public List<KLine> Walk() => BaseWalk(true);
+        public List<KLine> Walk() => WalkOneStep(true);
 
     }
 }

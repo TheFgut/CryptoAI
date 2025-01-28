@@ -14,6 +14,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 {
     public class NeuralNetwork
     {
+        public int timeFragments => 240;
         public int inputsCount => neuralData.inputCount;
         public int outputCount => neuralData.outputCount;
         public int neuronsCount 
@@ -56,7 +57,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             Sequential model = new Sequential();
             //creating input
             if (config[0].layerType == LayerType.LSTM) model.Add(CreateLSTMLayerFromConfig(config[0], config[1].layerType == LayerType.LSTM,
-                new Keras.Shape(60, config[0].neuronsCount)));
+                new Keras.Shape(timeFragments, config[0].neuronsCount)));
             else if (config[0].layerType == LayerType.Dense) model.Add(CreateDenseLayerFromConfig(config[0],
                 new Keras.Shape(config[0].neuronsCount)));
             for (int i = 1; i < config.Count; i++)
@@ -64,9 +65,14 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                 if (config[i].layerType == LayerType.LSTM)model.Add(CreateLSTMLayerFromConfig(config[i], config[i + 1].layerType == LayerType.LSTM));
                 else if (config[i].layerType == LayerType.Dense) model.Add(CreateDenseLayerFromConfig(config[i]));
             }
+
+            ///loss
+            ///"mean_squared_error" - сильнее ошибка - сильнее наказание, но из-за этого предсказание всегда 0
+            ///huber_loss - для данных с выбросами
+
             // Компиляция модели
             model.Compile(optimizer: new Keras.Optimizers.Nadam(),
-                          loss: "mean_squared_error",
+                          loss: "huber_loss",
                           metrics: new string[] { "mae" });
 
             return model;
@@ -163,19 +169,21 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                     List<double[,]> outputBatches = new List<double[,]>();
                     for (int i = 0; i < batchesCount; i++)
                     {
-                        if (dataWalker.isFinishedWalking()) break;
                         double[,] expectedOutput;
                         double[,] input = dataWalker.Walk(out expectedOutput);
-                        inputBatches.Add(input);
-                        outputBatches.Add(expectedOutput);
+                        List<double[,]> normalized = Helpers.Normalization.Normalize(input, expectedOutput);
+                        inputBatches.Add(normalized[0]);
+                        outputBatches.Add(normalized[1]);
+                        await Task.Delay(10);
+                        if (dataWalker.isFinishedWalking()) break;
                     }
                     if (inputBatches.Count == 0 || outputBatches.Count == 0) break;
-                    // Тренируем модель на текущем батче
-                    var loss = model.TrainOnBatch(np.array(Normalize(ConvertListTo3DArray(inputBatches))),
-                        np.array(Normalize(ConvertListTo3DArray(outputBatches))));
+
+                    var loss = model.TrainOnBatch(np.array(Helpers.ConvertListTo3DArray(inputBatches)),
+                        np.array(Helpers.ConvertListTo3DArray(outputBatches)));
                     error += loss[0];
                     walksIterations++;
-                    await Task.Delay(10); // Задержка для эмуляции асинхронной работы
+                    await Task.Delay(10); 
                 } while (dataWalker.isFinishedWalking());
                 dataWalker.ResetDataWalker();
                 tariningStats.RecordError(error / walksIterations);
@@ -189,62 +197,13 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             //Console.WriteLine(predictions.repr);
         }
 
-        /// <summary>
-        /// converts data values in range between -1 and 1
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        private double[,,] Normalize(double[,,] data)
+        public double[] Predict(double[,,] input)
         {
-            double min = data.Cast<double>().Min(); // Минимум в массиве
-            double max = data.Cast<double>().Max(); // Максимум в массиве
-            double range = max - min;
-
-            int dim0 = data.GetLength(0);
-            int dim1 = data.GetLength(1);
-            int dim2 = data.GetLength(2);
-
-            double[,,] normalizedData = new double[dim0, dim1, dim2];
-
-            for (int i = 0; i < dim0; i++)
-            {
-                for (int j = 0; j < dim1; j++)
-                {
-                    for (int k = 0; k < dim2; k++)
-                    {
-                        normalizedData[i, j, k] = 2 * (data[i, j, k] - min) / range - 1;
-                    }
-                }
-            }
-
-            return normalizedData;
+            var npInput = np.array(input); 
+            NDarray prediction = model.Predict(npInput);
+            return prediction.GetData<double>();
         }
 
-        public static double[,,] ConvertListTo3DArray(List<double[,]> list)
-        {
-            // Получаем размеры
-            int depth = list.Count;  // Количество двумерных массивов в списке
-            int rows = list[0].GetLength(0);  // Количество строк в каждом двумерном массиве
-            int cols = list[0].GetLength(1);  // Количество столбцов в каждом двумерном массиве
-
-            // Создаем новый трехмерный массив
-            double[,,] result = new double[depth, rows, cols];
-
-            // Копируем данные из списка в трехмерный массив
-            for (int i = 0; i < depth; i++)
-            {
-                double[,] currentArray = list[i];
-                for (int j = 0; j < rows; j++)
-                {
-                    for (int k = 0; k < cols; k++)
-                    {
-                        result[i, j, k] = currentArray[j, k];
-                    }
-                }
-            }
-
-            return result;
-        }
 
         private double[,] convertToTwoDimArr(double[] inputArr)
         {

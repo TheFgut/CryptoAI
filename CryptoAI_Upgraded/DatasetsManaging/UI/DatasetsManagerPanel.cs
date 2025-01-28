@@ -15,7 +15,7 @@ namespace CryptoAI_Upgraded.DatasetsManaging.UI
     public partial class DatasetsManagerPanel : UserControl
     {
         public List<LocalKlinesDataset> choosedLocalDatasets { get; private set; }
-        public Action<List<LocalKlinesDataset>>? onDataChanged { get; private set; }
+        public Action<List<LocalKlinesDataset>>? onDataChanged { get; set; }
         private LoadLocalDatasetsForm? loadingLocalForm;
         public DatasetsManagerPanel()
         {

@@ -25,6 +25,7 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
         public double[,] Walk(out double[,] expectedData)
         {
             int datasetIndexContainer = currentDatasetIndex;
+            int datasetPosHolder = localDatasetPos; 
             double[,] input = new double[timeFragments, nnInput];
             expectedData = new double[timeFragments, nnOutput];
 
@@ -46,16 +47,28 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
                 }
 
             }
-            List<KLine> walkedElements = BaseWalk(true);
-
+            localDatasetPos = datasetPosHolder;
             currentDatasetIndex = datasetIndexContainer;
+
+            MovePositionOneStep();
+
             finishedWalking = checkIfFinishedWalking(timeFragments);
             return input;
         }
 
+        public double[,] WalkAt(int index, out double[,] expectedData)
+        {
+            localDatasetPos = index;
+            int datasetFragmetsCount = datasets[currentDatasetIndex].LoadKlinesFromCache().data.Count;
+            currentDatasetIndex = (int)Math.Floor((decimal)localDatasetPos / datasetFragmetsCount);
+            if (checkIfFinishedWalking()) throw new Exception("Index is out of range");
+
+            return Walk(out expectedData);
+        }
+
         private List<KLine> WalkFragment(out List<KLine> output)
         {
-            List<KLine> walkedElements = BaseWalk(false);
+            List<KLine> walkedElements = WalkOneStep(false);
             output = walkedElements.GetRange(nnInput, nnOutput);
             return walkedElements.GetRange(0, nnInput);
         }

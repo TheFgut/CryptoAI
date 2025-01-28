@@ -21,7 +21,7 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
 
         public List<KLine> Walk(out List<KLine> output)
         {
-            List<KLine> walkedElements = BaseWalk(true);
+            List<KLine> walkedElements = WalkOneStep(true);
             output = walkedElements.GetRange(outputOne, outputTwo);
             return walkedElements.GetRange(0, outputOne);
         }
