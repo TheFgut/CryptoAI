@@ -48,7 +48,7 @@ namespace CryptoAI_Upgraded.AI_Prediction
 
         private void Init(NeuralNetwork network, List<LocalKlinesDataset> datasets)
         {
-            dataWalker = new LSTMDataWalker(datasets, network.inputsCount, network.outputCount, network.timeFragments);
+            dataWalker = new LSTMDataWalker(datasets, 1, network.outputCount, network.timeFragments);
             List<double[]> result = WalkAt(0, predictionsCount);
             ShwoDataInChart(result[0], result[1]);
         }
@@ -59,18 +59,17 @@ namespace CryptoAI_Upgraded.AI_Prediction
 
             double[,] data = dataWalker.WalkAt(step, out var expected);
             double[,,] input = Helpers.ConvertArrTo3DArray(data);
-            double[,,] expectedOutput = Helpers.ConvertArrTo3DArray(expected);
-            List<double[,,]> normalized = Helpers.Normalization.Normalize(input,
-                expectedOutput);
-
+            double[,,] normalized = Helpers.Normalization.Normalize(out double min, out double max, input);
             double collectorPred = 0;
             int predCounter = predictionsCount;
             while (predCounter > 0)
             {
-                double prediction = network.Predict(normalized[0])[0];
+                double[,,] dataWithMinMax = Helpers.ArrayValuesInjection.InjectValues(normalized, min, max);
+                double[] predictionArr = network.Predict(dataWithMinMax);
+                double prediction = predictionArr[0];
                 collectorPred += prediction;
-                predictions.Add(collectorPred);
-                input = UpdateInput(input, prediction);
+                predictions.Add(Helpers.Normalization.Denormalize(collectorPred,min, max));
+                normalized = UpdateInput(normalized, prediction);
                 predCounter--;
             }
 
@@ -80,11 +79,14 @@ namespace CryptoAI_Upgraded.AI_Prediction
             for (int i = 0; i < predictionsCount; i++)
             {
                 //collectorEx += expectedOutput[0, i, 0];
-                collectorEx += normalized[1][0, i, 0];
+                collectorEx += expected[0];
                 expectedList.Add(collectorEx);
+
+                dataWalker.WalkAt(step, out expected);
+                step++;
             }
             return new List<double[]>() { expectedList.ToArray(),
-                Helpers.Normalization.Normalize(predictions).ToArray() };
+                predictions.ToArray() };
         }
 
         private void ShwoDataInChart(double[] expected, double[] predictions)

@@ -9,13 +9,16 @@ using System.ComponentModel;
 using System.Text.Json.Serialization;
 using CryptoAI_Upgraded.DataSaving;
 using System.IO;
+using Keras.Optimizers;
+using Keras;
+using Keras.Initializer;
 
 namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 {
     public class NeuralNetwork
     {
-        public int timeFragments => 240;
-        public int inputsCount => neuralData.inputCount;
+        public int timeFragments => 500;
+        public int inputsFeatures => 3;
         public int outputCount => neuralData.outputCount;
         public int neuronsCount 
         {
@@ -57,7 +60,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             Sequential model = new Sequential();
             //creating input
             if (config[0].layerType == LayerType.LSTM) model.Add(CreateLSTMLayerFromConfig(config[0], config[1].layerType == LayerType.LSTM,
-                new Keras.Shape(timeFragments, config[0].neuronsCount)));
+                new Keras.Shape(timeFragments, inputsFeatures)));
             else if (config[0].layerType == LayerType.Dense) model.Add(CreateDenseLayerFromConfig(config[0],
                 new Keras.Shape(config[0].neuronsCount)));
             for (int i = 1; i < config.Count; i++)
@@ -65,15 +68,15 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                 if (config[i].layerType == LayerType.LSTM)model.Add(CreateLSTMLayerFromConfig(config[i], config[i + 1].layerType == LayerType.LSTM));
                 else if (config[i].layerType == LayerType.Dense) model.Add(CreateDenseLayerFromConfig(config[i]));
             }
-
+            //model.Add(new Dropout(0.2));
             ///loss
             ///"mean_squared_error" - сильнее ошибка - сильнее наказание, но из-за этого предсказание всегда 0
             ///huber_loss - для данных с выбросами
-
             // Компиляция модели
-            model.Compile(optimizer: new Keras.Optimizers.Nadam(),
+            var optimizer = new Keras.Optimizers.Nadam(lr: 0.00001f);
+            model.Compile(optimizer: optimizer,
                           loss: "huber_loss",
-                          metrics: new string[] { "mae" });
+                          metrics: new string[] { "mae", "mse" });
 
             return model;
         }
@@ -81,14 +84,15 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         private LSTM CreateLSTMLayerFromConfig(NNLayerConfig config, bool returnSequences, Keras.Shape? inputShape = null)
         {
             string? activationString = config.activation == ActivationFunc.linear ? null : config.activation.ToString();
-            return new LSTM(config.neuronsCount, input_shape: inputShape,
-                activation: activationString, return_sequences: returnSequences);
+            return new LSTM(config.neuronsCount, input_shape: inputShape, kernel_initializer: new GlorotNormal(),
+                activation: activationString, return_sequences: returnSequences, recurrent_initializer: "orthogonal",recurrent_activation: "tanh");
         }
 
         private Dense CreateDenseLayerFromConfig(NNLayerConfig config, Keras.Shape? inputShape = null)
         {
             string? activationString = config.activation == ActivationFunc.linear ? null : config.activation.ToString();
-            return new Dense(config.neuronsCount, input_shape: inputShape, activation: activationString);
+            return new Dense(config.neuronsCount, input_shape: inputShape, activation: activationString,
+                kernel_initializer: "he_normal");
         }
         #endregion
         /// <summary>
@@ -166,25 +170,27 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                 {
 
                     List<double[,]> inputBatches = new List<double[,]>();
-                    List<double[,]> outputBatches = new List<double[,]>();
+                    List<double[]> outputBatches = new List<double[]>();
                     for (int i = 0; i < batchesCount; i++)
                     {
-                        double[,] expectedOutput;
+                        double[] expectedOutput;
                         double[,] input = dataWalker.Walk(out expectedOutput);
-                        List<double[,]> normalized = Helpers.Normalization.Normalize(input, expectedOutput);
-                        inputBatches.Add(normalized[0]);
-                        outputBatches.Add(normalized[1]);
+                        
+                        List<double[,]> normalized = Helpers.Normalization.Normalize(out double min, out double max, input);              
+                        inputBatches.Add(Helpers.ArrayValuesInjection.InjectValues(normalized[0],min,max));
+                        outputBatches.Add(Helpers.Normalization.Normalize(min, max, expectedOutput));
                         await Task.Delay(10);
                         if (dataWalker.isFinishedWalking()) break;
                     }
                     if (inputBatches.Count == 0 || outputBatches.Count == 0) break;
 
+                    double[,] outputArr = Helpers.ConvertListTo3DArray(outputBatches);
                     var loss = model.TrainOnBatch(np.array(Helpers.ConvertListTo3DArray(inputBatches)),
-                        np.array(Helpers.ConvertListTo3DArray(outputBatches)));
+                        np.array(outputArr)); 
                     error += loss[0];
                     walksIterations++;
                     await Task.Delay(10); 
-                } while (dataWalker.isFinishedWalking());
+                } while (!dataWalker.isFinishedWalking());
                 dataWalker.ResetDataWalker();
                 tariningStats.RecordError(error / walksIterations);
                 tariningStats.GoNext();

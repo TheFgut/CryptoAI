@@ -15,11 +15,10 @@ namespace CryptoAI_Upgraded
             /// </summary>
             /// <param name="data"></param>
             /// <returns></returns>
-            public static double[,,] Normalize(double[,,] data)
+            public static double[,,] Normalize(out double min, out double max, double[,,] data)
             {
-                double min = data.Cast<double>().Min(); // Минимум в массиве
-                double max = data.Cast<double>().Max(); // Максимум в массиве
-                double range = max - min;
+                min = data.Cast<double>().Min(); // Минимум в массиве
+                max = data.Cast<double>().Max(); // Максимум в массиве
 
                 int dim0 = data.GetLength(0);
                 int dim1 = data.GetLength(1);
@@ -33,7 +32,7 @@ namespace CryptoAI_Upgraded
                     {
                         for (int k = 0; k < dim2; k++)
                         {
-                            normalizedData[i, j, k] = data[i, j, k] / range;
+                            normalizedData[i, j, k] = Normalize(data[i, j, k], min, max);
                         }
                     }
                 }
@@ -41,10 +40,10 @@ namespace CryptoAI_Upgraded
                 return normalizedData;
             }
 
-            public static List<double[,,]> Normalize(params double[][,,] datas)
+            public static List<double[,,]> Normalize(out double min, out double max, params double[][,,] datas)
             {
-                double min = double.MaxValue; // Минимум в массиве
-                double max = double.MinValue; // Максимум в массиве
+                min = double.MaxValue; // Минимум в массиве
+                max = double.MinValue; // Максимум в массиве
 
                 foreach (var data in datas)
                 {
@@ -70,7 +69,7 @@ namespace CryptoAI_Upgraded
                         {
                             for (int k = 0; k < dim2; k++)
                             {
-                                normalizedData[i, j, k] = data[i, j, k] / range;
+                                normalizedData[i, j, k] = Normalize(data[i, j, k], min, max);
                             }
                         }
                     }
@@ -79,10 +78,24 @@ namespace CryptoAI_Upgraded
                 return normalizedDatas;
             }
 
-            public static List<double[,]> Normalize(params double[][,] datas)
+            public static double Normalize(double value, double min, double max)
             {
-                double min = double.MaxValue; // Минимум в массиве
-                double max = double.MinValue; // Максимум в массиве
+                //double range = max - min;
+                //return value / range;
+                return (value - min) / (max - min);
+            }
+
+            public static double Denormalize(double value, double min, double max)
+            {
+                //double range = max - min;
+                //return value * range;
+                return value * (max - min) + min;
+            }
+
+            public static List<double[,]> Normalize(out double min, out double max, params double[][,] datas)
+            {
+                min = double.MaxValue; // Минимум в массиве
+                max = double.MinValue; // Максимум в массиве
 
                 foreach (var data in datas)
                 {
@@ -105,12 +118,22 @@ namespace CryptoAI_Upgraded
                     {
                         for (int j = 0; j < dim1; j++)
                         {
-                            normalizedData[i, j] = data[i, j] / range;
+                            normalizedData[i, j] = Normalize(data[i, j], min, max);
                         }
                     }
                     normalizedDatas.Add(normalizedData);
                 }
                 return normalizedDatas;
+            }
+
+            public static double[] Normalize(double min, double max, params double[] data)
+            {
+                double[] normalized = new double[data.Length];
+                for (int i = 0; i < normalized.Length;i++)
+                {
+                    normalized[i] = Normalize(data[i], min, max);
+                }
+                return normalized;
             }
             /// <summary>
             /// converts data values in range between -1 and 1.
@@ -127,12 +150,61 @@ namespace CryptoAI_Upgraded
 
                 foreach (var element in data)
                 {
-                    newData.Add(element / range);
+                    newData.Add(Normalize(element, min, max)); 
                 }
 
                 return newData;
             }
+        }
 
+        public static class ArrayValuesInjection
+        {
+            public static double[,] InjectValues(double[,] array, params double[] values)
+            {
+                int l1 = array.GetLength(0);
+                int l2 = array.GetLength(1);
+                double[,] resizedArr = new double[l1, l2 + values.Length];
+
+                for (int i = 0; i < l1;i++)
+                {
+                    for (int k = 0; k < l2; k++)
+                    {
+                        resizedArr[i,k] = array[i,k];
+                    }
+                    for (int k = l2; k < l2 + values.Length; k++)
+                    {
+                        resizedArr[i, k] = values[k - l2];
+                    }
+                }
+
+                return resizedArr;
+            }
+
+            public static double[,,] InjectValues(double[,,] array, params double[] values)
+            {
+                int l1 = array.GetLength(0);
+                int l2 = array.GetLength(1);
+                int l3 = array.GetLength(2);
+                double[,,] resizedArr = new double[l1, l2,l3 + values.Length];
+
+                for (int i = 0; i < l1; i++)
+                {
+                    for (int j = 0; j < l2; j++)
+                    {
+                        for (int k = 0; k < l3; k++)
+                        {
+                            resizedArr[i,j, k] = array[i,j, k];
+                        }
+                        for (int k = l3; k < l3 + values.Length; k++)
+                        {
+                            resizedArr[i,j, k] = values[k - l3];
+                        }
+                    }
+
+                }
+
+                return resizedArr;
+            }
         }
 
         public static double[,,] ConvertListTo3DArray(List<double[,]> list)
@@ -160,7 +232,27 @@ namespace CryptoAI_Upgraded
 
             return result;
         }
+        public static double[,] ConvertListTo3DArray(List<double[]> list)
+        {
+            // Получаем размеры
+            int depth = list.Count;  // Количество двумерных массивов в списке
+            int rows = list[0].GetLength(0);  // Количество строк в каждом двумерном массиве
 
+            // Создаем новый трехмерный массив
+            double[,] result = new double[depth, rows];
+
+            // Копируем данные из списка в трехмерный массив
+            for (int i = 0; i < depth; i++)
+            {
+                double[] currentArray = list[i];
+                for (int j = 0; j < rows; j++)
+                {
+                    result[i, j] = currentArray[j];
+                }
+            }
+
+            return result;
+        }
         public static double[,,] ConvertArrTo3DArray(double[,] arr)
         {
             // Получаем размеры
@@ -182,6 +274,10 @@ namespace CryptoAI_Upgraded
             }
 
             return result;
+        }
+        public static double GetPercentChange(decimal startPrice, decimal endPrice)
+        {
+            return (1 - (double)(endPrice / startPrice))*100;
         }
     }
 }

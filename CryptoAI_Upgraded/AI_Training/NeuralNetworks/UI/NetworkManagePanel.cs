@@ -82,7 +82,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks.UI
                 NetworkNameLabel.ForeColor = Color.Red;
                 NetworkNameLabel.Text = "Network loaded";
 
-                NetworkDetailsPanel.Text = $"$Inputs: {neuralNetwork.inputsCount}\n" +
+                NetworkDetailsPanel.Text = $"$Inputs: {neuralNetwork.inputsFeatures}\n" +
                     $"Outputs: {neuralNetwork.outputCount}\n" +
                     $"Layers: {neuralNetwork.layersCount}\n" +
                     $"Total neurons: {neuralNetwork.neuronsCount}";

@@ -47,6 +47,7 @@
             datasetsManagerPanel1.BackColor = SystemColors.ControlDark;
             datasetsManagerPanel1.Location = new Point(680, 318);
             datasetsManagerPanel1.Name = "datasetsManagerPanel1";
+            datasetsManagerPanel1.onDataChanged = null;
             datasetsManagerPanel1.Size = new Size(278, 152);
             datasetsManagerPanel1.TabIndex = 1;
             // 
@@ -56,6 +57,7 @@
             aiPredictionsDatasetWalkerPanel1.Name = "aiPredictionsDatasetWalkerPanel1";
             aiPredictionsDatasetWalkerPanel1.Size = new Size(662, 458);
             aiPredictionsDatasetWalkerPanel1.TabIndex = 2;
+            aiPredictionsDatasetWalkerPanel1.Load += aiPredictionsDatasetWalkerPanel1_Load;
             // 
             // AIPredictorForm
             // 
