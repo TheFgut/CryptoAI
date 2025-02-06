@@ -34,9 +34,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating
             // Создаем список данных
             BindingList<NNLayerConfig> dataList = new BindingList<NNLayerConfig>()
             {
-                new NNLayerConfig(30,ActivationFunc.tanh, LayerType.LSTM, true),
-                new NNLayerConfig(100,ActivationFunc.tanh, LayerType.LSTM, true),
-                new NNLayerConfig(100,ActivationFunc.tanh, LayerType.LSTM, true),
+                new NNLayerConfig(50,ActivationFunc.tanh, LayerType.LSTM, true),
                 new NNLayerConfig(100,ActivationFunc.tanh, LayerType.LSTM, true),
                 new NNLayerConfig(50,ActivationFunc.tanh, LayerType.Dense, true),
                 new NNLayerConfig(1,ActivationFunc.linear, LayerType.Dense, true)

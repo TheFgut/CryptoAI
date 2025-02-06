@@ -24,7 +24,7 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
             if (datasets.Count == 0) throw new Exception("DataWalker.Construction failed. datasets.Count should be higher than zero");
             if (walkSteps <= 0) throw new Exception("DataWalker.Construction failed. datasets.walkSteps should be higher than zero");
             datasetLength = datasets[0].LoadKlinesFromCache().data.Count;
-            if(walkSteps >= datasetLength * datasets.Count) throw new Exception("DataWalker.Construction failed. datasets.walkSteps cant be higher than dataset total data fragmens");
+            if (walkSteps >= datasetLength * datasets.Count) throw new Exception("DataWalker.Construction failed. datasets.walkSteps cant be higher than dataset total data fragmens");
             this.datasets = datasets;
             this.fullWalkSteps = walkSteps;
         }

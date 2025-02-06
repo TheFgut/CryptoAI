@@ -12,13 +12,16 @@ using System.IO;
 using Keras.Optimizers;
 using Keras;
 using Keras.Initializer;
+using Newtonsoft.Json.Linq;
 
 namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 {
     public class NeuralNetwork
     {
-        public int timeFragments => 500;
-        public int inputsFeatures => 3;
+        public int timeFragments => 900;
+
+        public int inputCount => 60;//data fragments input at the same time
+        public int inputsFeatures => 1;
         public int outputCount => neuralData.outputCount;
         public int neuronsCount 
         {
@@ -60,7 +63,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             Sequential model = new Sequential();
             //creating input
             if (config[0].layerType == LayerType.LSTM) model.Add(CreateLSTMLayerFromConfig(config[0], config[1].layerType == LayerType.LSTM,
-                new Keras.Shape(timeFragments, inputsFeatures)));
+                new Keras.Shape(timeFragments, (inputCount * inputsFeatures) + 2)));
             else if (config[0].layerType == LayerType.Dense) model.Add(CreateDenseLayerFromConfig(config[0],
                 new Keras.Shape(config[0].neuronsCount)));
             for (int i = 1; i < config.Count; i++)
@@ -74,9 +77,8 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             ///huber_loss - для данных с выбросами
             // Компиляция модели
             var optimizer = new Keras.Optimizers.Nadam(lr: 0.00001f);
-            model.Compile(optimizer: optimizer,
-                          loss: "huber_loss",
-                          metrics: new string[] { "mae", "mse" });
+            model.Compile(optimizer: "adam",
+                          loss: "mean_squared_error");
 
             return model;
         }
@@ -85,7 +87,8 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         {
             string? activationString = config.activation == ActivationFunc.linear ? null : config.activation.ToString();
             return new LSTM(config.neuronsCount, input_shape: inputShape, kernel_initializer: new GlorotNormal(),
-                activation: activationString, return_sequences: returnSequences, recurrent_initializer: "orthogonal",recurrent_activation: "tanh");
+                activation: activationString, return_sequences: returnSequences, recurrent_initializer: "orthogonal",
+                dropout: 0.2f);
         }
 
         private Dense CreateDenseLayerFromConfig(NNLayerConfig config, Keras.Shape? inputShape = null)
@@ -153,13 +156,12 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             //Console.WriteLine(predictions.repr);
         }
 
-        public async Task<NNTrainingStats> TrainLSTMNetwork(LSTMDataWalker dataWalker, int runsCount,int batchesCount,
-            TrainingprogressAnalyticsCollector analyticsCollector, Action<float> onProgressChange)
+        public async Task TrainLSTMNetwork(LSTMDataWalker dataWalker, int runsCount,int batchesCount,
+            NNTrainingStats analyticsCollector, Action<float> onProgressChange, CancellationToken cancellationToken)
         {
             if (dataWalker == null) throw new Exception("NeuralNetwork.Train dataWalker cant be null");
             if (runsCount <= 0) throw new Exception("NeuralNetwork.Train runsCount should be higher than one");
 
-            NNTrainingStats tariningStats = new NNTrainingStats(runsCount);
             for (int run = 1; run <= runsCount; run++)
             {
                 onProgressChange?.Invoke(run / (float)runsCount);
@@ -189,14 +191,17 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                         np.array(outputArr)); 
                     error += loss[0];
                     walksIterations++;
+                    if (cancellationToken.IsCancellationRequested)//cancellation of task
+                    {
+                        analyticsCollector.RecordError(error / walksIterations);
+                        cancellationToken.ThrowIfCancellationRequested();
+                    }
                     await Task.Delay(10); 
                 } while (!dataWalker.isFinishedWalking());
                 dataWalker.ResetDataWalker();
-                tariningStats.RecordError(error / walksIterations);
-                tariningStats.GoNext();
+                analyticsCollector.RecordError(error / walksIterations);
+                analyticsCollector.GoNext();
             }
-
-            return tariningStats;
             // Предсказания
             //var predictions = model.Predict(x_train);
             //Console.WriteLine("Predictions:");

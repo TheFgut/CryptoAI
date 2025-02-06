@@ -48,7 +48,7 @@ namespace CryptoAI_Upgraded.AI_Prediction
 
         private void Init(NeuralNetwork network, List<LocalKlinesDataset> datasets)
         {
-            dataWalker = new LSTMDataWalker(datasets, 1, network.outputCount, network.timeFragments);
+            dataWalker = new LSTMDataWalker(datasets, network.inputCount, network.outputCount, network.timeFragments);
             List<double[]> result = WalkAt(0, predictionsCount);
             ShwoDataInChart(result[0], result[1]);
         }
@@ -67,8 +67,11 @@ namespace CryptoAI_Upgraded.AI_Prediction
                 double[,,] dataWithMinMax = Helpers.ArrayValuesInjection.InjectValues(normalized, min, max);
                 double[] predictionArr = network.Predict(dataWithMinMax);
                 double prediction = predictionArr[0];
-                collectorPred += prediction;
-                predictions.Add(Helpers.Normalization.Denormalize(collectorPred,min, max));
+
+                double denormalized = Helpers.Normalization.Denormalize(prediction,min,max);
+                collectorPred += denormalized;
+                predictions.Add(collectorPred);
+
                 normalized = UpdateInput(normalized, prediction);
                 predCounter--;
             }
@@ -145,16 +148,21 @@ namespace CryptoAI_Upgraded.AI_Prediction
         double[,,] UpdateInput(double[,,] input, double newValue)
         {
             int timeSteps = input.GetLength(1);
-            double[,,] newInput = new double[1, timeSteps, 1];
+            int inputCounts = input.GetLength(2);
+            double[,,] newInput = new double[1, timeSteps, inputCounts];
 
             // Сдвигаем данные
             for (int t = 1; t < timeSteps; t++)
             {
-                newInput[0, t - 1, 0] = input[0, t, 0];
+                for (int n = 1; n < inputCounts; n++)
+                {
+                    newInput[0, t - 1, n - 1] = input[0, t - 1, n];
+                }
+                newInput[0, t - 1, inputCounts - 1] = input[0, t, inputCounts - 1];
             }
 
             // Добавляем новое значение
-            newInput[0, timeSteps - 1, 0] = newValue;
+            newInput[0, timeSteps - 1, inputCounts - 1] = newValue;
 
             return newInput;
         }

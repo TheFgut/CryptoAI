@@ -1,23 +1,10 @@
-﻿using Binance.Net.Objects.Models.Futures;
-using CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating;
+﻿using CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating;
 using CryptoAI_Upgraded.AI_Training.NeuralNetworks;
 using CryptoAI_Upgraded.Datasets.DataWalkers;
-using Keras.Layers;
-using Keras.Models;
-using Keras.Utils;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-using CryptoAI_Upgraded.AI_Training.NeuralNetworks.UI;
 using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
+using Microsoft.VisualBasic.Devices;
 
 namespace CryptoAI_Upgraded.AI_Training
 {
@@ -28,6 +15,8 @@ namespace CryptoAI_Upgraded.AI_Training
         private CancellationTokenSource? trainingCnacellationToken;
         private NeuralNetworkCreatorWindow? networkCreaterForm;
         private NeuralNetwork? neuralNetwork;
+
+        private int runsCount = 10;
 
         public AI_TrainWindow()
         {
@@ -62,9 +51,10 @@ namespace CryptoAI_Upgraded.AI_Training
             try
             {
                 object referencedProgressInt = 0;
-                LSTMDataWalker dataWalker = new LSTMDataWalker(datasets, 1,
+                LSTMDataWalker dataWalker = new LSTMDataWalker(datasets, neuralNetwork.inputCount,
                     neuralNetwork.outputCount, neuralNetwork.timeFragments);
-                NNTrainingStats trainingStats = await neuralNetwork.TrainLSTMNetwork(dataWalker, 10, 32, null,
+                NNTrainingStats analyticsCollector = new NNTrainingStats(runsCount);
+                await neuralNetwork.TrainLSTMNetwork(dataWalker, runsCount, 1, analyticsCollector,
                     (progressValue) =>
                     {
                         int progressValueInt = (int)(progressValue * 100);
@@ -75,8 +65,9 @@ namespace CryptoAI_Upgraded.AI_Training
                         {
                             TrainingProgressBar.Value = progressValueInt;
                         });
-                    });
-                DisplayDataOnChart(errorsChart, trainingStats.errorsLoss);
+                    }, token);
+
+                DisplayDataOnChart(errorsChart, analyticsCollector.errorsLoss);
             }
             catch (Exception ex)
             {
@@ -85,15 +76,7 @@ namespace CryptoAI_Upgraded.AI_Training
                     MessageBox.Show($"Exception during execution for training {ex.Message}\n {ex.StackTrace}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }));
             }
-
-            if (token.IsCancellationRequested)//cancellation of task
-            {
-                token.ThrowIfCancellationRequested();
-            }
-            else
-            {
-                trainingTask = null;
-            }
+            trainingTask = null;
             timer.Stop();
             Invoke((Action)(() =>
             {
@@ -127,12 +110,14 @@ namespace CryptoAI_Upgraded.AI_Training
             StartTraining();
             StopLearningBut.Enabled = true;
             StartLearningBut.Enabled = false;
+            runsCountBox.Enabled = false;
         }
 
         private void StopLearningBut_Click(object sender, EventArgs e)
         {
             StopTraining();
             StopLearningBut.Enabled = false;
+            runsCountBox.Enabled = true;
         }
 
         private void AssingModel(NeuralNetwork? model)
@@ -148,6 +133,19 @@ namespace CryptoAI_Upgraded.AI_Training
                 StartLearningBut.Enabled = true;
                 StopLearningBut.Enabled = true;
             }
+        }
+
+        private void runsCountBox_Validated(object sender, EventArgs e)
+        {
+            int result;
+            if(!int.TryParse(runsCountBox.Text, out result))
+            {
+                MessageBox.Show($"Your input: \"{runsCountBox.Text}\" is incorrect. Please write a number", "IputError",
+                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                runsCountBox.Text = runsCount.ToString();
+                return;
+            }
+            runsCount = result;
         }
     }
 }

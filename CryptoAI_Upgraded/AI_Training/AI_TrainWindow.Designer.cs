@@ -28,14 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             StartLearningBut = new Button();
             StopLearningBut = new Button();
             TrainingProgressBar = new ProgressBar();
             errorsChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            rundCountBox = new TextBox();
+            runsCountBox = new TextBox();
             networkManagePanel1 = new NeuralNetworks.UI.NetworkManagePanel();
             datasetsManagerPanel1 = new DatasetsManaging.UI.DatasetsManagerPanel();
             ((System.ComponentModel.ISupportInitialize)errorsChart).BeginInit();
@@ -70,30 +70,32 @@
             // 
             // errorsChart
             // 
-            chartArea1.Name = "ChartArea1";
-            errorsChart.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            errorsChart.Legends.Add(legend1);
+            chartArea2.Name = "ChartArea1";
+            errorsChart.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            errorsChart.Legends.Add(legend2);
             errorsChart.Location = new Point(12, 12);
             errorsChart.Name = "errorsChart";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            errorsChart.Series.Add(series1);
+            series2.ChartArea = "ChartArea1";
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            errorsChart.Series.Add(series2);
             errorsChart.Size = new Size(454, 134);
             errorsChart.TabIndex = 4;
             errorsChart.Text = "chart1";
             // 
-            // rundCountBox
+            // runsCountBox
             // 
-            rundCountBox.Location = new Point(12, 386);
-            rundCountBox.Name = "rundCountBox";
-            rundCountBox.Size = new Size(156, 23);
-            rundCountBox.TabIndex = 5;
-            rundCountBox.Text = "100";
+            runsCountBox.Location = new Point(12, 386);
+            runsCountBox.Name = "runsCountBox";
+            runsCountBox.Size = new Size(156, 23);
+            runsCountBox.TabIndex = 5;
+            runsCountBox.Text = "10";
+            runsCountBox.Validated += runsCountBox_Validated;
             // 
             // networkManagePanel1
             // 
+            networkManagePanel1.BackColor = SystemColors.ControlDark;
             networkManagePanel1.Location = new Point(510, 12);
             networkManagePanel1.Name = "networkManagePanel1";
             networkManagePanel1.onNetworkChanges = null;
@@ -105,6 +107,7 @@
             datasetsManagerPanel1.BackColor = SystemColors.ControlDark;
             datasetsManagerPanel1.Location = new Point(583, 318);
             datasetsManagerPanel1.Name = "datasetsManagerPanel1";
+            datasetsManagerPanel1.onDataChanged = null;
             datasetsManagerPanel1.Size = new Size(205, 152);
             datasetsManagerPanel1.TabIndex = 8;
             // 
@@ -115,7 +118,7 @@
             ClientSize = new Size(805, 483);
             Controls.Add(datasetsManagerPanel1);
             Controls.Add(networkManagePanel1);
-            Controls.Add(rundCountBox);
+            Controls.Add(runsCountBox);
             Controls.Add(errorsChart);
             Controls.Add(TrainingProgressBar);
             Controls.Add(StopLearningBut);
@@ -133,7 +136,7 @@
         private Button StopLearningBut;
         private ProgressBar TrainingProgressBar;
         private System.Windows.Forms.DataVisualization.Charting.Chart errorsChart;
-        private TextBox rundCountBox;
+        private TextBox runsCountBox;
         private NeuralNetworks.UI.NetworkManagePanel networkManagePanel1;
         private DatasetsManaging.UI.DatasetsManagerPanel datasetsManagerPanel1;
     }

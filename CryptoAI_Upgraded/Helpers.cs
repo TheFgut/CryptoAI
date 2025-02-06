@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CryptoAI_Upgraded
 {
@@ -82,14 +83,16 @@ namespace CryptoAI_Upgraded
             {
                 //double range = max - min;
                 //return value / range;
-                return (value - min) / (max - min);
+                if (max == min)
+                    return 0;
+                return 2 * (value - min) / (max - min) - 1;
             }
 
             public static double Denormalize(double value, double min, double max)
             {
                 //double range = max - min;
                 //return value * range;
-                return value * (max - min) + min;
+                return ((value + 1) * (max - min) / 2 + min);
             }
 
             public static List<double[,]> Normalize(out double min, out double max, params double[][,] datas)

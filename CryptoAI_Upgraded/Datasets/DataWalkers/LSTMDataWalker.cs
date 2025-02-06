@@ -17,7 +17,7 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
         {
             if (nnInput <= 0) throw new Exception("LSTMDataWalker.Construction failed. datasets.nnInput should be higher than zero");
             if (expectedOutput <= 0) throw new Exception("LSTMDataWalker.Construction failed. datasets.nnOutput should be higher than zero");
-            if (checkIfFinishedWalking(timeFragments)) throw new Exception("LSTMDataWalker.Construction failed. datasets length is lower than walker walk distance");
+            if (checkIfFinishedWalking(0)) throw new Exception("LSTMDataWalker.Construction failed. datasets length is lower than walker walk distance");
             this.nnInput = nnInput;
             this.expectedOutput = expectedOutput;
             this.timeFragments = timeFragments;
