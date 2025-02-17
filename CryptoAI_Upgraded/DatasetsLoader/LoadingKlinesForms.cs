@@ -16,6 +16,8 @@ namespace CryptoAI_Upgraded
         {
             InitializeComponent();
             display.Text = Application.CommonAppDataPath;
+            TimeIntervalBox.DataSource = Enum.GetValues(typeof(KlineInterval));
+            TimeIntervalBox.SelectedIndex = 1;
         }
 
         private async void LoadBut_Click(object sender, EventArgs e)
@@ -30,7 +32,7 @@ namespace CryptoAI_Upgraded
                 return;
             }
 
-            await LoadDataset(fromDateData, toDateData, "ETHUSDT", KlineInterval.OneMinute);
+            await LoadDataset(fromDateData, toDateData, "ETHUSDT", (KlineInterval)TimeIntervalBox.SelectedItem);
         }
 
         private async Task LoadDataset(DateTime from, DateTime to, string pair, KlineInterval interval)
@@ -40,7 +42,7 @@ namespace CryptoAI_Upgraded
             display.Text += $"Progress: 0%";
             try
             {
-                KlinesRequester requester = new KlinesRequester(pair, interval);
+                KlinesRequester requester = new KlinesRequester(pair, interval, DatasetLength.Month);
                 var binanceClient = new BinanceRestClient();
 
                 DateTime loadingFrom = from;
@@ -71,6 +73,7 @@ namespace CryptoAI_Upgraded
             DateTime to, string pair, KlineInterval interval)
         {
             var result = await requester.LoadKlinesAsync(from, to);
+            display.Text += $"Loaded: {result.Count}";
             if (result != null)
             {
                 string name = $"{pair}_{interval}_{from.Month}.{from.Day}.{from.Year}";

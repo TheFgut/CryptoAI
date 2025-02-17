@@ -33,8 +33,17 @@
             RemoveLAyersBut = new Button();
             CreateNetworkBut = new Button();
             InputLabel = new Label();
-            CourseCheckBox = new CheckBox();
-            checkBox1 = new CheckBox();
+            OpenPriceCheckBox = new CheckBox();
+            ClosePriceCheckBox = new CheckBox();
+            VolumeCheckBox = new CheckBox();
+            HighPriceCheckBox = new CheckBox();
+            LowPriceCheckBox = new CheckBox();
+            QuoteVolumeCheckBox = new CheckBox();
+            IputsCountBox = new TextBox();
+            TimeFragmentsBox = new TextBox();
+            IputFeaturesLabel = new Label();
+            InpCountLabel = new Label();
+            label1 = new Label();
             ((System.ComponentModel.ISupportInitialize)LayersGrid).BeginInit();
             SuspendLayout();
             // 
@@ -86,38 +95,135 @@
             InputLabel.TabIndex = 4;
             InputLabel.Text = "Input";
             // 
-            // CourseCheckBox
+            // OpenPriceCheckBox
             // 
-            CourseCheckBox.AutoCheck = false;
-            CourseCheckBox.AutoSize = true;
-            CourseCheckBox.Checked = true;
-            CourseCheckBox.CheckState = CheckState.Checked;
-            CourseCheckBox.Font = new Font("Segoe UI", 14F);
-            CourseCheckBox.Location = new Point(533, 68);
-            CourseCheckBox.Name = "CourseCheckBox";
-            CourseCheckBox.Size = new Size(87, 29);
-            CourseCheckBox.TabIndex = 5;
-            CourseCheckBox.Text = "course";
-            CourseCheckBox.UseVisualStyleBackColor = true;
+            OpenPriceCheckBox.AutoCheck = false;
+            OpenPriceCheckBox.AutoSize = true;
+            OpenPriceCheckBox.Checked = true;
+            OpenPriceCheckBox.CheckState = CheckState.Checked;
+            OpenPriceCheckBox.Font = new Font("Segoe UI", 14F);
+            OpenPriceCheckBox.Location = new Point(526, 177);
+            OpenPriceCheckBox.Name = "OpenPriceCheckBox";
+            OpenPriceCheckBox.Size = new Size(124, 29);
+            OpenPriceCheckBox.TabIndex = 5;
+            OpenPriceCheckBox.Text = "Open price";
+            OpenPriceCheckBox.UseVisualStyleBackColor = true;
             // 
-            // checkBox1
+            // ClosePriceCheckBox
             // 
-            checkBox1.AutoSize = true;
-            checkBox1.Font = new Font("Segoe UI", 14F);
-            checkBox1.Location = new Point(533, 103);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(120, 29);
-            checkBox1.TabIndex = 6;
-            checkBox1.Text = "checkBox1";
-            checkBox1.UseVisualStyleBackColor = true;
+            ClosePriceCheckBox.AutoSize = true;
+            ClosePriceCheckBox.Font = new Font("Segoe UI", 14F);
+            ClosePriceCheckBox.Location = new Point(526, 212);
+            ClosePriceCheckBox.Name = "ClosePriceCheckBox";
+            ClosePriceCheckBox.Size = new Size(124, 29);
+            ClosePriceCheckBox.TabIndex = 6;
+            ClosePriceCheckBox.Text = "Close price";
+            ClosePriceCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // VolumeCheckBox
+            // 
+            VolumeCheckBox.AutoSize = true;
+            VolumeCheckBox.Font = new Font("Segoe UI", 14F);
+            VolumeCheckBox.Location = new Point(526, 387);
+            VolumeCheckBox.Name = "VolumeCheckBox";
+            VolumeCheckBox.Size = new Size(95, 29);
+            VolumeCheckBox.TabIndex = 7;
+            VolumeCheckBox.Text = "Volume";
+            VolumeCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // HighPriceCheckBox
+            // 
+            HighPriceCheckBox.AutoSize = true;
+            HighPriceCheckBox.Font = new Font("Segoe UI", 14F);
+            HighPriceCheckBox.Location = new Point(525, 247);
+            HighPriceCheckBox.Name = "HighPriceCheckBox";
+            HighPriceCheckBox.Size = new Size(118, 29);
+            HighPriceCheckBox.TabIndex = 8;
+            HighPriceCheckBox.Text = "High price";
+            HighPriceCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // LowPriceCheckBox
+            // 
+            LowPriceCheckBox.AutoSize = true;
+            LowPriceCheckBox.Font = new Font("Segoe UI", 14F);
+            LowPriceCheckBox.Location = new Point(526, 282);
+            LowPriceCheckBox.Name = "LowPriceCheckBox";
+            LowPriceCheckBox.Size = new Size(112, 29);
+            LowPriceCheckBox.TabIndex = 9;
+            LowPriceCheckBox.Text = "Low price";
+            LowPriceCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // QuoteVolumeCheckBox
+            // 
+            QuoteVolumeCheckBox.AutoSize = true;
+            QuoteVolumeCheckBox.Font = new Font("Segoe UI", 14F);
+            QuoteVolumeCheckBox.Location = new Point(526, 352);
+            QuoteVolumeCheckBox.Name = "QuoteVolumeCheckBox";
+            QuoteVolumeCheckBox.Size = new Size(150, 29);
+            QuoteVolumeCheckBox.TabIndex = 10;
+            QuoteVolumeCheckBox.Text = "Quote volume";
+            QuoteVolumeCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // IputsCountBox
+            // 
+            IputsCountBox.Location = new Point(576, 62);
+            IputsCountBox.Name = "IputsCountBox";
+            IputsCountBox.Size = new Size(100, 23);
+            IputsCountBox.TabIndex = 11;
+            IputsCountBox.Text = "1";
+            // 
+            // TimeFragmentsBox
+            // 
+            TimeFragmentsBox.Location = new Point(576, 91);
+            TimeFragmentsBox.Name = "TimeFragmentsBox";
+            TimeFragmentsBox.Size = new Size(100, 23);
+            TimeFragmentsBox.TabIndex = 12;
+            TimeFragmentsBox.Text = "60";
+            // 
+            // IputFeaturesLabel
+            // 
+            IputFeaturesLabel.AutoSize = true;
+            IputFeaturesLabel.Font = new Font("Segoe UI", 16F);
+            IputFeaturesLabel.Location = new Point(541, 144);
+            IputFeaturesLabel.Name = "IputFeaturesLabel";
+            IputFeaturesLabel.Size = new Size(147, 30);
+            IputFeaturesLabel.TabIndex = 13;
+            IputFeaturesLabel.Text = "Input features";
+            // 
+            // InpCountLabel
+            // 
+            InpCountLabel.AutoSize = true;
+            InpCountLabel.Location = new Point(507, 70);
+            InpCountLabel.Name = "InpCountLabel";
+            InpCountLabel.Size = new Size(61, 15);
+            InpCountLabel.TabIndex = 14;
+            InpCountLabel.Text = "Inp. count";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(507, 99);
+            label1.Name = "label1";
+            label1.Size = new Size(59, 15);
+            label1.TabIndex = 15;
+            label1.Text = "T.F. count";
             // 
             // NeuralNetworkCreatorWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(723, 450);
-            Controls.Add(checkBox1);
-            Controls.Add(CourseCheckBox);
+            ClientSize = new Size(825, 450);
+            Controls.Add(label1);
+            Controls.Add(InpCountLabel);
+            Controls.Add(IputFeaturesLabel);
+            Controls.Add(TimeFragmentsBox);
+            Controls.Add(IputsCountBox);
+            Controls.Add(QuoteVolumeCheckBox);
+            Controls.Add(LowPriceCheckBox);
+            Controls.Add(HighPriceCheckBox);
+            Controls.Add(VolumeCheckBox);
+            Controls.Add(ClosePriceCheckBox);
+            Controls.Add(OpenPriceCheckBox);
             Controls.Add(InputLabel);
             Controls.Add(CreateNetworkBut);
             Controls.Add(RemoveLAyersBut);
@@ -137,7 +243,16 @@
         private Button RemoveLAyersBut;
         private Button CreateNetworkBut;
         private Label InputLabel;
-        private CheckBox CourseCheckBox;
-        private CheckBox checkBox1;
+        private CheckBox OpenPriceCheckBox;
+        private CheckBox ClosePriceCheckBox;
+        private CheckBox VolumeCheckBox;
+        private CheckBox HighPriceCheckBox;
+        private CheckBox LowPriceCheckBox;
+        private CheckBox QuoteVolumeCheckBox;
+        private TextBox IputsCountBox;
+        private TextBox TimeFragmentsBox;
+        private Label IputFeaturesLabel;
+        private Label InpCountLabel;
+        private Label label1;
     }
 }

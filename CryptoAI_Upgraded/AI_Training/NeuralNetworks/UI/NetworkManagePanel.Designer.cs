@@ -35,6 +35,7 @@
             NNameLabel = new Label();
             NetworkNameLabel = new Label();
             NetworkDetailsPanel = new RichTextBox();
+            DetailsBut = new Button();
             SuspendLayout();
             // 
             // CreateNetworkBut
@@ -71,7 +72,7 @@
             // 
             NetworkNameChangePanel.Location = new Point(142, 234);
             NetworkNameChangePanel.Name = "NetworkNameChangePanel";
-            NetworkNameChangePanel.Size = new Size(120, 23);
+            NetworkNameChangePanel.Size = new Size(80, 23);
             NetworkNameChangePanel.TabIndex = 3;
             NetworkNameChangePanel.TextChanged += NetworkNameChangePanel_TextChanged;
             // 
@@ -104,11 +105,22 @@
             NetworkDetailsPanel.TabIndex = 6;
             NetworkDetailsPanel.Text = "";
             // 
+            // DetailsBut
+            // 
+            DetailsBut.Location = new Point(228, 234);
+            DetailsBut.Name = "DetailsBut";
+            DetailsBut.Size = new Size(32, 23);
+            DetailsBut.TabIndex = 7;
+            DetailsBut.Text = "...";
+            DetailsBut.UseVisualStyleBackColor = true;
+            DetailsBut.Click += DetailsBut_Click;
+            // 
             // NetworkManagePanel
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ControlDark;
+            Controls.Add(DetailsBut);
             Controls.Add(NetworkDetailsPanel);
             Controls.Add(NetworkNameLabel);
             Controls.Add(NNameLabel);
@@ -131,5 +143,6 @@
         private Label NNameLabel;
         private Label NetworkNameLabel;
         private RichTextBox NetworkDetailsPanel;
+        private Button DetailsBut;
     }
 }

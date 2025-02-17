@@ -208,6 +208,28 @@ namespace CryptoAI_Upgraded
 
                 return resizedArr;
             }
+
+            public static double[,,] UpdateInput(double[,,] input, double newValue)
+            {
+                int timeSteps = input.GetLength(1);
+                int inputCounts = input.GetLength(2);
+                double[,,] newInput = new double[1, timeSteps, inputCounts];
+
+                // Сдвигаем данные
+                for (int t = 1; t < timeSteps; t++)
+                {
+                    for (int n = 1; n < inputCounts; n++)
+                    {
+                        newInput[0, t - 1, n - 1] = input[0, t - 1, n];
+                    }
+                    newInput[0, t - 1, inputCounts - 1] = input[0, t, inputCounts - 1];
+                }
+
+                // Добавляем новое значение
+                newInput[0, timeSteps - 1, inputCounts - 1] = newValue;
+
+                return newInput;
+            }
         }
 
         public static double[,,] ConvertListTo3DArray(List<double[,]> list)

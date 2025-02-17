@@ -35,8 +35,6 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating
             BindingList<NNLayerConfig> dataList = new BindingList<NNLayerConfig>()
             {
                 new NNLayerConfig(50,ActivationFunc.tanh, LayerType.LSTM, true),
-                new NNLayerConfig(100,ActivationFunc.tanh, LayerType.LSTM, true),
-                new NNLayerConfig(50,ActivationFunc.tanh, LayerType.Dense, true),
                 new NNLayerConfig(1,ActivationFunc.linear, LayerType.Dense, true)
             };
 
@@ -96,8 +94,36 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating
 
         private void CreateNetworkBut_Click(object sender, EventArgs e)
         {
-            BindingList<NNLayerConfig> config = (BindingList<NNLayerConfig>)LayersGrid.DataSource;       
-            onNetworkCreatedAction?.Invoke(new NeuralNetwork(config));
+            BindingList<NNLayerConfig> config = (BindingList<NNLayerConfig>)LayersGrid.DataSource;
+            //generating features arr
+            List<FeatureType> features = new List<FeatureType>();
+            if (OpenPriceCheckBox.Checked) features.Add(FeatureType.OpenPrice);
+            if (ClosePriceCheckBox.Checked) features.Add(FeatureType.ClosePrice);
+            if (HighPriceCheckBox.Checked) features.Add(FeatureType.HighPrice);
+            if (LowPriceCheckBox.Checked) features.Add(FeatureType.LowPrice);
+            if (QuoteVolumeCheckBox.Checked) features.Add(FeatureType.QuoteVolume);
+            if (VolumeCheckBox.Checked) features.Add(FeatureType.Volume);
+            if(features.Count == 0)
+            {
+                MessageBox.Show($"Network creation failed. Choose at least one input feature", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            //parsing inputs count
+            int inputsCount = 0;
+            if (!int.TryParse(IputsCountBox.Text, out inputsCount))
+            {
+                MessageBox.Show($"Inputs count are in not correct format", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            int timeFragmentsCount = 0;
+            if (!int.TryParse(TimeFragmentsBox.Text, out timeFragmentsCount))
+            {
+                MessageBox.Show($"Time fragments count are in not correct format", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            //generating config
+            NNConfigData configData = new NNConfigData(config, features.ToArray(), timeFragmentsCount, inputsCount);
+            onNetworkCreatedAction?.Invoke(new NeuralNetwork(configData));
             if (closeAfterCreation) Close();
         }
     }
@@ -132,4 +158,14 @@ public enum LayerType
 {
     Dense,
     LSTM
+}
+
+public enum FeatureType
+{
+    OpenPrice,
+    ClosePrice,
+    Volume,
+    HighPrice,
+    LowPrice,
+    QuoteVolume
 }

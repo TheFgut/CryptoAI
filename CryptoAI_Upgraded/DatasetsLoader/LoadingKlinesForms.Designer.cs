@@ -34,11 +34,12 @@
             label1 = new Label();
             label2 = new Label();
             toDate = new DateTimePicker();
+            TimeIntervalBox = new ComboBox();
             SuspendLayout();
             // 
             // LoadBut
             // 
-            LoadBut.Location = new Point(22, 144);
+            LoadBut.Location = new Point(22, 246);
             LoadBut.Name = "LoadBut";
             LoadBut.Size = new Size(200, 23);
             LoadBut.TabIndex = 0;
@@ -86,11 +87,20 @@
             toDate.Size = new Size(200, 23);
             toDate.TabIndex = 7;
             // 
+            // TimeIntervalBox
+            // 
+            TimeIntervalBox.FormattingEnabled = true;
+            TimeIntervalBox.Location = new Point(22, 143);
+            TimeIntervalBox.Name = "TimeIntervalBox";
+            TimeIntervalBox.Size = new Size(200, 23);
+            TimeIntervalBox.TabIndex = 8;
+            // 
             // LoadingKlinesForms
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(479, 290);
+            Controls.Add(TimeIntervalBox);
             Controls.Add(toDate);
             Controls.Add(label2);
             Controls.Add(label1);
@@ -112,5 +122,6 @@
         private Label label1;
         private Label label2;
         private DateTimePicker toDate;
+        private ComboBox TimeIntervalBox;
     }
 }

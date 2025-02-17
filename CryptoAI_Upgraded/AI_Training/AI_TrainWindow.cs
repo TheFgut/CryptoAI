@@ -13,7 +13,6 @@ namespace CryptoAI_Upgraded.AI_Training
         private List<LocalKlinesDataset> datasets;
         private Task? trainingTask;
         private CancellationTokenSource? trainingCnacellationToken;
-        private NeuralNetworkCreatorWindow? networkCreaterForm;
         private NeuralNetwork? neuralNetwork;
 
         private int runsCount = 10;
@@ -41,7 +40,6 @@ namespace CryptoAI_Upgraded.AI_Training
                 trainingCnacellationToken.Cancel();
                 trainingCnacellationToken = null;
                 trainingTask = null;
-                //stop logic
             }
         }
 
@@ -51,8 +49,7 @@ namespace CryptoAI_Upgraded.AI_Training
             try
             {
                 object referencedProgressInt = 0;
-                LSTMDataWalker dataWalker = new LSTMDataWalker(datasets, neuralNetwork.inputCount,
-                    neuralNetwork.outputCount, neuralNetwork.timeFragments);
+                LSTMDataWalker dataWalker = new LSTMDataWalker(datasets, neuralNetwork.networkConfig);
                 NNTrainingStats analyticsCollector = new NNTrainingStats(runsCount);
                 await neuralNetwork.TrainLSTMNetwork(dataWalker, runsCount, 1, analyticsCollector,
                     (progressValue) =>
@@ -82,6 +79,7 @@ namespace CryptoAI_Upgraded.AI_Training
             {
                 MessageBox.Show($"Training duration: {timer.ElapsedMilliseconds / 1000f} seconds", "Training finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 TrainingProgressBar.Value = 0;
+                ActivateAllButs();
             }));
         }
 
@@ -116,8 +114,6 @@ namespace CryptoAI_Upgraded.AI_Training
         private void StopLearningBut_Click(object sender, EventArgs e)
         {
             StopTraining();
-            StopLearningBut.Enabled = false;
-            runsCountBox.Enabled = true;
         }
 
         private void AssingModel(NeuralNetwork? model)
@@ -131,7 +127,6 @@ namespace CryptoAI_Upgraded.AI_Training
             else
             {
                 StartLearningBut.Enabled = true;
-                StopLearningBut.Enabled = true;
             }
         }
 
@@ -146,6 +141,13 @@ namespace CryptoAI_Upgraded.AI_Training
                 return;
             }
             runsCount = result;
+        }
+
+        private void ActivateAllButs()
+        {
+            StartLearningBut.Enabled = true;
+            StopLearningBut.Enabled = false;
+            runsCountBox.Enabled = true;
         }
     }
 }

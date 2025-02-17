@@ -1,10 +1,12 @@
 ﻿using CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating;
+using Keras.Models;
 
 namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks.UI
 {
     public partial class NetworkManagePanel : UserControl
     {
         private NeuralNetworkCreatorWindow? networkCreaterForm;
+        private ModelDetailsWindow? modelDetailsForm;
         public NeuralNetwork? neuralNetwork { get; private set; }
         public Action<NeuralNetwork?>? onNetworkChanges { get; set; }
         public NetworkManagePanel()
@@ -42,7 +44,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks.UI
         {
             using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
             {
-                folderDialog.SelectedPath = DataPaths.datasetsPath; 
+                folderDialog.SelectedPath = DataPaths.datasetsPath;
 
                 if (folderDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -86,12 +88,42 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks.UI
                     $"Outputs: {neuralNetwork.outputCount}\n" +
                     $"Layers: {neuralNetwork.layersCount}\n" +
                     $"Total neurons: {neuralNetwork.neuronsCount}";
+
+                //NetworkDetailsPanel.Text = "";
+                //var weights = neuralNetwork.model.GetWeights();
+                //foreach (var w in weights)
+                //{
+                //    NetworkDetailsPanel.Text += $"{w}   ";
+                //}
             }
             onNetworkChanges?.Invoke(neuralNetwork);
+            ReopenDetailsWindow();
         }
 
         private void NetworkNameLabel_Click(object sender, EventArgs e)
         {
+
+        }
+
+        private void DetailsBut_Click(object sender, EventArgs e)
+        {
+            if (modelDetailsForm == null)
+            {
+                modelDetailsForm = new ModelDetailsWindow(neuralNetwork);
+                modelDetailsForm.FormClosed += (sender, args) => modelDetailsForm = null;
+                modelDetailsForm.Show();
+            }
+        }
+
+        private void ReopenDetailsWindow()
+        {
+            if (modelDetailsForm != null)
+            {
+                modelDetailsForm.Close();
+                modelDetailsForm = new ModelDetailsWindow(neuralNetwork);
+                modelDetailsForm.FormClosed += (sender, args) => modelDetailsForm = null;
+                modelDetailsForm.Show();
+            }
 
         }
     }

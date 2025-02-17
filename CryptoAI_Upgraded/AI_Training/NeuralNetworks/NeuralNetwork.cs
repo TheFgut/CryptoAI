@@ -3,82 +3,82 @@ using Keras.Layers;
 using Keras.Models;
 using Numpy;
 using CryptoAI_Upgraded.Datasets;
-using System.Drawing.Text;
-using System.Reflection;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 using CryptoAI_Upgraded.DataSaving;
-using System.IO;
-using Keras.Optimizers;
-using Keras;
 using Keras.Initializer;
-using Newtonsoft.Json.Linq;
 
 namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 {
     public class NeuralNetwork
     {
-        public int timeFragments => 900;
+        public int timeFragments => _neuralData.timeFragments;
 
-        public int inputCount => 60;//data fragments input at the same time
-        public int inputsFeatures => 1;
-        public int outputCount => neuralData.outputCount;
+        public int inputCount => _neuralData.inputsLen;//data fragments input at the same time
+        public int inputsFeatures => _neuralData.featuresCount;
+        public FeatureType[] features => _neuralData.features;
+        public int outputCount => _neuralData.outputCount;
         public int neuronsCount 
         {
             get 
             {
                 int count = 0;
-                foreach (var layer in neuralData.networkLayers)
+                foreach (var layer in _neuralData.networkLayers)
                 {
                     count += layer.neuronsCount;
                 }
                 return count;
             } 
         }
-        public int layersCount => neuralData.networkLayers.Length;
+        public int layersCount => _neuralData.networkLayers.Length;
 
-        private LocalLoaderAndSaverBSON<NNData>? loader;
-        private BaseModel model;
-        private NNData neuralData;
+        private LocalLoaderAndSaverBSON<NNConfigData>? loader;
+        public BaseModel model;//close
+        private NNConfigData _neuralData;
+        public NNConfigData networkConfig => _neuralData;//to do make clone
+
         #region creation
-        public NeuralNetwork(BindingList<NNLayerConfig> config)
+        public NeuralNetwork(NNConfigData config)
         {
-            if(config == null || config.Count < 2) throw new ArgumentNullException("NeuralNetwork.Creation failed. config cant be null or count cant be less than 2");
+            _neuralData = config;
             this.model = CreateNetwork(config);
-            neuralData = new NNData(config);
         }
 
         public NeuralNetwork(string loadPath)
         {
             if (string.IsNullOrEmpty(loadPath)) throw new ArgumentNullException("NeuralNetwork.Creation failed. loadPath cant be null or empty");
             model = Keras.Models.Sequential.LoadModel(loadPath);
-            loader = new LocalLoaderAndSaverBSON<NNData>(loadPath, "config");
-            NNData? neuralData = loader.Load();
+            loader = new LocalLoaderAndSaverBSON<NNConfigData>(loadPath, "config");
+            NNConfigData? neuralData = loader.Load();
             if (neuralData == null) throw new Exception("NeuralNetwork.Constructor Network loading failed");
-            this.neuralData = neuralData;
+            this._neuralData = neuralData;
+
         }
 
-        private Sequential CreateNetwork(BindingList<NNLayerConfig> config)
+        private Sequential CreateNetwork(NNConfigData config)
         {
             Sequential model = new Sequential();
+            NNLayerConfig[] layers = config.networkLayers;
             //creating input
-            if (config[0].layerType == LayerType.LSTM) model.Add(CreateLSTMLayerFromConfig(config[0], config[1].layerType == LayerType.LSTM,
+            if (layers[0].layerType == LayerType.LSTM) model.Add(CreateLSTMLayerFromConfig(layers[0], layers[1].layerType == LayerType.LSTM,
                 new Keras.Shape(timeFragments, (inputCount * inputsFeatures) + 2)));
-            else if (config[0].layerType == LayerType.Dense) model.Add(CreateDenseLayerFromConfig(config[0],
-                new Keras.Shape(config[0].neuronsCount)));
-            for (int i = 1; i < config.Count; i++)
+            else if (layers[0].layerType == LayerType.Dense) model.Add(CreateDenseLayerFromConfig(layers[0],
+                new Keras.Shape(layers[0].neuronsCount)));
+
+            for (int i = 1; i < layers.Length; i++)
             {
-                if (config[i].layerType == LayerType.LSTM)model.Add(CreateLSTMLayerFromConfig(config[i], config[i + 1].layerType == LayerType.LSTM));
-                else if (config[i].layerType == LayerType.Dense) model.Add(CreateDenseLayerFromConfig(config[i]));
+                if (layers[i].layerType == LayerType.LSTM)model.Add(CreateLSTMLayerFromConfig(layers[i], layers[i + 1].layerType == LayerType.LSTM));
+                else if (layers[i].layerType == LayerType.Dense) model.Add(CreateDenseLayerFromConfig(layers[i]));
             }
             //model.Add(new Dropout(0.2));
             ///loss
             ///"mean_squared_error" - сильнее ошибка - сильнее наказание, но из-за этого предсказание всегда 0
             ///huber_loss - для данных с выбросами
             // Компиляция модели
-            var optimizer = new Keras.Optimizers.Nadam(lr: 0.00001f);
-            model.Compile(optimizer: "adam",
-                          loss: "mean_squared_error");
+            var optimizer = new Keras.Optimizers.Nadam(lr: 0.001f);
+            model.Compile(optimizer,
+                          loss: "mean_squared_error"
+                          , metrics: new string[] { "mae" });
 
             return model;
         }
@@ -86,16 +86,16 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         private LSTM CreateLSTMLayerFromConfig(NNLayerConfig config, bool returnSequences, Keras.Shape? inputShape = null)
         {
             string? activationString = config.activation == ActivationFunc.linear ? null : config.activation.ToString();
-            return new LSTM(config.neuronsCount, input_shape: inputShape, kernel_initializer: new GlorotNormal(),
+            return new LSTM(config.neuronsCount, input_shape: inputShape, kernel_initializer: "orthogonal",
                 activation: activationString, return_sequences: returnSequences, recurrent_initializer: "orthogonal",
-                dropout: 0.2f);
+                dropout: 0.05f, bias_initializer: "ones");
         }
 
         private Dense CreateDenseLayerFromConfig(NNLayerConfig config, Keras.Shape? inputShape = null)
         {
             string? activationString = config.activation == ActivationFunc.linear ? null : config.activation.ToString();
             return new Dense(config.neuronsCount, input_shape: inputShape, activation: activationString,
-                kernel_initializer: "he_normal");
+                kernel_initializer: "orthogonal", bias_initializer: "ones");
         }
         #endregion
         /// <summary>
@@ -212,7 +212,12 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         {
             var npInput = np.array(input); 
             NDarray prediction = model.Predict(npInput);
-            return prediction.GetData<double>();
+            double[] predictions = prediction.GetData<double>();
+            for (int i = 0; i < predictions.Length; i++)
+            {
+                if (predictions[i] == double.NaN) predictions[i] = 0;//need to handle this somehow
+            }
+            return predictions;
         }
 
 
@@ -229,27 +234,38 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         public void Save(string path)
         {
             model.Save(path);
-            loader = new LocalLoaderAndSaverBSON<NNData>(path, "config");
-            loader.Save(neuralData);
+            loader = new LocalLoaderAndSaverBSON<NNConfigData>(path, "config");
+            loader.Save(_neuralData);
         }
     }
 
-    public class NNData
+    public class NNConfigData
     {
+        public int timeFragments {  get; set; }
         public NNLayerConfig[] networkLayers { get; set; }
-        [JsonIgnore] public int inputCount => networkLayers[0].neuronsCount;
+        /// <summary>
+        /// count of time elements to input
+        /// </summary>
+        public int inputsLen {  get; set; }
+        public FeatureType[] features { get; set; }
+
+        [JsonIgnore] public int featuresCount => features.Length;
         [JsonIgnore] public int outputCount => networkLayers[networkLayers.Length - 1].neuronsCount;
 
         /// <summary>
         /// for serialization. Do not use!
         /// </summary>
-        public NNData()
+        public NNConfigData()
         {
 
         }
 
-        public NNData(BindingList<NNLayerConfig> config)
+        public NNConfigData(BindingList<NNLayerConfig> config, FeatureType[] features, int timeFragments, int inputsLen)
         {
+            if (config == null || config.Count < 2) throw new ArgumentNullException("NNConfigData.Creation failed. config cant be null or count cant be less than 2");
+            this.timeFragments = timeFragments;
+            this.inputsLen = inputsLen;
+            this.features = features;
             networkLayers = config.ToArray();
         }
     }

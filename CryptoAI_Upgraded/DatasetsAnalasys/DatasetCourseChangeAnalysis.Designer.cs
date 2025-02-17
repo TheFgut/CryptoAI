@@ -29,17 +29,17 @@
         private void InitializeComponent()
         {
             AnalyzeBut = new Button();
-            TargetProfitPercentText = new TextBox();
-            label1 = new Label();
-            label2 = new Label();
-            TargetPredictionIntervalsText = new TextBox();
             AnaliseResultDisp = new RichTextBox();
             AnalizeProgressBar = new ProgressBar();
+            datasetsManagerPanel1 = new DatasetsManaging.UI.DatasetsManagerPanel();
+            networkManagePanel1 = new AI_Training.NeuralNetworks.UI.NetworkManagePanel();
+            CheckGuessedDirectionBox = new CheckBox();
+            CheckErrorBox = new CheckBox();
             SuspendLayout();
             // 
             // AnalyzeBut
             // 
-            AnalyzeBut.Location = new Point(12, 415);
+            AnalyzeBut.Location = new Point(12, 485);
             AnalyzeBut.Name = "AnalyzeBut";
             AnalyzeBut.Size = new Size(236, 23);
             AnalyzeBut.TabIndex = 0;
@@ -47,68 +47,75 @@
             AnalyzeBut.UseVisualStyleBackColor = true;
             AnalyzeBut.Click += AnalyzeBut_Click;
             // 
-            // TargetProfitPercentText
-            // 
-            TargetProfitPercentText.Location = new Point(180, 24);
-            TargetProfitPercentText.Name = "TargetProfitPercentText";
-            TargetProfitPercentText.Size = new Size(100, 23);
-            TargetProfitPercentText.TabIndex = 1;
-            TargetProfitPercentText.Text = "0.5";
-            TargetProfitPercentText.TextAlign = HorizontalAlignment.Center;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(28, 27);
-            label1.Name = "label1";
-            label1.Size = new Size(114, 15);
-            label1.TabIndex = 2;
-            label1.Text = "Target profit percent";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(28, 59);
-            label2.Name = "label2";
-            label2.Size = new Size(146, 15);
-            label2.TabIndex = 3;
-            label2.Text = "Target prediction  intervals";
-            // 
-            // TargetPredictionIntervalsText
-            // 
-            TargetPredictionIntervalsText.Location = new Point(180, 59);
-            TargetPredictionIntervalsText.Name = "TargetPredictionIntervalsText";
-            TargetPredictionIntervalsText.Size = new Size(100, 23);
-            TargetPredictionIntervalsText.TabIndex = 4;
-            TargetPredictionIntervalsText.Text = "5";
-            TargetPredictionIntervalsText.TextAlign = HorizontalAlignment.Center;
-            // 
             // AnaliseResultDisp
             // 
-            AnaliseResultDisp.Location = new Point(299, 12);
+            AnaliseResultDisp.Location = new Point(3, 269);
             AnaliseResultDisp.Name = "AnaliseResultDisp";
-            AnaliseResultDisp.Size = new Size(489, 396);
+            AnaliseResultDisp.ReadOnly = true;
+            AnaliseResultDisp.Size = new Size(492, 199);
             AnaliseResultDisp.TabIndex = 5;
             AnaliseResultDisp.Text = "";
             // 
             // AnalizeProgressBar
             // 
-            AnalizeProgressBar.Location = new Point(299, 415);
+            AnalizeProgressBar.Location = new Point(254, 485);
             AnalizeProgressBar.Name = "AnalizeProgressBar";
-            AnalizeProgressBar.Size = new Size(489, 23);
+            AnalizeProgressBar.Size = new Size(534, 23);
             AnalizeProgressBar.TabIndex = 6;
+            // 
+            // datasetsManagerPanel1
+            // 
+            datasetsManagerPanel1.BackColor = SystemColors.ControlDark;
+            datasetsManagerPanel1.Location = new Point(510, 327);
+            datasetsManagerPanel1.Name = "datasetsManagerPanel1";
+            datasetsManagerPanel1.onDataChanged = null;
+            datasetsManagerPanel1.Size = new Size(278, 152);
+            datasetsManagerPanel1.TabIndex = 7;
+            // 
+            // networkManagePanel1
+            // 
+            networkManagePanel1.BackColor = SystemColors.ControlDark;
+            networkManagePanel1.Location = new Point(510, 12);
+            networkManagePanel1.Name = "networkManagePanel1";
+            networkManagePanel1.onNetworkChanges = null;
+            networkManagePanel1.Size = new Size(278, 300);
+            networkManagePanel1.TabIndex = 8;
+            // 
+            // CheckGuessedDirectionBox
+            // 
+            CheckGuessedDirectionBox.AutoSize = true;
+            CheckGuessedDirectionBox.Checked = true;
+            CheckGuessedDirectionBox.CheckState = CheckState.Checked;
+            CheckGuessedDirectionBox.Location = new Point(12, 28);
+            CheckGuessedDirectionBox.Name = "CheckGuessedDirectionBox";
+            CheckGuessedDirectionBox.Size = new Size(177, 19);
+            CheckGuessedDirectionBox.TabIndex = 9;
+            CheckGuessedDirectionBox.Text = "CheckGuessedDirPercentage";
+            CheckGuessedDirectionBox.UseVisualStyleBackColor = true;
+            // 
+            // CheckErrorBox
+            // 
+            CheckErrorBox.AutoSize = true;
+            CheckErrorBox.Checked = true;
+            CheckErrorBox.CheckState = CheckState.Checked;
+            CheckErrorBox.Location = new Point(12, 53);
+            CheckErrorBox.Name = "CheckErrorBox";
+            CheckErrorBox.Size = new Size(115, 19);
+            CheckErrorBox.TabIndex = 10;
+            CheckErrorBox.Text = "checkErrorValues";
+            CheckErrorBox.UseVisualStyleBackColor = true;
             // 
             // DatasetCourseChangeAnalysis
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(842, 519);
+            Controls.Add(CheckErrorBox);
+            Controls.Add(CheckGuessedDirectionBox);
+            Controls.Add(networkManagePanel1);
+            Controls.Add(datasetsManagerPanel1);
             Controls.Add(AnalizeProgressBar);
             Controls.Add(AnaliseResultDisp);
-            Controls.Add(TargetPredictionIntervalsText);
-            Controls.Add(label2);
-            Controls.Add(label1);
-            Controls.Add(TargetProfitPercentText);
             Controls.Add(AnalyzeBut);
             Name = "DatasetCourseChangeAnalysis";
             Text = "DatasetCourseChangeAnalysis";
@@ -119,11 +126,11 @@
         #endregion
 
         private Button AnalyzeBut;
-        private TextBox TargetProfitPercentText;
-        private Label label1;
-        private Label label2;
-        private TextBox TargetPredictionIntervalsText;
         private RichTextBox AnaliseResultDisp;
         private ProgressBar AnalizeProgressBar;
+        private DatasetsManaging.UI.DatasetsManagerPanel datasetsManagerPanel1;
+        private AI_Training.NeuralNetworks.UI.NetworkManagePanel networkManagePanel1;
+        private CheckBox CheckGuessedDirectionBox;
+        private CheckBox CheckErrorBox;
     }
 }

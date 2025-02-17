@@ -68,7 +68,7 @@ namespace CryptoAI_Upgraded
         {
             if (datasetsCourseAnalysis == null)
             {
-                datasetsCourseAnalysis = new DatasetCourseChangeAnalysis(choosedLocalDatasets);
+                datasetsCourseAnalysis = new DatasetCourseChangeAnalysis();
                 datasetsCourseAnalysis.FormClosed += (sender, args) => datasetsCourseAnalysis = null;
                 datasetsCourseAnalysis.Show();
             }

@@ -15,16 +15,29 @@ namespace CryptoAI_Upgraded
         private const int requestInterval = 250;//4 requests per min for safe. But possible to send 20
 
         private readonly Dictionary<KlineInterval, int> intervalMinutesMultiplier = new Dictionary<KlineInterval, int>()
-        {           
+        {
             { KlineInterval.OneMinute, 1},
-            { KlineInterval.OneHour, 60 }
+            { KlineInterval.FiveMinutes, 5 },
+            { KlineInterval.FifteenMinutes, 15 },
+            { KlineInterval.ThirtyMinutes, 30 },
+            { KlineInterval.OneHour, 60 },
+            { KlineInterval.FourHour, 240 }
+
         };
 
-        public KlinesRequester(string pair, KlineInterval interval)
+        private readonly Dictionary<DatasetLength, int> datasetLengthMultiplier = new Dictionary<DatasetLength, int>()
+        {
+            { DatasetLength.Day, 1},
+            { DatasetLength.Month, 5 }
+        };
+
+        public KlinesRequester(string pair, KlineInterval interval, DatasetLength datasetLwngth)
         {
             this.pair = pair;
             this.interval = interval;
             binanceClient = new BinanceRestClient();
+            if (!intervalMinutesMultiplier.ContainsKey(interval)) 
+                throw new Exception($"KlinesRequester.Creation failed. intervalMinutesMultiplier for \"{interval}\" is not assigned");
         }
 
         public async Task<List<IBinanceKline>> LoadKlinesAsync(DateTime from, DateTime to)
@@ -61,57 +74,34 @@ namespace CryptoAI_Upgraded
         private bool CheckIfRequestFitInThousendKlines(DateTime from, DateTime to, KlineInterval interval)
         {
             TimeSpan difference = to - from;
-            switch (interval)
-            {
-                case KlineInterval.OneMinute:
-                    double totalMinutes = difference.TotalMinutes;
-                    return totalMinutes < klinesLimit;
-
-                case KlineInterval.OneHour:
-                    double totalHours = difference.TotalHours;
-                    return totalHours < klinesLimit;
-
-                default:
-                    throw new NotImplementedException($"KlinesRequester.CheckIfRequestFitInThousendKlines interval {interval} logic is not implemented");
-            }
+            double totalFMin = Math.Ceiling(difference.TotalMinutes / intervalMinutesMultiplier[interval]);
+            return totalFMin < klinesLimit;
         }
 
         private int getRequestCount(TimeSpan difference)
         {
-            switch (interval)
-            {
-                case KlineInterval.OneMinute:
-                    double totalMinutes = difference.TotalMinutes;
-                    return (int)Math.Ceiling(totalMinutes / klinesLimit);
-
-                case KlineInterval.OneHour:
-                    double totalHours = difference.TotalHours;
-                    return (int)Math.Ceiling(totalHours / klinesLimit);
-
-                default:
-                    throw new NotImplementedException($"KlinesRequester.CheckIfRequestFitInThousendKlines interval {interval} logic is not implemented");
-            }
+            double totalTimeFragments = Math.Ceiling(difference.TotalMinutes / intervalMinutesMultiplier[interval]);
+            return (int)Math.Ceiling(totalTimeFragments / klinesLimit);
         }
 
         private DateTime GetToTimeFittedInInterval(DateTime from, DateTime maxTo, KlineInterval interval)
         {
             TimeSpan difference = maxTo - from;
             DateTime result;
-            switch (interval)
-            {
-                case KlineInterval.OneMinute:
-                    result = from.AddMinutes(klinesLimit-1);
-                    if ((result - from).TotalMinutes > difference.TotalMinutes) return maxTo;
-                    return result;
 
-                case KlineInterval.OneHour:
-                    result = from.AddHours(klinesLimit-1);
-                    if ((result - from).TotalHours > difference.TotalHours) return maxTo;
-                    return result;
+            result = from.AddMinutes((klinesLimit - 1) * intervalMinutesMultiplier[interval]);//may be -1 is not good idea
 
-                default:
-                    throw new NotImplementedException($"KlinesRequester.GetRequestDate interval {interval} logic is not implemented");
-            }
+
+            if (Math.Ceiling((result - from).TotalMinutes/ intervalMinutesMultiplier[interval]) >
+                Math.Ceiling(difference.TotalMinutes/ intervalMinutesMultiplier[interval])) return maxTo;
+            return result;
         }
     }
+}
+
+public enum DatasetLength
+{
+    Day,
+    Month, 
+    Year
 }
