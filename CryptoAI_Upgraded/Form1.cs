@@ -1,15 +1,9 @@
-using Binance.Net.Interfaces;
 using CryptoAI_Upgraded.AI_Prediction;
 using CryptoAI_Upgraded.AI_Training;
 using CryptoAI_Upgraded.DataLocalChoosing;
-using CryptoAI_Upgraded.DataSaving;
-using CryptoAI_Upgraded.Datasets;
 using CryptoAI_Upgraded.Datasets.NromalizationAndConvertion;
 using CryptoAI_Upgraded.DatasetsAnalasys;
 using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
-using Keras.Layers;
-using Keras.Models;
-using Numpy;
 
 namespace CryptoAI_Upgraded
 {
@@ -27,8 +21,6 @@ namespace CryptoAI_Upgraded
         {
             choosedLocalDatasets = new List<LocalKlinesDataset>();
             InitializeComponent();
-            Keras.Keras.DisablePySysConsoleLog = true;
-            //trainAI_But.Enabled = false;
         }
 
         private void OpenLoadDataWindowBut_Click(object sender, EventArgs e)

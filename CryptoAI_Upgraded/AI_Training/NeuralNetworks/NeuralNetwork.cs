@@ -6,7 +6,8 @@ using CryptoAI_Upgraded.Datasets;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 using CryptoAI_Upgraded.DataSaving;
-using Keras.Initializer;
+using CryptoAI_Upgraded.PythonBridge;
+using Python.Runtime;
 
 namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 {
@@ -138,7 +139,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                         var outputArr = convertToTwoDimArr(expectedOutput.Select(k => (double)(k.ClosePrice)).ToArray());
 
                         // Тренируем модель на текущем батче
-                        var loss = model.TrainOnBatch(np.array(inputArr), np.array(outputArr));
+                        var loss = model.TrainOnBatch(np.array<double>(inputArr), np.array<double>(outputArr));
                         error += loss[0];
                         walksIterations++;
                         await Task.Delay(10); // Задержка для эмуляции асинхронной работы
@@ -188,8 +189,8 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 
                     double[,] outputArr = Helpers.ConvertListTo3DArray(outputBatches);
 
-                    NDarray<double> inputArr = np.array(Helpers.ConvertListTo3DArray(inputBatches));
-                    NDarray<double> expectedOutputArr = np.array(outputArr);
+                    PyObject inputArr = np.array<double>(Helpers.ConvertListTo3DArray(inputBatches));
+                    PyObject expectedOutputArr = np.array<double>(outputArr);
                     var loss = model.TrainOnBatch(inputArr, expectedOutputArr);
                     error += loss[0];
                     walksIterations++;
@@ -212,7 +213,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 
         public double[] Predict(double[,,] input)
         {
-            var npInput = np.array(input); 
+            var npInput = np.array<double>(input); 
             NDarray prediction = model.Predict(npInput);
             double[] predictions = prediction.GetData<double>();
             for (int i = 0; i < predictions.Length; i++)
