@@ -87,6 +87,14 @@ namespace CryptoAI_Upgraded
                     return 0;
                 return 2 * (value - min) / (max - min) - 1;
             }
+            public static decimal Normalize(decimal value, decimal min, decimal max)
+            {
+                //double range = max - min;
+                //return value / range;
+                if (max == min)
+                    return 0;
+                return 2 * (value - min) / (max - min) - 1;
+            }
 
             public static double Denormalize(double value, double min, double max)
             {

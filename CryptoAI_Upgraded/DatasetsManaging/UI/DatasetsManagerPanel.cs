@@ -1,4 +1,5 @@
 ﻿using CryptoAI_Upgraded.DataLocalChoosing;
+using CryptoAI_Upgraded.Datasets;
 using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
 using System;
 using System.Collections.Generic;
@@ -42,6 +43,27 @@ namespace CryptoAI_Upgraded.DatasetsManaging.UI
             DatasetsDetailsDisp.Text = $"Datasets count: {choosedLocalDatasets.Count}\n" +
                 $"Dataset duration: {choosedLocalDatasets.Count} days\n" +
                 $"Interval {interval}";
+
+            int requiredDatasetsCount = 4;
+            List<double> openPrices = new List<double>();
+
+            StringBuilder strBuilder = new StringBuilder();
+            strBuilder.Append("[");
+            if (choosedLocalDatasets != null && choosedLocalDatasets.Count >= requiredDatasetsCount)
+            {
+                for (int i = 0; i < requiredDatasetsCount; i++)
+                {
+                    List<KLine> klines = choosedLocalDatasets[i].LoadKlinesIndependant().data;
+                    foreach (var cline in klines)
+                    {
+                        string priceStr = ((double)cline.OpenPrice).ToString();
+                        strBuilder.Append($"{priceStr.Replace(',','.')},");
+                    }
+                }
+            }
+
+            DatasetsDetailsDisp.Text = strBuilder.ToString();
+
             onDataChanged?.Invoke(choosedLocalDatasets);
         }
     }

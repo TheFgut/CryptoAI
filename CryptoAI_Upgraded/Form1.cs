@@ -4,6 +4,7 @@ using CryptoAI_Upgraded.AI_Training;
 using CryptoAI_Upgraded.DataLocalChoosing;
 using CryptoAI_Upgraded.DataSaving;
 using CryptoAI_Upgraded.Datasets;
+using CryptoAI_Upgraded.Datasets.NromalizationAndConvertion;
 using CryptoAI_Upgraded.DatasetsAnalasys;
 using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
 using Keras.Layers;
@@ -21,6 +22,7 @@ namespace CryptoAI_Upgraded
         private DatasetCourseChangeAnalysis? datasetsCourseAnalysis;
         private AI_TrainWindow? aiTrainWindow;
         private AIPredictorForm? aiPredictor;
+        private DatasetConvertorAndNormalizerWindow? datasetNormalizerWindow;
         public Form1()
         {
             choosedLocalDatasets = new List<LocalKlinesDataset>();
@@ -112,6 +114,16 @@ namespace CryptoAI_Upgraded
                 aiPredictor = new AIPredictorForm();
                 aiPredictor.FormClosed += (sender, args) => aiPredictor = null;
                 aiPredictor.Show();
+            }
+        }
+
+        private void NormalizeDatasetBut_Click(object sender, EventArgs e)
+        {
+            if (datasetNormalizerWindow == null)
+            {
+                datasetNormalizerWindow = new DatasetConvertorAndNormalizerWindow();
+                datasetNormalizerWindow.FormClosed += (sender, args) => datasetNormalizerWindow = null;
+                datasetNormalizerWindow.Show();
             }
         }
     }

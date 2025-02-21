@@ -1,10 +1,5 @@
 ﻿using Binance.Net.Enums;
 using Binance.Net.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CryptoAI_Upgraded.Datasets
 {
@@ -13,6 +8,8 @@ namespace CryptoAI_Upgraded.Datasets
         public List<KLine> data;
         public KlineInterval interval;
         public string pair;
+        //normalization
+        public NormalizationParams? normalization;
         public KlinesDay()
         {
 
@@ -28,22 +25,25 @@ namespace CryptoAI_Upgraded.Datasets
 
     public class KLine
     {
-        public decimal ClosePrice;
+        public DateTime OpenTime;
 
         public decimal OpenPrice;
-        public decimal LowPrice;
+        public decimal ClosePrice;
         public decimal HighPrice;
+        public decimal LowPrice;
+        public decimal Volume;
         public decimal QuoteVolume;
         public decimal TakerBuyBaseVolume;
         public decimal TakerBuyQuoteVolume;
         public decimal TradeCount;
-        public decimal Volume;
+
         public KLine()
         {
 
         }
         public KLine(IBinanceKline kline)
         {
+            OpenTime = kline.OpenTime; 
             ClosePrice = kline.ClosePrice;
             OpenPrice = kline.OpenPrice;
             LowPrice = kline.LowPrice;
@@ -54,5 +54,13 @@ namespace CryptoAI_Upgraded.Datasets
             TradeCount = kline.TradeCount;
             Volume = kline.Volume;
         }
+    }
+
+    public class NormalizationParams
+    {
+        public Dictionary<string, decimal> normalizedGroupsMin;
+        public Dictionary<string, decimal> normalizedGroupsMax;
+
+
     }
 }

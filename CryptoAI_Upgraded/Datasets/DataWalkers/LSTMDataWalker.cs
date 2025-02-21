@@ -70,7 +70,7 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
 
                 if(fragment == timeFragments - expectedOutput)
                 {
-                    expectedData[0] = (double)(outputKlines[0].OpenPrice - outputKlines[0].ClosePrice);
+                    expectedData[0] = (double)outputKlines[0].ClosePrice;
                 }
             }
             localDatasetPos = datasetPosHolder;

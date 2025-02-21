@@ -51,7 +51,7 @@ namespace CryptoAI_Upgraded.AI_Training
                 object referencedProgressInt = 0;
                 LSTMDataWalker dataWalker = new LSTMDataWalker(datasets, neuralNetwork.networkConfig);
                 NNTrainingStats analyticsCollector = new NNTrainingStats(runsCount);
-                await neuralNetwork.TrainLSTMNetwork(dataWalker, runsCount, 1, analyticsCollector,
+                await neuralNetwork.TrainLSTMNetwork(dataWalker, runsCount, 16, analyticsCollector,
                     (progressValue) =>
                     {
                         int progressValueInt = (int)(progressValue * 100);

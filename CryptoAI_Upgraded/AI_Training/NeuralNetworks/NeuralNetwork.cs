@@ -47,7 +47,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         public NeuralNetwork(string loadPath)
         {
             if (string.IsNullOrEmpty(loadPath)) throw new ArgumentNullException("NeuralNetwork.Creation failed. loadPath cant be null or empty");
-            model = Keras.Models.Sequential.LoadModel(loadPath);
+            model = Sequential.LoadModel(loadPath);
             loader = new LocalLoaderAndSaverBSON<NNConfigData>(loadPath, "config");
             NNConfigData? neuralData = loader.Load();
             if (neuralData == null) throw new Exception("NeuralNetwork.Constructor Network loading failed");
@@ -76,7 +76,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             ///huber_loss - для данных с выбросами
             // Компиляция модели
             var optimizer = new Keras.Optimizers.Nadam(lr: 0.001f);
-            model.Compile(optimizer,
+            model.Compile("adam",
                           loss: "mean_squared_error"
                           , metrics: new string[] { "mae" });
 
@@ -88,7 +88,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             string? activationString = config.activation == ActivationFunc.linear ? null : config.activation.ToString();
             return new LSTM(config.neuronsCount, input_shape: inputShape, kernel_initializer: "orthogonal",
                 activation: activationString, return_sequences: returnSequences, recurrent_initializer: "orthogonal",
-                dropout: 0.05f, bias_initializer: "ones");
+                bias_initializer: "ones");
         }
 
         private Dense CreateDenseLayerFromConfig(NNLayerConfig config, Keras.Shape? inputShape = null)
@@ -178,17 +178,19 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                         double[] expectedOutput;
                         double[,] input = dataWalker.Walk(out expectedOutput);
                         
-                        List<double[,]> normalized = Helpers.Normalization.Normalize(out double min, out double max, input);              
-                        inputBatches.Add(Helpers.ArrayValuesInjection.InjectValues(normalized[0],min,max));
-                        outputBatches.Add(Helpers.Normalization.Normalize(min, max, expectedOutput));
+                        //List<double[,]> normalized = Helpers.Normalization.Normalize(out double min, out double max, input);              
+                        inputBatches.Add(Helpers.ArrayValuesInjection.InjectValues(input,0,0));
+                        outputBatches.Add(expectedOutput);
                         await Task.Delay(10);
                         if (dataWalker.isFinishedWalking()) break;
                     }
                     if (inputBatches.Count == 0 || outputBatches.Count == 0) break;
 
                     double[,] outputArr = Helpers.ConvertListTo3DArray(outputBatches);
-                    var loss = model.TrainOnBatch(np.array(Helpers.ConvertListTo3DArray(inputBatches)),
-                        np.array(outputArr)); 
+
+                    NDarray<double> inputArr = np.array(Helpers.ConvertListTo3DArray(inputBatches));
+                    NDarray<double> expectedOutputArr = np.array(outputArr);
+                    var loss = model.TrainOnBatch(inputArr, expectedOutputArr);
                     error += loss[0];
                     walksIterations++;
                     if (cancellationToken.IsCancellationRequested)//cancellation of task

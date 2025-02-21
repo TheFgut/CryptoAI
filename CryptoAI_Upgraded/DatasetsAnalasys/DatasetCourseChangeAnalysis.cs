@@ -74,7 +74,7 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
                     AnaliseResultDisp.Text += $"Step: {predictionResult[0][0]} {predictionResult[1][0]}\n";
                     //getting error metrics and datas
                     double error = 0;
-                    for (int i = 0; i < predictionResult[0].Length;i++)
+                    for (int i = 0; i < predictionResult[1].Length;i++)
                     {
                         if (predictionResult[1][i] == double.NaN)
                         {
@@ -127,19 +127,19 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
             double[,] data = dataWalker.Walk(out var expected);
             if (dataWalker.isFinishedWalking()) return null;
             double[,,] input = Helpers.ConvertArrTo3DArray(data);
-            double[,,] normalized = Helpers.Normalization.Normalize(out double min, out double max, input);
+            //double[,,] normalized = Helpers.Normalization.Normalize(out double min, out double max, input);
             int predCounter = predictionsLength;
             while (predCounter > 0)
             {
-                double[,,] dataWithMinMax = Helpers.ArrayValuesInjection.InjectValues(normalized, min, max);
+                double[,,] dataWithMinMax = Helpers.ArrayValuesInjection.InjectValues(input, 0, 0);
 
                 double[] predictionArr = neuralNetwork.Predict(dataWithMinMax);
                 double prediction = predictionArr[0];
 
-                double denormalized = Helpers.Normalization.Denormalize(prediction, min, max);
-                predictions.Add(denormalized);
+                //double denormalized = Helpers.Normalization.Denormalize(prediction, min, max);
+                predictions.Add(prediction);
 
-                normalized = Helpers.ArrayValuesInjection.UpdateInput(normalized, prediction);
+                input = Helpers.ArrayValuesInjection.UpdateInput(input, prediction);
                 predCounter--;
             }
 

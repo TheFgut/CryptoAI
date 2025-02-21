@@ -28,25 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             OpenLoadDataWindowBut = new Button();
             displayDataBut = new Button();
-            courseGraphic = new System.Windows.Forms.DataVisualization.Charting.Chart();
             LoadLocalDatasetsBut = new Button();
             DisplayGraphics = new Button();
             AnalyzeCourseChangeBut = new Button();
             trainAI_But = new Button();
             AIPredictorBut = new Button();
-            ((System.ComponentModel.ISupportInitialize)courseGraphic).BeginInit();
+            NormalizeDatasetBut = new Button();
             SuspendLayout();
             // 
             // OpenLoadDataWindowBut
             // 
             OpenLoadDataWindowBut.Location = new Point(12, 12);
             OpenLoadDataWindowBut.Name = "OpenLoadDataWindowBut";
-            OpenLoadDataWindowBut.Size = new Size(75, 23);
+            OpenLoadDataWindowBut.Size = new Size(140, 23);
             OpenLoadDataWindowBut.TabIndex = 0;
             OpenLoadDataWindowBut.Text = "Load data";
             OpenLoadDataWindowBut.UseVisualStyleBackColor = true;
@@ -61,22 +57,6 @@
             displayDataBut.Text = "display data";
             displayDataBut.UseVisualStyleBackColor = true;
             displayDataBut.Click += displayDataBut_Click;
-            // 
-            // courseGraphic
-            // 
-            chartArea1.Name = "ChartArea1";
-            courseGraphic.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            courseGraphic.Legends.Add(legend1);
-            courseGraphic.Location = new Point(12, 52);
-            courseGraphic.Name = "courseGraphic";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            courseGraphic.Series.Add(series1);
-            courseGraphic.Size = new Size(776, 345);
-            courseGraphic.TabIndex = 2;
-            courseGraphic.Text = "chart1";
             // 
             // LoadLocalDatasetsBut
             // 
@@ -120,7 +100,7 @@
             // 
             // AIPredictorBut
             // 
-            AIPredictorBut.Location = new Point(160, 12);
+            AIPredictorBut.Location = new Point(265, 41);
             AIPredictorBut.Name = "AIPredictorBut";
             AIPredictorBut.Size = new Size(99, 23);
             AIPredictorBut.TabIndex = 7;
@@ -128,23 +108,32 @@
             AIPredictorBut.UseVisualStyleBackColor = true;
             AIPredictorBut.Click += AIPredictorBut_Click;
             // 
+            // NormalizeDatasetBut
+            // 
+            NormalizeDatasetBut.Location = new Point(12, 41);
+            NormalizeDatasetBut.Name = "NormalizeDatasetBut";
+            NormalizeDatasetBut.Size = new Size(140, 23);
+            NormalizeDatasetBut.TabIndex = 8;
+            NormalizeDatasetBut.Text = "DatasetsNormalization";
+            NormalizeDatasetBut.UseVisualStyleBackColor = true;
+            NormalizeDatasetBut.Click += NormalizeDatasetBut_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(NormalizeDatasetBut);
             Controls.Add(AIPredictorBut);
             Controls.Add(trainAI_But);
             Controls.Add(AnalyzeCourseChangeBut);
             Controls.Add(DisplayGraphics);
             Controls.Add(LoadLocalDatasetsBut);
-            Controls.Add(courseGraphic);
             Controls.Add(displayDataBut);
             Controls.Add(OpenLoadDataWindowBut);
             Name = "Form1";
             Text = "Form1";
             Shown += Form1_Shown;
-            ((System.ComponentModel.ISupportInitialize)courseGraphic).EndInit();
             ResumeLayout(false);
         }
 
@@ -152,11 +141,11 @@
 
         private Button OpenLoadDataWindowBut;
         private Button displayDataBut;
-        private System.Windows.Forms.DataVisualization.Charting.Chart courseGraphic;
         private Button LoadLocalDatasetsBut;
         private Button DisplayGraphics;
         private Button AnalyzeCourseChangeBut;
         private Button trainAI_But;
         private Button AIPredictorBut;
+        private Button NormalizeDatasetBut;
     }
 }

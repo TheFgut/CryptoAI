@@ -22,6 +22,42 @@ namespace CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing
         private KlinesDay? cachedKlines;
         public LocalKlinesDataset(string filePath)
         {
+            GetAllNecessaryDataFromFilepath(filePath);
+        }
+
+        public KlinesDay LoadKlinesFromCache()
+        {
+            if (cachedKlines != null) return cachedKlines;
+            LocalLoaderAndSaverBSON<KlinesDay> loader = new LocalLoaderAndSaverBSON<KlinesDay>(filePath);
+            KlinesDay? dayData = loader.Load();
+            if (dayData == null) throw new Exception($"LocalKlinesDataset LoadKlines failed from path {loader.fullPath}");
+            cachedKlines = dayData;
+            return dayData;
+        }
+
+        public void SaveToAnotherLocation(string filePath)
+        {
+            if (cachedKlines == null) throw new Exception("LocalKlinesDataset.Unable to save to another location because dataset is not loaded to cache");
+            GetAllNecessaryDataFromFilepath(filePath);
+            LocalLoaderAndSaverBSON<KlinesDay> loader = new LocalLoaderAndSaverBSON<KlinesDay>(filePath);
+            loader.Save(cachedKlines);
+        }
+
+        /// <summary>
+        /// load klines and not saving it in cache
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public KlinesDay LoadKlinesIndependant()
+        {
+            LocalLoaderAndSaverBSON<KlinesDay> loader = new LocalLoaderAndSaverBSON<KlinesDay>(filePath);
+            KlinesDay? dayData = loader.Load();
+            if (dayData == null) throw new Exception("LocalKlinesDataset LoadKlines failed");
+            return dayData;
+        }
+
+        private void GetAllNecessaryDataFromFilepath(string filePath)
+        {
             this.filePath = filePath;
             string[] elements = filePath.Split('\\').Last().Split('_');
             pair = elements[0];
@@ -37,29 +73,6 @@ namespace CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing
                 throw new Exception($"LocalKlinesDataset.Construction date \"{dateWithoutExt}\" parse failed");
             fileName = Path.GetFileNameWithoutExtension(filePath);
             this.date = date;
-        }
-
-        public KlinesDay LoadKlinesFromCache()
-        {
-            if (cachedKlines != null) return cachedKlines;
-            LocalLoaderAndSaverBSON<KlinesDay> loader = new LocalLoaderAndSaverBSON<KlinesDay>(filePath);
-            KlinesDay? dayData = loader.Load();
-            if (dayData == null) throw new Exception($"LocalKlinesDataset LoadKlines failed from path {loader.fullPath}");
-            cachedKlines = dayData;
-            return dayData;
-        }
-
-        /// <summary>
-        /// load klines and not saving it in cache
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        public KlinesDay LoadKlinesIndependant()
-        {
-            LocalLoaderAndSaverBSON<KlinesDay> loader = new LocalLoaderAndSaverBSON<KlinesDay>(filePath);
-            KlinesDay? dayData = loader.Load();
-            if (dayData == null) throw new Exception("LocalKlinesDataset LoadKlines failed");
-            return dayData;
         }
     }
 }
