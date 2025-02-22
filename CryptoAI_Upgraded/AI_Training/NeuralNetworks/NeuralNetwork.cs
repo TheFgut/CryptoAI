@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Text.Json.Serialization;
 using CryptoAI_Upgraded.DataSaving;
 using Keras.Initializer;
+using Python.Runtime;
 
 namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 {
@@ -52,7 +53,6 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             NNConfigData? neuralData = loader.Load();
             if (neuralData == null) throw new Exception("NeuralNetwork.Constructor Network loading failed");
             this._neuralData = neuralData;
-
         }
 
         private Sequential CreateNetwork(NNConfigData config)
@@ -75,7 +75,6 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             ///"mean_squared_error" - сильнее ошибка - сильнее наказание, но из-за этого предсказание всегда 0
             ///huber_loss - для данных с выбросами
             // Компиляция модели
-            var optimizer = new Keras.Optimizers.Nadam(lr: 0.001f);
             model.Compile("adam",
                           loss: "mean_squared_error"
                           , metrics: new string[] { "mae" });

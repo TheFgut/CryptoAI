@@ -10,6 +10,7 @@ using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
 using Keras.Layers;
 using Keras.Models;
 using Numpy;
+using Python.Runtime;
 
 namespace CryptoAI_Upgraded
 {
@@ -28,6 +29,7 @@ namespace CryptoAI_Upgraded
             choosedLocalDatasets = new List<LocalKlinesDataset>();
             InitializeComponent();
             Keras.Keras.DisablePySysConsoleLog = true;
+            Runtime.PythonDLL = "C:\\Users\\Fgut\\AppData\\Local\\Programs\\Python\\Python38\\python38.dll";
             //trainAI_But.Enabled = false;
         }
 

@@ -10,10 +10,19 @@
 
   <ItemGroup>
     <PackageReference Include="Binance.Net" Version="10.14.0" />
-    <PackageReference Include="Keras.NET" Version="3.8.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.3" />
+    <PackageReference Include="Numpy.Bare" Version="3.11.1.33" />
     <PackageReference Include="WinForms.DataVisualization" Version="1.9.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Keras">
+      <HintPath>..\..\..\..\Desktop\Keras.NET-master\Keras\bin\Debug\netstandard2.0\Keras.dll</HintPath>
+    </Reference>
+    <Reference Include="Tensorflow">
+      <HintPath>..\..\..\..\Desktop\Keras.NET-master\Keras\bin\Debug\netstandard2.0\Tensorflow.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
