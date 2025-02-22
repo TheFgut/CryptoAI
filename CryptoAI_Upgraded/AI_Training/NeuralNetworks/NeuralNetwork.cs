@@ -210,11 +210,11 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             //Console.WriteLine(predictions.repr);
         }
 
-        public double[] Predict(double[,,] input)
+        public float[] Predict(double[,,] input)
         {
             var npInput = np.array(input); 
             NDarray prediction = model.Predict(npInput);
-            double[] predictions = prediction.GetData<double>();
+            float[] predictions = prediction.GetData<float>();
             for (int i = 0; i < predictions.Length; i++)
             {
                 if (predictions[i] == double.NaN) predictions[i] = 0;//need to handle this somehow

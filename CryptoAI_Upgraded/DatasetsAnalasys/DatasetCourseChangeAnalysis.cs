@@ -133,7 +133,7 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
             {
                 double[,,] dataWithMinMax = Helpers.ArrayValuesInjection.InjectValues(input, 0, 0);
 
-                double[] predictionArr = neuralNetwork.Predict(dataWithMinMax);
+                float[] predictionArr = neuralNetwork.Predict(dataWithMinMax);
                 double prediction = predictionArr[0];
 
                 //double denormalized = Helpers.Normalization.Denormalize(prediction, min, max);

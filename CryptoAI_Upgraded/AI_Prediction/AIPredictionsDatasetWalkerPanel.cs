@@ -64,7 +64,7 @@ namespace CryptoAI_Upgraded.AI_Prediction
             while (predCounter > 0)
             {
                 double[,,] dataWithMinMax = Helpers.ArrayValuesInjection.InjectValues(normalized, min, max);
-                double[] predictionArr = network.Predict(dataWithMinMax);
+                float[] predictionArr = network.Predict(dataWithMinMax);
                 double prediction = predictionArr[0];
 
                 double denormalized = Helpers.Normalization.Denormalize(prediction,min,max);
