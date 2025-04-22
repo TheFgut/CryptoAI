@@ -1,24 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.Xml.Linq;
-using Keras.Layers;
-using Keras.Utils;
-using Keras.Models;
+﻿using System.ComponentModel;
 using CryptoAI_Upgraded.AI_Training.NeuralNetworks;
+using CryptoAI_Upgraded.DataSaving;
 
 namespace CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating
 {
     public partial class NeuralNetworkCreatorWindow : Form
     {
         private Action<NeuralNetwork> onNetworkCreatedAction;
+        private SavableConfig config;
         private bool closeAfterCreation;
         public NeuralNetworkCreatorWindow(Action<NeuralNetwork> onNetworkCreatedAction, bool closeAfterCreation = true)
         {
@@ -26,17 +15,51 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating
             this.onNetworkCreatedAction = onNetworkCreatedAction;
             this.closeAfterCreation = closeAfterCreation;
             InitializeComponent();
+            LoadConfiguration();
             InitializeDataGrid();
+        }
+
+        private void LoadConfiguration()
+        {
+            config = new SavableConfig(DataPaths.appConfigurationPath, "networkCreater");
+            OpenPriceCheckBox.Checked = true;
+            ClosePriceCheckBox.Checked = config.GetBool("ClosePrice");
+            HighPriceCheckBox.Checked = config.GetBool("HighPrice");
+            LowPriceCheckBox.Checked = config.GetBool("LowPrice");
+            FragmentNumCheckBox.Checked = config.GetBool("FragmentNum");
+            QuoteVolumeCheckBox.Checked = config.GetBool("QuoteVolume");
+            TradeCountBox.Checked = config.GetBool("TradeCount");
+
+            InputsCountBox.Text = config.GetStrinOrDefault("InputsCount", "1");
+            TimeFragmentsBox.Text = config.GetStrinOrDefault("TimeFragments", "6");
+        }
+
+        private void SaveConfiguration()
+        {
+            config.SetBool("OpenPrice", OpenPriceCheckBox.Checked);
+            config.SetBool("ClosePrice", ClosePriceCheckBox.Checked);
+            config.SetBool("HighPrice", HighPriceCheckBox.Checked);
+            config.SetBool("LowPrice", LowPriceCheckBox.Checked);
+            config.SetBool("FragmentNum", FragmentNumCheckBox.Checked);
+            config.SetBool("QuoteVolume", QuoteVolumeCheckBox.Checked);
+            config.SetBool("TradeCount", TradeCountBox.Checked);
+
+            config.SetString("InputsCount", InputsCountBox.Text);
+            config.SetString("TimeFragments", TimeFragmentsBox.Text);
+            config.SetObject("LayersConfigurations", ((BindingList<NNLayerConfig>)LayersGrid.DataSource).ToList());
+            config.Save();
         }
 
         private void InitializeDataGrid()
         {
             // Создаем список данных
-            BindingList<NNLayerConfig> dataList = new BindingList<NNLayerConfig>()
+            BindingList<NNLayerConfig> dataList = new BindingList<NNLayerConfig>(
+                config.GetObjectOrDefault("LayersConfigurations",
+                new List<NNLayerConfig>()
             {
                 new NNLayerConfig(50,ActivationFunc.tanh, LayerType.LSTM, true),
                 new NNLayerConfig(1,ActivationFunc.linear, LayerType.Dense, true)
-            };
+            }));
 
             // Настройка столбцов: можно задать формат для числовых данных и для enum
             LayersGrid.Columns.Add(new DataGridViewTextBoxColumn
@@ -75,7 +98,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating
         private void AddLayerBut_Click(object sender, EventArgs e)
         {
             BindingList<NNLayerConfig> dataSource = (BindingList<NNLayerConfig>)LayersGrid.DataSource;
-            dataSource.Insert(dataSource.Count - 2,new NNLayerConfig(10, ActivationFunc.tanh, LayerType.LSTM, true));
+            dataSource.Insert(dataSource.Count - 2, new NNLayerConfig(10, ActivationFunc.tanh, LayerType.LSTM, true));
         }
 
         private void RemoveLayersBut_Click(object sender, EventArgs e)
@@ -102,15 +125,16 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating
             if (HighPriceCheckBox.Checked) features.Add(FeatureType.HighPrice);
             if (LowPriceCheckBox.Checked) features.Add(FeatureType.LowPrice);
             if (QuoteVolumeCheckBox.Checked) features.Add(FeatureType.QuoteVolume);
-            if (VolumeCheckBox.Checked) features.Add(FeatureType.Volume);
-            if(features.Count == 0)
+            if (TradeCountBox.Checked) features.Add(FeatureType.TradeCount);
+            if (FragmentNumCheckBox.Checked) features.Add(FeatureType.FragmentNum);
+            if (features.Count == 0)
             {
                 MessageBox.Show($"Network creation failed. Choose at least one input feature", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             //parsing inputs count
             int inputsCount = 0;
-            if (!int.TryParse(IputsCountBox.Text, out inputsCount))
+            if (!int.TryParse(InputsCountBox.Text, out inputsCount))
             {
                 MessageBox.Show($"Inputs count are in not correct format", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -125,6 +149,11 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating
             NNConfigData configData = new NNConfigData(config, features.ToArray(), timeFragmentsCount, inputsCount);
             onNetworkCreatedAction?.Invoke(new NeuralNetwork(configData));
             if (closeAfterCreation) Close();
+        }
+
+        private void NeuralNetworkCreatorWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            SaveConfiguration();
         }
     }
 }
@@ -164,8 +193,9 @@ public enum FeatureType
 {
     OpenPrice,
     ClosePrice,
-    Volume,
     HighPrice,
     LowPrice,
-    QuoteVolume
+    QuoteVolume,
+    TradeCount,
+    FragmentNum
 }

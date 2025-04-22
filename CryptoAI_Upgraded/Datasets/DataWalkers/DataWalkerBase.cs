@@ -11,6 +11,10 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
     {
         public int fullWalkSteps { get; private set; }
         public int totalElementsCount { get; private set; }
+        /// <summary>
+        /// value from 0 to 1 that indicates how close we are to the end of walking
+        /// </summary>
+        public float walkingProgress { get; private set; }
         protected List<LocalKlinesDataset> datasets;
         protected bool finishedWalking;
 
@@ -75,6 +79,8 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
 
         protected bool checkIfFinishedWalking(int drag = 0)
         {
+
+            walkingProgress = currentDatasetIndex / (float)datasets.Count;
             // check if cant walk more
             if (currentDatasetIndex >= datasets.Count)//if no more datasets left
             {
@@ -100,6 +106,7 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
         public virtual void ResetDataWalker()
         {
             currentDatasetIndex = 0;
+            walkingProgress = 0;
             localDatasetPos = 0;
             finishedWalking = false;
         }

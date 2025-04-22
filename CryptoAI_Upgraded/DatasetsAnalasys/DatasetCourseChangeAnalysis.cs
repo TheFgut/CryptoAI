@@ -96,8 +96,8 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
                     guessedDir.AddLast(Math.Sign(finalPred) == Math.Sign(finalEx) ? 1 : 0);
                 } while (true);
                 await Task.Yield();
-                averageError = errors.Average();
-                guessedDirPercent = guessedDir.Average();
+                averageError = errors.Average() * 100;
+                guessedDirPercent = guessedDir.Average() * 100;
             }
             catch (Exception ex)
             {
@@ -134,7 +134,7 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
                 double[,,] dataWithMinMax = Helpers.ArrayValuesInjection.InjectValues(input, 0, 0);
 
                 float[] predictionArr = neuralNetwork.Predict(dataWithMinMax);
-                double prediction = predictionArr[0];
+                double prediction = Convert.ToDouble(predictionArr[0]);
 
                 //double denormalized = Helpers.Normalization.Denormalize(prediction, min, max);
                 predictions.Add(prediction);

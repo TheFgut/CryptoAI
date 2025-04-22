@@ -17,6 +17,12 @@ namespace CryptoAI_Upgraded.Datasets.NromalizationAndConvertion
 
             decimal lowestPrice = decimal.MaxValue;
             decimal highestPrice = decimal.MinValue;
+
+            decimal quteVolumeMin = decimal.MaxValue;
+            decimal quteVolumeMax = decimal.MinValue;
+
+            decimal tradeCountMin = decimal.MaxValue;
+            decimal traddeCountMax = decimal.MinValue;
             foreach (var dataset in datasets)
             {
                 KlinesDay data = dataset.LoadKlinesFromCache();
@@ -27,6 +33,16 @@ namespace CryptoAI_Upgraded.Datasets.NromalizationAndConvertion
 
                 lowestPrice = GetLowestValue(lowestPrice, closePrices.Min(), openPrices.Min(), lowPrices.Min(), highPrices.Min());
                 highestPrice = GetHighestValue(highestPrice, closePrices.Max(), openPrices.Max(), lowPrices.Max(), highPrices.Max());
+
+                IEnumerable<decimal> QuoteVolumes = data.data.Select(kline => kline.QuoteVolume);
+
+                quteVolumeMin = GetLowestValue(quteVolumeMin, QuoteVolumes.Min());
+                quteVolumeMax = GetHighestValue(quteVolumeMax, QuoteVolumes.Max());
+
+                IEnumerable<decimal> TradeCounts = data.data.Select(kline => kline.TradeCount);
+
+                tradeCountMin = GetLowestValue(tradeCountMin, TradeCounts.Min());
+                traddeCountMax = GetHighestValue(traddeCountMax, TradeCounts.Max());
             }
 
             NormalizationParams normalization = new NormalizationParams
@@ -52,6 +68,8 @@ namespace CryptoAI_Upgraded.Datasets.NromalizationAndConvertion
                     data.ClosePrice = Helpers.Normalization.Normalize(data.ClosePrice, lowestPrice, highestPrice);
                     data.LowPrice = Helpers.Normalization.Normalize(data.LowPrice, lowestPrice, highestPrice);
                     data.HighPrice = Helpers.Normalization.Normalize(data.HighPrice, lowestPrice, highestPrice);
+                    data.QuoteVolume = Helpers.Normalization.Normalize(data.QuoteVolume, quteVolumeMin, quteVolumeMax);
+                    data.TradeCount = Helpers.Normalization.Normalize(data.TradeCount, tradeCountMin, traddeCountMax);
                 }
                 string fileSavePath = $"{savePath}\\{dataset.fileName}.bson";
                 dataset.SaveToAnotherLocation(fileSavePath);

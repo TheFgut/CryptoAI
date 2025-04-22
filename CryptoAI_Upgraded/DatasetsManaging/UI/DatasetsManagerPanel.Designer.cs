@@ -35,6 +35,7 @@
             // 
             // ModifyDatasetsBut
             // 
+            ModifyDatasetsBut.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             ModifyDatasetsBut.Location = new Point(14, 111);
             ModifyDatasetsBut.Name = "ModifyDatasetsBut";
             ModifyDatasetsBut.Size = new Size(176, 23);
@@ -45,6 +46,7 @@
             // 
             // DatasetsManagerLabel
             // 
+            DatasetsManagerLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             DatasetsManagerLabel.Font = new Font("Segoe UI", 12F);
             DatasetsManagerLabel.Location = new Point(14, 12);
             DatasetsManagerLabel.Name = "DatasetsManagerLabel";
@@ -55,6 +57,7 @@
             // 
             // DatasetsDetailsDisp
             // 
+            DatasetsDetailsDisp.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             DatasetsDetailsDisp.Location = new Point(14, 38);
             DatasetsDetailsDisp.Name = "DatasetsDetailsDisp";
             DatasetsDetailsDisp.ReadOnly = true;

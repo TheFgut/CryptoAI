@@ -6,7 +6,6 @@ using CryptoAI_Upgraded.Datasets;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 using CryptoAI_Upgraded.DataSaving;
-using Keras.Initializer;
 
 namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 {
@@ -59,15 +58,17 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         {
             Sequential model = new Sequential();
             NNLayerConfig[] layers = config.networkLayers;
+            float dropout = 0.1f;
             //creating input
-            if (layers[0].layerType == LayerType.LSTM) model.Add(CreateLSTMLayerFromConfig(layers[0], layers[1].layerType == LayerType.LSTM,
-                new Keras.Shape(timeFragments, (inputCount * inputsFeatures) + 2)));
+            if (layers[0].layerType == LayerType.LSTM) model.Add(CreateLSTMLayerFromConfig(layers[0], dropout,
+                layers[1].layerType == LayerType.LSTM, new Keras.Shape(timeFragments, (inputCount * inputsFeatures) + 2)));
             else if (layers[0].layerType == LayerType.Dense) model.Add(CreateDenseLayerFromConfig(layers[0],
                 new Keras.Shape(layers[0].neuronsCount)));
 
             for (int i = 1; i < layers.Length; i++)
             {
-                if (layers[i].layerType == LayerType.LSTM)model.Add(CreateLSTMLayerFromConfig(layers[i], layers[i + 1].layerType == LayerType.LSTM));
+                if (layers[i].layerType == LayerType.LSTM)model.Add(CreateLSTMLayerFromConfig(layers[i], dropout,
+                    layers[i + 1].layerType == LayerType.LSTM));
                 else if (layers[i].layerType == LayerType.Dense) model.Add(CreateDenseLayerFromConfig(layers[i]));
             }
             //model.Add(new Dropout(0.2));
@@ -75,27 +76,30 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             ///"mean_squared_error" - сильнее ошибка - сильнее наказание, но из-за этого предсказание всегда 0
             ///huber_loss - для данных с выбросами
             // Компиляция модели
-            var optimizer = new Keras.Optimizers.Nadam(lr: 0.001f);
+            var optimizer = new Keras.Optimizers.Nadam(lr: 0.00001f);
             model.Compile("adam",
-                          loss: "mean_squared_error"
+                          loss: "huber_loss"
                           , metrics: new string[] { "mae" });
 
             return model;
         }
 
-        private LSTM CreateLSTMLayerFromConfig(NNLayerConfig config, bool returnSequences, Keras.Shape? inputShape = null)
+        private LSTM CreateLSTMLayerFromConfig(NNLayerConfig config, float dropout, bool returnSequences, Keras.Shape? inputShape = null)
         {
             string? activationString = config.activation == ActivationFunc.linear ? null : config.activation.ToString();
-            return new LSTM(config.neuronsCount, input_shape: inputShape, kernel_initializer: "orthogonal",
-                activation: activationString, return_sequences: returnSequences, recurrent_initializer: "orthogonal",
-                bias_initializer: "ones");
+            return new LSTM(config.neuronsCount, input_shape: inputShape, activation: activationString, return_sequences: returnSequences
+                , bias_initializer: "ones", recurrent_activation: "sigmoid", dropout: dropout);
+            //kernel_initializer: "orthogonal",
+            //,  recurrent_initializer: "orthogonal",
+            //      
         }
 
         private Dense CreateDenseLayerFromConfig(NNLayerConfig config, Keras.Shape? inputShape = null)
         {
             string? activationString = config.activation == ActivationFunc.linear ? null : config.activation.ToString();
             return new Dense(config.neuronsCount, input_shape: inputShape, activation: activationString,
-                kernel_initializer: "orthogonal", bias_initializer: "ones");
+                bias_initializer: "ones");
+               // kernel_initializer: "orthogonal", bias_initializer: "ones");
         }
         #endregion
         /// <summary>
@@ -134,8 +138,8 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                         {
                             throw new Exception("Data walker is ass. Returned < 2 as input");
                         }
-                        var inputArr = convertToTwoDimArr(input.Select(k => (double)(k.ClosePrice)).ToArray());
-                        var outputArr = convertToTwoDimArr(expectedOutput.Select(k => (double)(k.ClosePrice)).ToArray());
+                        var inputArr = convertToTwoDimArr(input.Select(k => (float)(k.ClosePrice)).ToArray());
+                        var outputArr = convertToTwoDimArr(expectedOutput.Select(k => (float)(k.ClosePrice)).ToArray());
 
                         // Тренируем модель на текущем батче
                         var loss = model.TrainOnBatch(np.array(inputArr), np.array(outputArr));
@@ -145,7 +149,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                     }
                 } while (dataWalker.isFinishedWalking());
                 dataWalker.ResetDataWalker();
-                tariningStats.RecordError(error/ walksIterations);
+                tariningStats.RecordAwerageError(error/ walksIterations);
                 tariningStats.GoNext();
             }
 
@@ -157,15 +161,19 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         }
 
         public async Task TrainLSTMNetwork(LSTMDataWalker dataWalker, int runsCount,int batchesCount,
-            NNTrainingStats analyticsCollector, Action<float> onProgressChange, CancellationToken cancellationToken)
+            NNTrainingStats analyticsCollector, Action<float> onProgressChange, bool stopWhenErrorRaising,
+            CancellationToken cancellationToken)
         {
             if (dataWalker == null) throw new Exception("NeuralNetwork.Train dataWalker cant be null");
             if (runsCount <= 0) throw new Exception("NeuralNetwork.Train runsCount should be higher than one");
 
+            double prevAwgError = double.MaxValue;
+            float progress = 0;
             for (int run = 1; run <= runsCount; run++)
             {
-                onProgressChange?.Invoke(run / (float)runsCount);
-                double error = 0;
+                double errorsSum = 0;
+                double minError = double.MaxValue;
+                double maxError = double.MinValue;
                 // Разбиваем данные на батчи
                 int walksIterations = 0;
                 do
@@ -186,23 +194,43 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                     }
                     if (inputBatches.Count == 0 || outputBatches.Count == 0) break;
 
-                    double[,] outputArr = Helpers.ConvertListTo3DArray(outputBatches);
+                    double[,] outputArr = Helpers.ConvertListTo2DArray(outputBatches);
 
                     NDarray<double> inputArr = np.array(Helpers.ConvertListTo3DArray(inputBatches));
                     NDarray<double> expectedOutputArr = np.array(outputArr);
-                    var loss = model.TrainOnBatch(inputArr, expectedOutputArr);
-                    error += loss[0];
+                    var metrics = model.TrainOnBatch(inputArr, expectedOutputArr);
+                    errorsSum += metrics[1];
+                    minError = metrics[1] < minError ? metrics[1] : minError;
+                    maxError = metrics[1] > maxError ? metrics[1] : maxError;
+
                     walksIterations++;
                     if (cancellationToken.IsCancellationRequested)//cancellation of task
                     {
-                        analyticsCollector.RecordError(error / walksIterations);
+                        analyticsCollector.RecordAwerageError(errorsSum / walksIterations);
+                        analyticsCollector.RecordMinError(minError);
+                        analyticsCollector.RecordMaxError(maxError);
                         cancellationToken.ThrowIfCancellationRequested();
                     }
-                    await Task.Delay(10); 
+                    await Task.Delay(10);
+                    float newProgress = (float)(Math.Floor((((run-1) + dataWalker.walkingProgress) / (float)runsCount)*100)/100);//to do check run progress
+                    if(newProgress != progress)
+                    {
+                        progress = newProgress;
+                        onProgressChange?.Invoke(progress);
+                    }
+
                 } while (!dataWalker.isFinishedWalking());
                 dataWalker.ResetDataWalker();
-                analyticsCollector.RecordError(error / walksIterations);
+                double awgError = errorsSum / walksIterations;
+                analyticsCollector.RecordAwerageError(awgError);
+                analyticsCollector.RecordMinError(minError);
+                analyticsCollector.RecordMaxError(maxError);
                 analyticsCollector.GoNext();
+                if(stopWhenErrorRaising && prevAwgError < awgError)
+                {
+                    break;
+                }
+                prevAwgError = awgError;
             }
             // Предсказания
             //var predictions = model.Predict(x_train);
@@ -210,11 +238,73 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             //Console.WriteLine(predictions.repr);
         }
 
+        public async Task TestLSTMNetwork(LSTMDataWalker dataWalker,
+          NNTrainingStats analyticsCollector, Action<float> onProgressChange,
+          CancellationToken cancellationToken)
+        {
+            if (dataWalker == null) throw new Exception("NeuralNetwork.Test dataWalker cant be null");
+
+            double predictionsErrorSum = 0;
+            double minError = double.MaxValue;
+            double maxError = double.MinValue;
+
+            int walkSteps = 0;
+            do
+            {
+
+                double[] expectedOutput;
+                double[,] input = dataWalker.Walk(out expectedOutput);
+                input = Helpers.ArrayValuesInjection.InjectValues(input, 0, 0);
+
+                double[,,] inputArr = Helpers.ConvertArrTo3DArray(input);
+                float[] precitions = Predict(inputArr);
+
+                double awgPredictionsError = 0;
+                for (int valueNum = 0; valueNum < precitions.Length; valueNum++)
+                {
+                    double difference = expectedOutput[valueNum] - precitions[valueNum];
+                    awgPredictionsError += Math.Abs(difference);
+                    minError = Math.Min(minError, difference);
+                    maxError = Math.Max(maxError, difference);
+                }
+                awgPredictionsError /= precitions.Length;
+                predictionsErrorSum += awgPredictionsError;
+
+                walkSteps++;
+                if (cancellationToken.IsCancellationRequested)//cancellation of task
+                {
+                    analyticsCollector.RecordTestMetrics(predictionsErrorSum / walkSteps, minError, maxError);
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+                await Task.Delay(10);
+                //float newProgress = (float)(Math.Floor((((run - 1) + dataWalker.walkingProgress) / (float)runsCount) * 100) / 100);//to do check run progress
+                //if (newProgress != progress)
+                //{
+                //    progress = newProgress;
+                //    onProgressChange?.Invoke(progress);
+                //}
+
+            } while (!dataWalker.isFinishedWalking());
+            analyticsCollector.RecordTestMetrics(predictionsErrorSum / walkSteps, minError, maxError);
+        }
+
         public float[] Predict(double[,,] input)
         {
-            var npInput = np.array(input); 
+            NDarray<double> npInput = np.array(input); 
             NDarray prediction = model.Predict(npInput);
             float[] predictions = prediction.GetData<float>();
+            for (int i = 0; i < predictions.Length; i++)
+            {
+                if (predictions[i] == double.NaN || double.IsInfinity(predictions[i])) predictions[i] = 0;//need to handle this somehow
+            }
+            return predictions;
+        }
+
+        public double[] PredictDouble(double[,,] input)
+        {
+            NDarray<double> npInput = np.array(input);
+            NDarray prediction = model.Predict(npInput);
+            double[] predictions = prediction.GetData<double>();
             for (int i = 0; i < predictions.Length; i++)
             {
                 if (predictions[i] == double.NaN) predictions[i] = 0;//need to handle this somehow
@@ -223,9 +313,9 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         }
 
 
-        private double[,] convertToTwoDimArr(double[] inputArr)
+        private T[,] convertToTwoDimArr<T>(T[] inputArr)
         {
-            double[,] transformedArray = new double[1, inputArr.Length];
+            T[,] transformedArray = new T[1, inputArr.Length];
             for (int i = 0; i < inputArr.Length; i++)
             {
                 transformedArray[0, i] = inputArr[i];

@@ -63,14 +63,18 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
                 {
                     foreach (FeatureType feature in features)
                     {
-                        input[fragment, dataNum] = GetFeatureValue(inputKlines[element], feature);
+                        input[fragment, dataNum] = GetFeatureValue(inputKlines[element], feature, (element + 1.0)/ inputKlines.Count);
                         dataNum++;
                     }
                 }
 
+
                 if(fragment == timeFragments - expectedOutput)
                 {
-                    expectedData[0] = (double)outputKlines[0].ClosePrice;
+                    for (int i = 0; i < outputKlines.Count; i++)
+                    {
+                        expectedData[i] = (double)outputKlines[i].ClosePrice;
+                    }
                 }
             }
             localDatasetPos = datasetPosHolder;
@@ -81,7 +85,7 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
             return input;
         }
 
-        private double GetFeatureValue(KLine kline, FeatureType feature)
+        private double GetFeatureValue(KLine kline, FeatureType feature, double dataFragmentNum)
         {
             switch (feature)
             {
@@ -93,10 +97,12 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
                     return (double)kline.HighPrice;
                 case FeatureType.LowPrice:
                     return (double)kline.LowPrice;
-                case FeatureType.Volume:
-                    return (double)kline.Volume;
+                case FeatureType.TradeCount:
+                    return (double)kline.TradeCount;
                 case FeatureType.QuoteVolume:
                     return (double)kline.QuoteVolume;
+                case FeatureType.FragmentNum:
+                    return dataFragmentNum;
             }
             throw new Exception($"LSTMDataWalker.GetFeatureValue failed. Unexpected feature type - {feature}");
         }

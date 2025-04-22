@@ -26,6 +26,16 @@ namespace CryptoAI_Upgraded
             }
         }
 
+        public static string appConfigurationPath
+        {
+            get
+            {
+                string path = $"{Application.CommonAppDataPath.Split("+")[0]}\\appConfig";
+                CheckIfExistsIfNoCreate(path);
+                return path;
+            }
+        }
+
 
         private static void CheckIfExistsIfNoCreate(string path)
         {

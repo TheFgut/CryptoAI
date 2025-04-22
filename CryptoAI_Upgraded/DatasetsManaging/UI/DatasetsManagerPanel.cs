@@ -17,6 +17,8 @@ namespace CryptoAI_Upgraded.DatasetsManaging.UI
     {
         public List<LocalKlinesDataset> choosedLocalDatasets { get; private set; }
         public Action<List<LocalKlinesDataset>>? onDataChanged { get; set; }
+        public string title { get { return DatasetsManagerLabel.Text; } set { DatasetsManagerLabel.Text = value; } }
+
         private LoadLocalDatasetsForm? loadingLocalForm;
         public DatasetsManagerPanel()
         {
@@ -47,22 +49,22 @@ namespace CryptoAI_Upgraded.DatasetsManaging.UI
             int requiredDatasetsCount = 4;
             List<double> openPrices = new List<double>();
 
-            StringBuilder strBuilder = new StringBuilder();
-            strBuilder.Append("[");
-            if (choosedLocalDatasets != null && choosedLocalDatasets.Count >= requiredDatasetsCount)
-            {
-                for (int i = 0; i < requiredDatasetsCount; i++)
-                {
-                    List<KLine> klines = choosedLocalDatasets[i].LoadKlinesIndependant().data;
-                    foreach (var cline in klines)
-                    {
-                        string priceStr = ((double)cline.OpenPrice).ToString();
-                        strBuilder.Append($"{priceStr.Replace(',','.')},");
-                    }
-                }
-            }
+            //StringBuilder strBuilder = new StringBuilder();
+            //strBuilder.Append("[");
+            //if (choosedLocalDatasets != null && choosedLocalDatasets.Count >= requiredDatasetsCount)
+            //{
+            //    for (int i = 0; i < requiredDatasetsCount; i++)
+            //    {
+            //        List<KLine> klines = choosedLocalDatasets[i].LoadKlinesIndependant().data;
+            //        foreach (var cline in klines)
+            //        {
+            //            string priceStr = ((double)cline.OpenPrice).ToString();
+            //            strBuilder.Append($"{priceStr.Replace(',','.')},");
+            //        }
+            //    }
+            //}
 
-            DatasetsDetailsDisp.Text = strBuilder.ToString();
+            //DatasetsDetailsDisp.Text = strBuilder.ToString();
 
             onDataChanged?.Invoke(choosedLocalDatasets);
         }

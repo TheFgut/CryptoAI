@@ -35,6 +35,7 @@
             details = new RichTextBox();
             GoRightBut = new Button();
             GoLeftBut = new Button();
+            predictionsCountBox = new TextBox();
             ((System.ComponentModel.ISupportInitialize)chart1).BeginInit();
             SuspendLayout();
             // 
@@ -82,10 +83,19 @@
             GoLeftBut.UseVisualStyleBackColor = true;
             GoLeftBut.Click += GoLeftBut_Click;
             // 
+            // predictionsCountBox
+            // 
+            predictionsCountBox.Location = new Point(18, 310);
+            predictionsCountBox.Name = "predictionsCountBox";
+            predictionsCountBox.Size = new Size(100, 23);
+            predictionsCountBox.TabIndex = 4;
+            predictionsCountBox.Text = "4";
+            // 
             // AIPredictionsDatasetWalkerPanel
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(predictionsCountBox);
             Controls.Add(GoLeftBut);
             Controls.Add(GoRightBut);
             Controls.Add(details);
@@ -94,6 +104,7 @@
             Size = new Size(662, 429);
             ((System.ComponentModel.ISupportInitialize)chart1).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -102,5 +113,6 @@
         private RichTextBox details;
         private Button GoRightBut;
         private Button GoLeftBut;
+        private TextBox predictionsCountBox;
     }
 }

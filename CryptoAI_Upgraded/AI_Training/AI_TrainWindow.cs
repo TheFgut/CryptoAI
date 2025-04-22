@@ -5,12 +5,14 @@ using System.Diagnostics;
 using System.Windows.Forms.DataVisualization.Charting;
 using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
 using Microsoft.VisualBasic.Devices;
+using System.Windows.Forms;
 
 namespace CryptoAI_Upgraded.AI_Training
 {
     public partial class AI_TrainWindow : Form
     {
-        private List<LocalKlinesDataset> datasets;
+        private List<LocalKlinesDataset> learningDatasets;
+        private List<LocalKlinesDataset> testingDatasets;
         private Task? trainingTask;
         private CancellationTokenSource? trainingCnacellationToken;
         private NeuralNetwork? neuralNetwork;
@@ -22,7 +24,10 @@ namespace CryptoAI_Upgraded.AI_Training
             InitializeComponent();
             networkManagePanel1.onNetworkChanges += AssingModel;
             AssingModel(null);
-            datasets = datasetsManagerPanel1.choosedLocalDatasets;
+            learningDatasets = trainingDatasetsManager.choosedLocalDatasets;
+            trainingDatasetsManager.title = "Training datasets";
+            testingDatasets = testingDatasetsManager.choosedLocalDatasets;
+            testingDatasetsManager.title = "Testing datasets";
         }
 
         public void StartTraining()
@@ -46,12 +51,12 @@ namespace CryptoAI_Upgraded.AI_Training
         private async Task Train(CancellationToken token)
         {
             Stopwatch timer = Stopwatch.StartNew();
+            NNTrainingStats analyticsCollector = new NNTrainingStats(runsCount);
             try
             {
                 object referencedProgressInt = 0;
-                LSTMDataWalker dataWalker = new LSTMDataWalker(datasets, neuralNetwork.networkConfig);
-                NNTrainingStats analyticsCollector = new NNTrainingStats(runsCount);
-                await neuralNetwork.TrainLSTMNetwork(dataWalker, runsCount, 16, analyticsCollector,
+                LSTMDataWalker dataWalker = new LSTMDataWalker(learningDatasets, neuralNetwork.networkConfig);
+                await neuralNetwork.TrainLSTMNetwork(dataWalker, runsCount, 1, analyticsCollector,
                     (progressValue) =>
                     {
                         int progressValueInt = (int)(progressValue * 100);
@@ -62,9 +67,17 @@ namespace CryptoAI_Upgraded.AI_Training
                         {
                             TrainingProgressBar.Value = progressValueInt;
                         });
-                    }, token);
+                    }, stopWhenErrorRaisesBox.Checked, token);
 
-                DisplayDataOnChart(errorsChart, analyticsCollector.errorsLoss);
+                errorsChart.Series.Clear();
+                DisplayDataOnChart(errorsChart, analyticsCollector.awerageLossErrors, Color.Blue);
+                DisplayDataOnChart(errorsChart, analyticsCollector.maxLossErrors, Color.Red);
+                DisplayDataOnChart(errorsChart, analyticsCollector.minLossErrors, Color.Green);
+
+                if(testingDatasets.Count > 0)
+                {
+                    await Test(token, analyticsCollector);
+                }
             }
             catch (Exception ex)
             {
@@ -73,6 +86,22 @@ namespace CryptoAI_Upgraded.AI_Training
                     MessageBox.Show($"Exception during execution for training {ex.Message}\n {ex.StackTrace}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }));
             }
+
+            try
+            {
+                trainingResultPanel.Rtf = analyticsCollector.ToRichTextString();
+                trainingResultPanel.SelectionStart = trainingResultPanel.TextLength;
+                trainingResultPanel.ScrollToCaret();
+            }
+            catch (Exception ex)
+            {
+                Invoke((Action)(() =>
+                {
+                    MessageBox.Show($"Training duration: {timer.ElapsedMilliseconds / 1000f} seconds",
+                        "Display training information error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }));
+            }
+
             trainingTask = null;
             timer.Stop();
             Invoke((Action)(() =>
@@ -83,10 +112,38 @@ namespace CryptoAI_Upgraded.AI_Training
             }));
         }
 
-        private void DisplayDataOnChart(Chart chart, double[] data)
+        private async Task Test(CancellationToken token, NNTrainingStats analyticsCollector)
         {
-            chart.Series.Clear();
-
+            Stopwatch timer = Stopwatch.StartNew();
+            try
+            {
+                object referencedProgressInt = 0;
+                LSTMDataWalker dataWalker = new LSTMDataWalker(testingDatasets, neuralNetwork.networkConfig);
+                await neuralNetwork.TestLSTMNetwork(dataWalker, analyticsCollector,
+                    (progressValue) =>
+                    {
+                        int progressValueInt = (int)(progressValue * 100);
+                        if ((int)referencedProgressInt == progressValueInt) return;
+                        referencedProgressInt = progressValueInt;
+                        Invoke(
+                            () =>
+                            {
+                                TrainingProgressBar.Value = progressValueInt;
+                            });
+                    }, token);
+            }
+            catch (Exception ex)
+            {
+                Invoke((Action)(() =>
+                {
+                    MessageBox.Show($"Exception during execution of testing {ex.Message}\n {ex.StackTrace}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }));
+            }
+            trainingTask = null;
+            timer.Stop();
+        }
+        private void DisplayDataOnChart(Chart chart, double[] data, Color color)
+        {
             // Создание и настройка ряда данных
             var series = new Series
             {

@@ -85,7 +85,8 @@ namespace CryptoAI_Upgraded
                 //return value / range;
                 if (max == min)
                     return 0;
-                return 2 * (value - min) / (max - min) - 1;
+                return (value - min) / (max - min);//from 0 to 1
+                //return 2 * (value - min) / (max - min) - 1;//from -1 to 1
             }
             public static decimal Normalize(decimal value, decimal min, decimal max)
             {
@@ -93,14 +94,16 @@ namespace CryptoAI_Upgraded
                 //return value / range;
                 if (max == min)
                     return 0;
-                return 2 * (value - min) / (max - min) - 1;
+                return (value - min) / (max - min);//from 0 to 1
+                //return 2 * (value - min) / (max - min) - 1;//from -1 to 1
             }
 
             public static double Denormalize(double value, double min, double max)
             {
                 //double range = max - min;
                 //return value * range;
-                return ((value + 1) * (max - min) / 2 + min);
+                return value * (max - min) + min;//denorm from 0 to 1 
+                //return ((value + 1) * (max - min) / 2 + min);//denorm from -1 to 1 
             }
 
             public static List<double[,]> Normalize(out double min, out double max, params double[][,] datas)
@@ -265,7 +268,7 @@ namespace CryptoAI_Upgraded
 
             return result;
         }
-        public static double[,] ConvertListTo3DArray(List<double[]> list)
+        public static double[,] ConvertListTo2DArray(List<double[]> list)
         {
             // Получаем размеры
             int depth = list.Count;  // Количество двумерных массивов в списке
@@ -289,12 +292,11 @@ namespace CryptoAI_Upgraded
         public static double[,,] ConvertArrTo3DArray(double[,] arr)
         {
             // Получаем размеры
-            int depth = 1;  // Количество двумерных массивов в списке
             int rows = arr.GetLength(0);  // Количество строк в каждом двумерном массиве
             int cols = arr.GetLength(1);  // Количество столбцов в каждом двумерном массиве
 
             // Создаем новый трехмерный массив
-            double[,,] result = new double[depth, rows, cols];
+            double[,,] result = new double[1, rows, cols];
 
             // Копируем данные из списка в трехмерный массив
             double[,] currentArray = arr;
@@ -311,6 +313,35 @@ namespace CryptoAI_Upgraded
         public static double GetPercentChange(decimal startPrice, decimal endPrice)
         {
             return (1 - (double)(endPrice / startPrice))*100;
+        }
+
+        public static float[,,] ConvertToFloat(double[,,] input)
+        {
+            int x = input.GetLength(0);
+            int y = input.GetLength(1);
+            int z = input.GetLength(2);
+
+            float[,,] result = new float[x, y, z];
+
+            for (int i = 0; i < x; i++)
+                for (int j = 0; j < y; j++)
+                    for (int k = 0; k < z; k++)
+                        result[i, j, k] = (float)input[i, j, k];
+
+            return result;
+        }
+        public static float[,] ConvertToFloat(double[,] input)
+        {
+            int x = input.GetLength(0);
+            int y = input.GetLength(1);
+
+            float[,] result = new float[x, y];
+
+            for (int i = 0; i < x; i++)
+                for (int j = 0; j < y; j++)
+                    result[i, j] = (float)input[i, j];
+
+            return result;
         }
     }
 }

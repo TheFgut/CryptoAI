@@ -1,15 +1,6 @@
 ﻿using CryptoAI_Upgraded.AI_Training.NeuralNetworks;
 using CryptoAI_Upgraded.Datasets.DataWalkers;
 using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 
 namespace CryptoAI_Upgraded.AI_Prediction
@@ -21,7 +12,6 @@ namespace CryptoAI_Upgraded.AI_Prediction
         private NeuralNetwork? network;
 
         int WalkerNum = 0;
-        int predictionsCount = 5;
         public AIPredictionsDatasetWalkerPanel()
         {
             datasets = new List<LocalKlinesDataset>();
@@ -49,34 +39,44 @@ namespace CryptoAI_Upgraded.AI_Prediction
         private void Init(NeuralNetwork network, List<LocalKlinesDataset> datasets)
         {
             dataWalker = new LSTMDataWalker(datasets, network.networkConfig);
-            List<double[]> result = WalkAt(0, predictionsCount);
-            ShwoDataInChart(result[0], result[1]);
+
+            List<double[]>? result = WalkAt(0);
+            if (result != null) ShwoDataInChart(result[0], result[1]);
         }
 
-        public List<double[]> WalkAt(int step, int predictionsCount)
+        public List<double[]>? WalkAt(int step)
         {
+            int predictionsCount;
+            if (!int.TryParse(predictionsCountBox.Text, out predictionsCount))
+            {
+                MessageBox.Show("Predictions count are in not correct format","Error");
+                return null;
+            }
+
             List<double> predictions = new List<double>();
 
             double[,] data = dataWalker.WalkAt(step, out var expected);
             double[,,] input = Helpers.ConvertArrTo3DArray(data);
-            double[,,] normalized = Helpers.Normalization.Normalize(out double min, out double max, input);
+            //double[,,] normalized = Helpers.Normalization.Normalize(out double min, out double max, input);
+            int predictionSteps = 0;
             int predCounter = predictionsCount;
             while (predCounter > 0)
             {
-                double[,,] dataWithMinMax = Helpers.ArrayValuesInjection.InjectValues(normalized, min, max);
+                double[,,] dataWithMinMax = Helpers.ArrayValuesInjection.InjectValues(input, 0, 0);
                 float[] predictionArr = network.Predict(dataWithMinMax);
-                double prediction = predictionArr[0];
-
-                double denormalized = Helpers.Normalization.Denormalize(prediction,min,max);
-                predictions.Add(denormalized);
-
-                normalized = Helpers.ArrayValuesInjection.UpdateInput(normalized, prediction);
+                foreach (var pred in predictionArr)
+                {
+                    //double denormalized = Helpers.Normalization.Denormalize(pred, min, max);
+                    predictions.Add(pred);
+                    input = Helpers.ArrayValuesInjection.UpdateInput(input, pred);
+                    predictionSteps++;
+                }
                 predCounter--;
             }
 
             //getting expected arr
             List<double> expectedList = new List<double>();
-            for (int i = 0; i < predictionsCount; i++)
+            for (int i = 0; i < predictionSteps; i++)
             {
                 expectedList.Add(expected[0]);
 
@@ -142,16 +142,16 @@ namespace CryptoAI_Upgraded.AI_Prediction
         private void GoRightBut_Click(object sender, EventArgs e)
         {
             WalkerNum++;
-            List<double[]> result = WalkAt(WalkerNum, predictionsCount);
-            ShwoDataInChart(result[0], result[1]);
+            List<double[]>? result = WalkAt(WalkerNum);
+            if (result != null) ShwoDataInChart(result[0], result[1]);
         }
 
         private void GoLeftBut_Click(object sender, EventArgs e)
         {
             if (WalkerNum <= 0) return;
             WalkerNum--;
-            List<double[]> result = WalkAt(WalkerNum, predictionsCount);
-            ShwoDataInChart(result[0], result[1]);
+            List<double[]>? result = WalkAt(WalkerNum);
+            if(result != null) ShwoDataInChart(result[0], result[1]);
         }
     }
 }

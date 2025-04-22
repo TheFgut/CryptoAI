@@ -35,15 +35,16 @@
             InputLabel = new Label();
             OpenPriceCheckBox = new CheckBox();
             ClosePriceCheckBox = new CheckBox();
-            VolumeCheckBox = new CheckBox();
+            TradeCountBox = new CheckBox();
             HighPriceCheckBox = new CheckBox();
             LowPriceCheckBox = new CheckBox();
             QuoteVolumeCheckBox = new CheckBox();
-            IputsCountBox = new TextBox();
+            InputsCountBox = new TextBox();
             TimeFragmentsBox = new TextBox();
             IputFeaturesLabel = new Label();
             InpCountLabel = new Label();
             label1 = new Label();
+            FragmentNumCheckBox = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)LayersGrid).BeginInit();
             SuspendLayout();
             // 
@@ -120,16 +121,16 @@
             ClosePriceCheckBox.Text = "Close price";
             ClosePriceCheckBox.UseVisualStyleBackColor = true;
             // 
-            // VolumeCheckBox
+            // TradeCountBox
             // 
-            VolumeCheckBox.AutoSize = true;
-            VolumeCheckBox.Font = new Font("Segoe UI", 14F);
-            VolumeCheckBox.Location = new Point(526, 387);
-            VolumeCheckBox.Name = "VolumeCheckBox";
-            VolumeCheckBox.Size = new Size(95, 29);
-            VolumeCheckBox.TabIndex = 7;
-            VolumeCheckBox.Text = "Volume";
-            VolumeCheckBox.UseVisualStyleBackColor = true;
+            TradeCountBox.AutoSize = true;
+            TradeCountBox.Font = new Font("Segoe UI", 14F);
+            TradeCountBox.Location = new Point(526, 387);
+            TradeCountBox.Name = "TradeCountBox";
+            TradeCountBox.Size = new Size(128, 29);
+            TradeCountBox.TabIndex = 7;
+            TradeCountBox.Text = "TradeCount";
+            TradeCountBox.UseVisualStyleBackColor = true;
             // 
             // HighPriceCheckBox
             // 
@@ -164,13 +165,13 @@
             QuoteVolumeCheckBox.Text = "Quote volume";
             QuoteVolumeCheckBox.UseVisualStyleBackColor = true;
             // 
-            // IputsCountBox
+            // InputsCountBox
             // 
-            IputsCountBox.Location = new Point(576, 62);
-            IputsCountBox.Name = "IputsCountBox";
-            IputsCountBox.Size = new Size(100, 23);
-            IputsCountBox.TabIndex = 11;
-            IputsCountBox.Text = "1";
+            InputsCountBox.Location = new Point(576, 62);
+            InputsCountBox.Name = "InputsCountBox";
+            InputsCountBox.Size = new Size(100, 23);
+            InputsCountBox.TabIndex = 11;
+            InputsCountBox.Text = "1";
             // 
             // TimeFragmentsBox
             // 
@@ -208,20 +209,34 @@
             label1.TabIndex = 15;
             label1.Text = "T.F. count";
             // 
+            // FragmentNumCheckBox
+            // 
+            FragmentNumCheckBox.AutoSize = true;
+            FragmentNumCheckBox.Checked = true;
+            FragmentNumCheckBox.CheckState = CheckState.Checked;
+            FragmentNumCheckBox.Font = new Font("Segoe UI", 14F);
+            FragmentNumCheckBox.Location = new Point(674, 177);
+            FragmentNumCheckBox.Name = "FragmentNumCheckBox";
+            FragmentNumCheckBox.Size = new Size(154, 29);
+            FragmentNumCheckBox.TabIndex = 16;
+            FragmentNumCheckBox.Text = "Fragment num";
+            FragmentNumCheckBox.UseVisualStyleBackColor = true;
+            // 
             // NeuralNetworkCreatorWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(825, 450);
+            Controls.Add(FragmentNumCheckBox);
             Controls.Add(label1);
             Controls.Add(InpCountLabel);
             Controls.Add(IputFeaturesLabel);
             Controls.Add(TimeFragmentsBox);
-            Controls.Add(IputsCountBox);
+            Controls.Add(InputsCountBox);
             Controls.Add(QuoteVolumeCheckBox);
             Controls.Add(LowPriceCheckBox);
             Controls.Add(HighPriceCheckBox);
-            Controls.Add(VolumeCheckBox);
+            Controls.Add(TradeCountBox);
             Controls.Add(ClosePriceCheckBox);
             Controls.Add(OpenPriceCheckBox);
             Controls.Add(InputLabel);
@@ -231,6 +246,7 @@
             Controls.Add(LayersGrid);
             Name = "NeuralNetworkCreatorWindow";
             Text = "NeuralNetworkCreatorWindow";
+            FormClosing += NeuralNetworkCreatorWindow_FormClosing;
             ((System.ComponentModel.ISupportInitialize)LayersGrid).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -245,14 +261,15 @@
         private Label InputLabel;
         private CheckBox OpenPriceCheckBox;
         private CheckBox ClosePriceCheckBox;
-        private CheckBox VolumeCheckBox;
+        private CheckBox TradeCountBox;
         private CheckBox HighPriceCheckBox;
         private CheckBox LowPriceCheckBox;
         private CheckBox QuoteVolumeCheckBox;
-        private TextBox IputsCountBox;
+        private TextBox InputsCountBox;
         private TextBox TimeFragmentsBox;
         private Label IputFeaturesLabel;
         private Label InpCountLabel;
         private Label label1;
+        private CheckBox FragmentNumCheckBox;
     }
 }

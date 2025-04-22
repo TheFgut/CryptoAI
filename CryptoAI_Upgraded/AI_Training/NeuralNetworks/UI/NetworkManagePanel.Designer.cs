@@ -40,6 +40,7 @@
             // 
             // CreateNetworkBut
             // 
+            CreateNetworkBut.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             CreateNetworkBut.Location = new Point(16, 263);
             CreateNetworkBut.Name = "CreateNetworkBut";
             CreateNetworkBut.Size = new Size(75, 23);
@@ -50,6 +51,7 @@
             // 
             // LoadNeworkBut
             // 
+            LoadNeworkBut.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             LoadNeworkBut.Location = new Point(16, 234);
             LoadNeworkBut.Name = "LoadNeworkBut";
             LoadNeworkBut.Size = new Size(75, 23);
@@ -60,6 +62,7 @@
             // 
             // SaveNetworkBut
             // 
+            SaveNetworkBut.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             SaveNetworkBut.Location = new Point(97, 263);
             SaveNetworkBut.Name = "SaveNetworkBut";
             SaveNetworkBut.Size = new Size(165, 23);
@@ -70,6 +73,7 @@
             // 
             // NetworkNameChangePanel
             // 
+            NetworkNameChangePanel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             NetworkNameChangePanel.Location = new Point(142, 234);
             NetworkNameChangePanel.Name = "NetworkNameChangePanel";
             NetworkNameChangePanel.Size = new Size(80, 23);
@@ -78,6 +82,7 @@
             // 
             // NNameLabel
             // 
+            NNameLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             NNameLabel.AutoSize = true;
             NNameLabel.Location = new Point(97, 242);
             NNameLabel.Name = "NNameLabel";
@@ -87,6 +92,7 @@
             // 
             // NetworkNameLabel
             // 
+            NetworkNameLabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             NetworkNameLabel.Font = new Font("Segoe UI", 14F);
             NetworkNameLabel.ForeColor = Color.IndianRed;
             NetworkNameLabel.Location = new Point(16, 12);
@@ -98,6 +104,7 @@
             // 
             // NetworkDetailsPanel
             // 
+            NetworkDetailsPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             NetworkDetailsPanel.Location = new Point(16, 49);
             NetworkDetailsPanel.Name = "NetworkDetailsPanel";
             NetworkDetailsPanel.ReadOnly = true;
@@ -107,6 +114,7 @@
             // 
             // DetailsBut
             // 
+            DetailsBut.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             DetailsBut.Location = new Point(228, 234);
             DetailsBut.Name = "DetailsBut";
             DetailsBut.Size = new Size(32, 23);

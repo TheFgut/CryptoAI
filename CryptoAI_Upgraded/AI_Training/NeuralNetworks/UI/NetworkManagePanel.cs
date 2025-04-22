@@ -1,5 +1,6 @@
 ﻿using CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating;
 using Keras.Models;
+using System.Text;
 
 namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks.UI
 {
@@ -84,17 +85,33 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks.UI
                 NetworkNameLabel.ForeColor = Color.Red;
                 NetworkNameLabel.Text = "Network loaded";
 
-                NetworkDetailsPanel.Text = $"$Inputs: {neuralNetwork.inputsFeatures}\n" +
-                    $"Outputs: {neuralNetwork.outputCount}\n" +
-                    $"Layers: {neuralNetwork.layersCount}\n" +
-                    $"Total neurons: {neuralNetwork.neuronsCount}";
+                StringBuilder NetworkDetails = new StringBuilder();
+                NetworkDetails.AppendLine("Network details:");
+                NetworkDetails.AppendLine();
+                NetworkDetails.AppendLine($"Inputs/timeFragments: {neuralNetwork.inputCount}/{neuralNetwork.timeFragments}");
+                NetworkDetails.Append($"Input features: ");
+                for (int i = 0; i < neuralNetwork.features.Length;i++)
+                {
+                    var feature = neuralNetwork.features[i];
+                    string backSpace = i < neuralNetwork.features.Length - 1 ? ", " : "";
+                    NetworkDetails.Append($"{feature.ToString()}{backSpace}");
+                }
+                NetworkDetails.AppendLine();
+                NetworkDetails.AppendLine($"Layers count: {neuralNetwork.layersCount}");
+                NetworkDetails.AppendLine($"Total neurons: {neuralNetwork.neuronsCount}");
+                NetworkDetails.AppendLine($"Outputs count: {neuralNetwork.outputCount}\n");
 
-                //NetworkDetailsPanel.Text = "";
-                //var weights = neuralNetwork.model.GetWeights();
-                //foreach (var w in weights)
-                //{
-                //    NetworkDetailsPanel.Text += $"{w}   ";
-                //}
+                NetworkDetails.AppendLine();
+                NetworkDetails.AppendLine("Layers structure:");
+                foreach(var layer in neuralNetwork.networkConfig.networkLayers)
+                {
+                    NetworkDetails.AppendLine($"type:{layer.layerType} neurons:{layer.neuronsCount}" +
+                        $" activation:{layer.activation} bias:{layer.withBias}");
+                }
+
+                NetworkDetailsPanel.Text = NetworkDetails.ToString();
+
+
             }
             onNetworkChanges?.Invoke(neuralNetwork);
             ReopenDetailsWindow();
