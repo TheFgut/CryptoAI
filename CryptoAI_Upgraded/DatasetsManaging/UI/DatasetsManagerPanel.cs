@@ -1,16 +1,6 @@
 ﻿using CryptoAI_Upgraded.DataLocalChoosing;
 using CryptoAI_Upgraded.DataSaving;
-using CryptoAI_Upgraded.Datasets;
 using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace CryptoAI_Upgraded.DatasetsManaging.UI
 {
@@ -34,7 +24,7 @@ namespace CryptoAI_Upgraded.DatasetsManaging.UI
         {
             this.config = config;
             List<string>  filePaths = config.GetObjectOrDefault("filesPaths", new List<string>());
-            choosedLocalDatasets = new List<LocalKlinesDataset>();
+            if(choosedLocalDatasets == null) choosedLocalDatasets = new List<LocalKlinesDataset>();
             foreach (string path in filePaths)
             {
                 choosedLocalDatasets.Add(new LocalKlinesDataset(path));

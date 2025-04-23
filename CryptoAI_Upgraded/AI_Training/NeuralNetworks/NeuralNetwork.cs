@@ -34,13 +34,16 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         private LocalLoaderAndSaverBSON<NNConfigData>? loader;
         public BaseModel model;//close
         private NNConfigData _neuralData;
+        public NetworkTrainingsStats trainingStatistics { get; private set; }
         public NNConfigData networkConfig => _neuralData;//to do make clone
+
 
         #region creation
         public NeuralNetwork(NNConfigData config)
         {
             _neuralData = config;
             this.model = CreateNetwork(config);
+            trainingStatistics = new NetworkTrainingsStats();
         }
 
         public NeuralNetwork(string loadPath)
@@ -51,7 +54,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             NNConfigData? neuralData = loader.Load();
             if (neuralData == null) throw new Exception("NeuralNetwork.Constructor Network loading failed");
             this._neuralData = neuralData;
-
+            trainingStatistics = new NetworkTrainingsStats(loadPath);
         }
 
         private Sequential CreateNetwork(NNConfigData config)
@@ -160,16 +163,16 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             //Console.WriteLine(predictions.repr);
         }
 
-        public async Task TrainLSTMNetwork(LSTMDataWalker dataWalker, int runsCount,int batchesCount,
-            NNTrainingStats analyticsCollector, Action<float> onProgressChange, bool stopWhenErrorRaising,
+        public async Task TrainLSTMNetwork(LSTMDataWalker dataWalker,int batchesCount,
+            NNTrainingStats analyticsCollector, Action<float> onProgressChange, TrainingConfigData trainingSettings,
             CancellationToken cancellationToken)
         {
             if (dataWalker == null) throw new Exception("NeuralNetwork.Train dataWalker cant be null");
-            if (runsCount <= 0) throw new Exception("NeuralNetwork.Train runsCount should be higher than one");
-
-            double prevAwgError = double.MaxValue;
+            if (trainingSettings.runsCount <= 0) throw new Exception("NeuralNetwork.Train runsCount should be higher than one");
+            EarlyStopping earlyStopping = new EarlyStopping(trainingSettings.patienceToStop,
+                trainingSettings.minErrorDeltaToStop);
             float progress = 0;
-            for (int run = 1; run <= runsCount; run++)
+            for (int run = 1; run <= trainingSettings.runsCount; run++)
             {
                 double errorsSum = 0;
                 double minError = double.MaxValue;
@@ -212,7 +215,8 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                         cancellationToken.ThrowIfCancellationRequested();
                     }
                     await Task.Delay(10);
-                    float newProgress = (float)(Math.Floor((((run-1) + dataWalker.walkingProgress) / (float)runsCount)*100)/100);//to do check run progress
+                    float newProgress = (float)(Math.Floor((((run-1) + dataWalker.walkingProgress) / 
+                        (float)trainingSettings.runsCount) *100)/100);//to do check run progress
                     if(newProgress != progress)
                     {
                         progress = newProgress;
@@ -226,11 +230,10 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                 analyticsCollector.RecordMinError(minError);
                 analyticsCollector.RecordMaxError(maxError);
                 analyticsCollector.GoNext();
-                if(stopWhenErrorRaising && prevAwgError < awgError)
+                if (trainingSettings.stopWhenErrorRising && earlyStopping.CheckShouldStop(awgError))
                 {
                     break;
                 }
-                prevAwgError = awgError;
             }
             // Предсказания
             //var predictions = model.Predict(x_train);

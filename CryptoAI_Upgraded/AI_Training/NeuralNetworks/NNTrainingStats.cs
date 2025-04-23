@@ -19,9 +19,10 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         private bool noTestMetrics { get; set; }
 
 
-        private int runsCount;
+        public int runsCount { get; private set; }
 
         private int currentRecordingNum;
+        public int runsPassed => currentRecordingNum;
         public NNTrainingStats(int runsCount) 
         {
             this.runsCount = runsCount;
@@ -65,7 +66,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             StringBuilder details = new StringBuilder();
             details.AppendLine("{\\rtf1\\ansi");
             details.AppendLine("Learning stats:");
-            for (int i = 0; i < runsCount; i++)
+            for (int i = 0; i < currentRecordingNum; i++)
             {
                 double rate = (awerageLossErrors[i] * 2) + maxLossErrors[i] + maxLossErrors[i];
                 details.Append($"Rate: {rate.ToString("F5")} awg: {awerageLossErrors[i].ToString("F5")}");

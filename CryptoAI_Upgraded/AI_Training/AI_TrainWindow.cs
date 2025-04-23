@@ -1,12 +1,10 @@
-﻿using CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating;
-using CryptoAI_Upgraded.AI_Training.NeuralNetworks;
+﻿using CryptoAI_Upgraded.AI_Training.NeuralNetworks;
 using CryptoAI_Upgraded.Datasets.DataWalkers;
 using System.Diagnostics;
 using System.Windows.Forms.DataVisualization.Charting;
 using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
-using Microsoft.VisualBasic.Devices;
-using System.Windows.Forms;
 using CryptoAI_Upgraded.DataSaving;
+using CryptoAI_Upgraded.DataLocalChoosing;
 
 namespace CryptoAI_Upgraded.AI_Training
 {
@@ -17,8 +15,9 @@ namespace CryptoAI_Upgraded.AI_Training
         private Task? trainingTask;
         private CancellationTokenSource? trainingCnacellationToken;
         private NeuralNetwork? neuralNetwork;
-
-        private int runsCount = 10;
+        private TrainingConfigData trainingConfig;
+        LocalLoaderAndSaverBSON<TrainingConfigData> trainConfigLoader;
+        private AI_SetupWindow? setupWindow;
 
         public AI_TrainWindow()
         {
@@ -27,13 +26,26 @@ namespace CryptoAI_Upgraded.AI_Training
             AssingModel(null);
             learningDatasets = trainingDatasetsManager.choosedLocalDatasets;
             trainingDatasetsManager.title = "Training datasets";
-            SavableConfig trainingDatasetsConfig = new SavableConfig(DataPaths.appConfigurationPath, "trainingDatasetsConfig");
-            trainingDatasetsManager.InitFromConfig(trainingDatasetsConfig);
             testingDatasets = testingDatasetsManager.choosedLocalDatasets;
+            testingDatasetsManager.title = "Testing datasets";
+
+            trainConfigLoader = new LocalLoaderAndSaverBSON<TrainingConfigData>(DataPaths.appConfigurationPath, "trainingSettings");
+            TrainingConfigData? loadedConfig = trainConfigLoader.Load();
+            if (loadedConfig == null) loadedConfig = TrainingConfigData.Default;
+            trainingConfig = loadedConfig;
+            InitConfiguration();
+        }
+
+        #region configuration
+        public void InitConfiguration()
+        {
+            runsCountBox.Text = trainingConfig.runsCount.ToString();
             SavableConfig testDatasetsConfig = new SavableConfig(DataPaths.appConfigurationPath, "testDatasetsConfig");
             testingDatasetsManager.InitFromConfig(testDatasetsConfig);
-            testingDatasetsManager.title = "Testing datasets";
+            SavableConfig trainingDatasetsConfig = new SavableConfig(DataPaths.appConfigurationPath, "trainingDatasetsConfig");
+            trainingDatasetsManager.InitFromConfig(trainingDatasetsConfig);
         }
+        #endregion
 
         public void StartTraining()
         {
@@ -56,12 +68,12 @@ namespace CryptoAI_Upgraded.AI_Training
         private async Task Train(CancellationToken token)
         {
             Stopwatch timer = Stopwatch.StartNew();
-            NNTrainingStats analyticsCollector = new NNTrainingStats(runsCount);
+            NNTrainingStats analyticsCollector = new NNTrainingStats(trainingConfig.runsCount);
             try
             {
                 object referencedProgressInt = 0;
                 LSTMDataWalker dataWalker = new LSTMDataWalker(learningDatasets, neuralNetwork.networkConfig);
-                await neuralNetwork.TrainLSTMNetwork(dataWalker, runsCount, 1, analyticsCollector,
+                await neuralNetwork.TrainLSTMNetwork(dataWalker, 1, analyticsCollector,
                     (progressValue) =>
                     {
                         int progressValueInt = (int)(progressValue * 100);
@@ -70,19 +82,19 @@ namespace CryptoAI_Upgraded.AI_Training
                         Invoke(
                             () =>
                         {
-                            
+
                             TrainingProgressBar.Value = progressValueInt;
                             int eta = (int)((timer.ElapsedMilliseconds / 1000 / progressValue) * (1 - progressValue));
                             TrainingETA.Text = $"ETA: {Helpers.FormatDuration(eta)}";
                         });
-                    }, stopWhenErrorRaisesBox.Checked, token);
+                    }, trainingConfig, token);
 
                 errorsChart.Series.Clear();
-                DisplayDataOnChart(errorsChart, analyticsCollector.awerageLossErrors, Color.Blue);
-                DisplayDataOnChart(errorsChart, analyticsCollector.maxLossErrors, Color.Red);
-                DisplayDataOnChart(errorsChart, analyticsCollector.minLossErrors, Color.Green);
+                DisplayDataOnChart(errorsChart, analyticsCollector.awerageLossErrors, analyticsCollector.runsPassed, Color.Blue);
+                DisplayDataOnChart(errorsChart, analyticsCollector.maxLossErrors, analyticsCollector.runsPassed, Color.Red);
+                DisplayDataOnChart(errorsChart, analyticsCollector.minLossErrors, analyticsCollector.runsPassed, Color.Green);
 
-                if(testingDatasets.Count > 0)
+                if (testingDatasets.Count > 0)
                 {
                     await Test(token, analyticsCollector);
                 }
@@ -150,7 +162,7 @@ namespace CryptoAI_Upgraded.AI_Training
             trainingTask = null;
             timer.Stop();
         }
-        private void DisplayDataOnChart(Chart chart, double[] data, Color color)
+        private void DisplayDataOnChart(Chart chart, double[] data,int count, Color color)
         {
             // Создание и настройка ряда данных
             var series = new Series
@@ -162,7 +174,7 @@ namespace CryptoAI_Upgraded.AI_Training
             chart.Series.Add(series);
 
             // Добавление точек в график
-            for (int i = 0; i < data.Length; i++)
+            for (int i = 0; i < count; i++)
             {
                 series.Points.AddXY(i, data[i]);
             }
@@ -198,14 +210,15 @@ namespace CryptoAI_Upgraded.AI_Training
         private void runsCountBox_Validated(object sender, EventArgs e)
         {
             int result;
-            if(!int.TryParse(runsCountBox.Text, out result))
+            if (!int.TryParse(runsCountBox.Text, out result))
             {
                 MessageBox.Show($"Your input: \"{runsCountBox.Text}\" is incorrect. Please write a number", "IputError",
                      MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                runsCountBox.Text = runsCount.ToString();
+                runsCountBox.Text = trainingConfig.runsCount.ToString();
                 return;
             }
-            runsCount = result;
+            trainingConfig.runsCount = result;
+            trainConfigLoader.Save(trainingConfig);
         }
 
         private void ActivateAllButs()
@@ -213,6 +226,21 @@ namespace CryptoAI_Upgraded.AI_Training
             StartLearningBut.Enabled = true;
             StopLearningBut.Enabled = false;
             runsCountBox.Enabled = true;
+        }
+
+        private void learningSettings_Click(object sender, EventArgs e)
+        {
+            if (setupWindow == null)
+            {
+                setupWindow = new AI_SetupWindow(trainingConfig);
+                setupWindow.FormClosed += (sender, args) => setupWindow = null;
+                setupWindow.Show();
+            }
+        }
+
+        private void AI_TrainWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            trainConfigLoader.Save(trainingConfig);
         }
     }
 }

@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             StartLearningBut = new Button();
             StopLearningBut = new Button();
             TrainingProgressBar = new ProgressBar();
@@ -39,9 +39,10 @@
             networkManagePanel1 = new NeuralNetworks.UI.NetworkManagePanel();
             trainingDatasetsManager = new DatasetsManaging.UI.DatasetsManagerPanel();
             trainingResultPanel = new RichTextBox();
-            stopWhenErrorRaisesBox = new CheckBox();
             testingDatasetsManager = new DatasetsManaging.UI.DatasetsManagerPanel();
             TrainingETA = new Label();
+            richTextBox1 = new RichTextBox();
+            learningSettings = new Button();
             ((System.ComponentModel.ISupportInitialize)errorsChart).BeginInit();
             SuspendLayout();
             // 
@@ -74,16 +75,16 @@
             // 
             // errorsChart
             // 
-            chartArea2.Name = "ChartArea1";
-            errorsChart.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            errorsChart.Legends.Add(legend2);
+            chartArea1.Name = "ChartArea1";
+            errorsChart.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            errorsChart.Legends.Add(legend1);
             errorsChart.Location = new Point(12, 12);
             errorsChart.Name = "errorsChart";
-            series2.ChartArea = "ChartArea1";
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            errorsChart.Series.Add(series2);
+            series1.ChartArea = "ChartArea1";
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            errorsChart.Series.Add(series1);
             errorsChart.Size = new Size(454, 134);
             errorsChart.TabIndex = 4;
             errorsChart.Text = "chart1";
@@ -125,18 +126,6 @@
             trainingResultPanel.TabIndex = 9;
             trainingResultPanel.Text = "";
             // 
-            // stopWhenErrorRaisesBox
-            // 
-            stopWhenErrorRaisesBox.AutoSize = true;
-            stopWhenErrorRaisesBox.Checked = true;
-            stopWhenErrorRaisesBox.CheckState = CheckState.Checked;
-            stopWhenErrorRaisesBox.Location = new Point(174, 390);
-            stopWhenErrorRaisesBox.Name = "stopWhenErrorRaisesBox";
-            stopWhenErrorRaisesBox.Size = new Size(147, 19);
-            stopWhenErrorRaisesBox.TabIndex = 10;
-            stopWhenErrorRaisesBox.Text = "stop when error raising";
-            stopWhenErrorRaisesBox.UseVisualStyleBackColor = true;
-            // 
             // testingDatasetsManager
             // 
             testingDatasetsManager.BackColor = SystemColors.ControlDark;
@@ -157,14 +146,34 @@
             TrainingETA.TabIndex = 12;
             TrainingETA.Text = "ETA: 0.1";
             // 
+            // richTextBox1
+            // 
+            richTextBox1.Location = new Point(174, 386);
+            richTextBox1.Name = "richTextBox1";
+            richTextBox1.ReadOnly = true;
+            richTextBox1.Size = new Size(252, 52);
+            richTextBox1.TabIndex = 13;
+            richTextBox1.Text = "";
+            // 
+            // learningSettings
+            // 
+            learningSettings.Location = new Point(432, 386);
+            learningSettings.Name = "learningSettings";
+            learningSettings.Size = new Size(52, 52);
+            learningSettings.TabIndex = 14;
+            learningSettings.Text = "setup";
+            learningSettings.UseVisualStyleBackColor = true;
+            learningSettings.Click += learningSettings_Click;
+            // 
             // AI_TrainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(871, 483);
+            Controls.Add(learningSettings);
+            Controls.Add(richTextBox1);
             Controls.Add(TrainingETA);
             Controls.Add(testingDatasetsManager);
-            Controls.Add(stopWhenErrorRaisesBox);
             Controls.Add(trainingResultPanel);
             Controls.Add(trainingDatasetsManager);
             Controls.Add(networkManagePanel1);
@@ -175,6 +184,7 @@
             Controls.Add(StartLearningBut);
             Name = "AI_TrainWindow";
             Text = "AI_TrainWindow";
+            FormClosing += AI_TrainWindow_FormClosing;
             ((System.ComponentModel.ISupportInitialize)errorsChart).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -190,8 +200,9 @@
         private NeuralNetworks.UI.NetworkManagePanel networkManagePanel1;
         private DatasetsManaging.UI.DatasetsManagerPanel trainingDatasetsManager;
         private RichTextBox trainingResultPanel;
-        private CheckBox stopWhenErrorRaisesBox;
         private DatasetsManaging.UI.DatasetsManagerPanel testingDatasetsManager;
         private Label TrainingETA;
+        private RichTextBox richTextBox1;
+        private Button learningSettings;
     }
 }
