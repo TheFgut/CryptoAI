@@ -1,4 +1,5 @@
 ﻿using CryptoAI_Upgraded.DataLocalChoosing;
+using CryptoAI_Upgraded.DataSaving;
 using CryptoAI_Upgraded.Datasets;
 using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
 using System;
@@ -20,12 +21,39 @@ namespace CryptoAI_Upgraded.DatasetsManaging.UI
         public string title { get { return DatasetsManagerLabel.Text; } set { DatasetsManagerLabel.Text = value; } }
 
         private LoadLocalDatasetsForm? loadingLocalForm;
+        private SavableConfig config;
         public DatasetsManagerPanel()
         {
             choosedLocalDatasets = new List<LocalKlinesDataset>();
             InitializeComponent();
             DatasetsDetailsDisp.Text = "No datasets loaded";
         }
+
+        #region configuration
+        public void InitFromConfig(SavableConfig config)
+        {
+            this.config = config;
+            List<string>  filePaths = config.GetObjectOrDefault("filesPaths", new List<string>());
+            choosedLocalDatasets = new List<LocalKlinesDataset>();
+            foreach (string path in filePaths)
+            {
+                choosedLocalDatasets.Add(new LocalKlinesDataset(path));
+            }
+            UpdateData();
+        }
+
+        private void SaveConfig()
+        {
+            if (config == null) return;
+            List<string> filePaths = new List<string>();
+            foreach (LocalKlinesDataset dataset in choosedLocalDatasets)
+            {
+                filePaths.Add(dataset.filePath);
+            }
+            config.SetObject("filesPaths", filePaths);
+            config.Save();
+        }
+        #endregion
 
         private void ModifyDatasetsBut_Click(object sender, EventArgs e)
         {
@@ -66,7 +94,9 @@ namespace CryptoAI_Upgraded.DatasetsManaging.UI
 
             //DatasetsDetailsDisp.Text = strBuilder.ToString();
 
+            SaveConfig();
             onDataChanged?.Invoke(choosedLocalDatasets);
         }
+
     }
 }

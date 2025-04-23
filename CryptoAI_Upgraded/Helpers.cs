@@ -343,5 +343,23 @@ namespace CryptoAI_Upgraded
 
             return result;
         }
+
+        public static string FormatDuration(int totalSeconds)
+        {
+            int hours = totalSeconds / 3600;
+            int minutes = (totalSeconds % 3600) / 60;
+            int seconds = totalSeconds % 60;
+
+            List<string> parts = new List<string>();
+
+            if (hours > 0)
+                parts.Add($"{hours}h");
+            if (minutes > 0)
+                parts.Add($"{minutes}m");
+            if (seconds > 0 || parts.Count == 0) // если всё 0, показываем хотя бы "0 сек"
+                parts.Add($"{seconds}s");
+
+            return string.Join(" ", parts);
+        }
     }
 }

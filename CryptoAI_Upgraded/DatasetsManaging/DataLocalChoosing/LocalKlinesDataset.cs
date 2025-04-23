@@ -22,6 +22,7 @@ namespace CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing
         private KlinesDay? cachedKlines;
         public LocalKlinesDataset(string filePath)
         {
+            this.filePath = filePath;
             GetAllNecessaryDataFromFilepath(filePath);
         }
 
@@ -58,7 +59,6 @@ namespace CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing
 
         private void GetAllNecessaryDataFromFilepath(string filePath)
         {
-            this.filePath = filePath;
             string[] elements = filePath.Split('\\').Last().Split('_');
             pair = elements[0];
             if (!Enum.TryParse(elements[1], out KlineInterval interval))

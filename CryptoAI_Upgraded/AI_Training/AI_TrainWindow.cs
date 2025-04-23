@@ -6,6 +6,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
 using Microsoft.VisualBasic.Devices;
 using System.Windows.Forms;
+using CryptoAI_Upgraded.DataSaving;
 
 namespace CryptoAI_Upgraded.AI_Training
 {
@@ -26,7 +27,11 @@ namespace CryptoAI_Upgraded.AI_Training
             AssingModel(null);
             learningDatasets = trainingDatasetsManager.choosedLocalDatasets;
             trainingDatasetsManager.title = "Training datasets";
+            SavableConfig trainingDatasetsConfig = new SavableConfig(DataPaths.appConfigurationPath, "trainingDatasetsConfig");
+            trainingDatasetsManager.InitFromConfig(trainingDatasetsConfig);
             testingDatasets = testingDatasetsManager.choosedLocalDatasets;
+            SavableConfig testDatasetsConfig = new SavableConfig(DataPaths.appConfigurationPath, "testDatasetsConfig");
+            testingDatasetsManager.InitFromConfig(testDatasetsConfig);
             testingDatasetsManager.title = "Testing datasets";
         }
 
@@ -65,7 +70,10 @@ namespace CryptoAI_Upgraded.AI_Training
                         Invoke(
                             () =>
                         {
+                            
                             TrainingProgressBar.Value = progressValueInt;
+                            int eta = (int)((timer.ElapsedMilliseconds / 1000 / progressValue) * (1 - progressValue));
+                            TrainingETA.Text = $"ETA: {Helpers.FormatDuration(eta)}";
                         });
                     }, stopWhenErrorRaisesBox.Checked, token);
 
