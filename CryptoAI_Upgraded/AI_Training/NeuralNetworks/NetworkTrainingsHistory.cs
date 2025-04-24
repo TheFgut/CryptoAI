@@ -1,4 +1,5 @@
 ﻿using CryptoAI_Upgraded.DataSaving;
+using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,8 +21,20 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         {
             LocalLoaderAndSaverBSON<NetworkTrainingsStatsData> loader 
                 = new LocalLoaderAndSaverBSON<NetworkTrainingsStatsData>(path,"trainStats");
-            NetworkTrainingsStatsData? data = loader.Load();
+
+            NetworkTrainingsStatsData? data = null;
+            try
+            {
+                data = loader.Load();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Network stats load failed due to error:\n{ex.Message}", "Network stats load failed",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
             if (data == null) data = new NetworkTrainingsStatsData();
+            this.data = data;
         }
 
         public void RecordTrainingData(NNTrainingStats analyticsCollector)
@@ -43,9 +56,14 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                 = new LocalLoaderAndSaverBSON<NetworkTrainingsStatsData>(path, "trainStats");
             loader.Save(data);
         }
+
+        public NetworkRunData[] GetTrainHistory()
+        {
+            return data.runs.ToArray();
+        }
     }
 
-    internal class NetworkTrainingsStatsData
+    public class NetworkTrainingsStatsData
     {
         public List<NetworkRunData> runs { get; set; }
         public Dictionary<int, NetworkRunData> testRuns {  get; set; }
@@ -62,5 +80,33 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         public double averageError { get; set; }
         public double maxError { get; set; }
         public double minError { get; set; }
+        public List<DatasetID> datasetIDs { get; set; }
+
+        public NetworkRunData()
+        {
+            if(datasetIDs == null) datasetIDs = new List<DatasetID>();
+        }
+        public override string ToString()
+        {
+            return $"D:{datasetIDs.Count} AwgErr:{averageError}";
+        }
+    }
+
+    public class DatasetID
+    {
+        public DateTime id { get; set; }
+
+        /// <summary>
+        /// for deserialization
+        /// </summary>
+        public DatasetID()
+        {
+
+        }
+
+        public DatasetID(LocalKlinesDataset dataset)
+        {
+            id = dataset.date;
+        }
     }
 }

@@ -29,21 +29,31 @@
         private void InitializeComponent()
         {
             DetailsTextBox = new RichTextBox();
+            networkLearningStatsPanel = new NetworkLearningStatsPanel();
             SuspendLayout();
             // 
             // DetailsTextBox
             // 
             DetailsTextBox.Location = new Point(12, 12);
             DetailsTextBox.Name = "DetailsTextBox";
-            DetailsTextBox.Size = new Size(371, 348);
+            DetailsTextBox.Size = new Size(371, 262);
             DetailsTextBox.TabIndex = 0;
             DetailsTextBox.Text = "";
+            // 
+            // networkLearningStatsPanel
+            // 
+            networkLearningStatsPanel.BackColor = SystemColors.AppWorkspace;
+            networkLearningStatsPanel.Location = new Point(389, 12);
+            networkLearningStatsPanel.Name = "networkLearningStatsPanel";
+            networkLearningStatsPanel.Size = new Size(278, 262);
+            networkLearningStatsPanel.TabIndex = 1;
             // 
             // ModelDetailsWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(396, 379);
+            ClientSize = new Size(674, 286);
+            Controls.Add(networkLearningStatsPanel);
             Controls.Add(DetailsTextBox);
             Name = "ModelDetailsWindow";
             Text = "ModelDetailsWindow";
@@ -53,5 +63,6 @@
         #endregion
 
         private RichTextBox DetailsTextBox;
+        private NetworkLearningStatsPanel networkLearningStatsPanel;
     }
 }

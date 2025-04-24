@@ -68,7 +68,8 @@ namespace CryptoAI_Upgraded.AI_Training
         private async Task Train(CancellationToken token)
         {
             Stopwatch timer = Stopwatch.StartNew();
-            NNTrainingStats analyticsCollector = new NNTrainingStats(trainingConfig.runsCount);
+            NNTrainingStats analyticsCollector = new NNTrainingStats(trainingConfig.runsCount,
+                learningDatasets.Select(d => new DatasetID(d)).ToList());
             try
             {
                 object referencedProgressInt = 0;

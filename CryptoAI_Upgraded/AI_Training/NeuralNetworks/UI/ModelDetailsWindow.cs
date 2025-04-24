@@ -29,6 +29,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks.UI
                 return;
             }
             DetailsTextBox.Text = GetModelWeights(neuralNetwork.model);
+            networkLearningStatsPanel.Init(neuralNetwork.trainingStatistics);
         }
 
         public string GetModelWeights(BaseModel model)

@@ -1,4 +1,5 @@
-﻿using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
+﻿using CryptoAI_Upgraded.AI_Training.NeuralNetworks;
+using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,19 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
         protected int datasetLength;
         protected int currentDatasetIndex = 0;
         protected int localDatasetPos = 0;
+
+        public List<DatasetID> datasetIDs 
+        { 
+            get 
+            {
+                List <DatasetID> datasetIDsList = new List <DatasetID>();
+                foreach(LocalKlinesDataset dataset in datasets)
+                {
+                    datasetIDsList.Add(new DatasetID(dataset));
+                }
+                return null; 
+            } 
+        }
 
         public DataWalkerBase(List<LocalKlinesDataset> datasets, int walkSteps)
         {

@@ -21,13 +21,14 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 
         private int currentRecordingNum;
         public int runsPassed => currentRecordingNum;
-        public NNTrainingStats(int runsCount) 
+        public NNTrainingStats(int runsCount, List<DatasetID> datasetIds) 
         {
             this.runsCount = runsCount;
             trainingRunsData = new NetworkRunData[runsCount];
             for (int i = 0; i < trainingRunsData.Length; i++)
             {
                 trainingRunsData[i] = new NetworkRunData();
+                trainingRunsData[i].datasetIDs = datasetIds;
             }
             currentRecordingNum = 0;
             noTestMetrics = true;

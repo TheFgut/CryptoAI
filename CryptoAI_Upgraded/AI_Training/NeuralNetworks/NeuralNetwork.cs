@@ -120,7 +120,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             if (dataWalker == null) throw new Exception("NeuralNetwork.Train dataWalker cant be null");
             if (runsCount <= 0) throw new Exception("NeuralNetwork.Train runsCount should be higher than one");
 
-            NNTrainingStats tariningStats = new NNTrainingStats(runsCount);
+            NNTrainingStats tariningStats = new NNTrainingStats(runsCount, dataWalker.datasetIDs);
             for (int run = 1; run <= runsCount; run++)
             {
                 onProgressChange?.Invoke(run/(float)runsCount);
