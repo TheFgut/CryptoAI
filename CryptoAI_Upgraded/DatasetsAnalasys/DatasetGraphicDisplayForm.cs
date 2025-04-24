@@ -36,13 +36,10 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
                 JumpRightBut.Enabled = false;
                 GoRightBut.Enabled = false;
             }
-            else
+            if (datasets.Count > 0)
             {
-                if (datasets.Count > 0)
-                {
-                    displayedGraphicNum = 0;
-                    Display(displayedGraphicNum);
-                }
+                displayedGraphicNum = 0;
+                Display(displayedGraphicNum);
             }
         }
 

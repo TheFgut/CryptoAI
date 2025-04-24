@@ -67,8 +67,6 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
                         dataNum++;
                     }
                 }
-
-
                 if(fragment == timeFragments - expectedOutput)
                 {
                     for (int i = 0; i < outputKlines.Count; i++)

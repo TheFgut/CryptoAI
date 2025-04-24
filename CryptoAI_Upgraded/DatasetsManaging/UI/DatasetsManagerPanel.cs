@@ -1,5 +1,6 @@
 ﻿using CryptoAI_Upgraded.DataLocalChoosing;
 using CryptoAI_Upgraded.DataSaving;
+using CryptoAI_Upgraded.DatasetsAnalasys;
 using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
 
 namespace CryptoAI_Upgraded.DatasetsManaging.UI
@@ -11,11 +12,14 @@ namespace CryptoAI_Upgraded.DatasetsManaging.UI
         public string title { get { return DatasetsManagerLabel.Text; } set { DatasetsManagerLabel.Text = value; } }
 
         private LoadLocalDatasetsForm? loadingLocalForm;
-        private SavableConfig config;
+        private DatasetGraphicDisplayForm? datasetsDisplay;
+        private SavableConfig? config;
+
         public DatasetsManagerPanel()
         {
             choosedLocalDatasets = new List<LocalKlinesDataset>();
             InitializeComponent();
+            AnalizeBut.Enabled = false;
             DatasetsDetailsDisp.Text = "No datasets loaded";
         }
 
@@ -23,8 +27,8 @@ namespace CryptoAI_Upgraded.DatasetsManaging.UI
         public void InitFromConfig(SavableConfig config)
         {
             this.config = config;
-            List<string>  filePaths = config.GetObjectOrDefault("filesPaths", new List<string>());
-            if(choosedLocalDatasets == null) choosedLocalDatasets = new List<LocalKlinesDataset>();
+            List<string> filePaths = config.GetObjectOrDefault("filesPaths", new List<string>());
+            if (choosedLocalDatasets == null) choosedLocalDatasets = new List<LocalKlinesDataset>();
             foreach (string path in filePaths)
             {
                 choosedLocalDatasets.Add(new LocalKlinesDataset(path));
@@ -58,7 +62,7 @@ namespace CryptoAI_Upgraded.DatasetsManaging.UI
 
         private void UpdateData()
         {
-            string interval = choosedLocalDatasets.Count == 0 ? "none" : 
+            string interval = choosedLocalDatasets.Count == 0 ? "none" :
                 choosedLocalDatasets[0].LoadKlinesIndependant().interval.ToString();
             DatasetsDetailsDisp.Text = $"Datasets count: {choosedLocalDatasets.Count}\n" +
                 $"Dataset duration: {choosedLocalDatasets.Count} days\n" +
@@ -83,10 +87,20 @@ namespace CryptoAI_Upgraded.DatasetsManaging.UI
             //}
 
             //DatasetsDetailsDisp.Text = strBuilder.ToString();
-
+            if (choosedLocalDatasets.Count != 0) AnalizeBut.Enabled = true;
+            else AnalizeBut.Enabled = false;
             SaveConfig();
             onDataChanged?.Invoke(choosedLocalDatasets);
         }
 
+        private void AnalizeBut_Click(object sender, EventArgs e)
+        {
+            if (datasetsDisplay == null)
+            {
+                datasetsDisplay = new DatasetGraphicDisplayForm(choosedLocalDatasets);
+                datasetsDisplay.FormClosed += (sender, args) => datasetsDisplay = null;
+                datasetsDisplay.Show();
+            }
+        }
     }
 }

@@ -31,6 +31,7 @@
             ModifyDatasetsBut = new Button();
             DatasetsManagerLabel = new Label();
             DatasetsDetailsDisp = new RichTextBox();
+            AnalizeBut = new Button();
             SuspendLayout();
             // 
             // ModifyDatasetsBut
@@ -38,7 +39,7 @@
             ModifyDatasetsBut.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             ModifyDatasetsBut.Location = new Point(14, 111);
             ModifyDatasetsBut.Name = "ModifyDatasetsBut";
-            ModifyDatasetsBut.Size = new Size(176, 23);
+            ModifyDatasetsBut.Size = new Size(135, 23);
             ModifyDatasetsBut.TabIndex = 0;
             ModifyDatasetsBut.Text = "Modify datasets";
             ModifyDatasetsBut.UseVisualStyleBackColor = true;
@@ -65,11 +66,23 @@
             DatasetsDetailsDisp.TabIndex = 2;
             DatasetsDetailsDisp.Text = "";
             // 
+            // AnalizeBut
+            // 
+            AnalizeBut.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            AnalizeBut.Location = new Point(155, 111);
+            AnalizeBut.Name = "AnalizeBut";
+            AnalizeBut.Size = new Size(35, 23);
+            AnalizeBut.TabIndex = 3;
+            AnalizeBut.Text = "...";
+            AnalizeBut.UseVisualStyleBackColor = true;
+            AnalizeBut.Click += AnalizeBut_Click;
+            // 
             // DatasetsManagerPanel
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ControlDark;
+            Controls.Add(AnalizeBut);
             Controls.Add(DatasetsDetailsDisp);
             Controls.Add(DatasetsManagerLabel);
             Controls.Add(ModifyDatasetsBut);
@@ -83,5 +96,6 @@
         private Button ModifyDatasetsBut;
         private Label DatasetsManagerLabel;
         private RichTextBox DatasetsDetailsDisp;
+        private Button AnalizeBut;
     }
 }
