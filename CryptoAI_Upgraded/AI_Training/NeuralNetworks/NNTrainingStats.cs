@@ -9,9 +9,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
     public class NNTrainingStats
     {
         //training
-        public double[] awerageLossErrors { get; private set; }
-        public double[] maxLossErrors { get; private set; }
-        public double[] minLossErrors { get; private set; }
+        public NetworkRunData[] trainingRunsData {  get; private set; }
         //testing
         public double avarageTestError { get; private set; }
         public double maxTestError { get; private set; }
@@ -26,30 +24,32 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         public NNTrainingStats(int runsCount) 
         {
             this.runsCount = runsCount;
-            awerageLossErrors = new double[runsCount];
-            minLossErrors = new double[runsCount];
-            maxLossErrors = new double[runsCount];
+            trainingRunsData = new NetworkRunData[runsCount];
+            for (int i = 0; i < trainingRunsData.Length; i++)
+            {
+                trainingRunsData[i] = new NetworkRunData();
+            }
             currentRecordingNum = 0;
             noTestMetrics = true;
         }
 
         public void RecordMinError(double error)
         {
-            minLossErrors[currentRecordingNum] = error;
+            trainingRunsData[currentRecordingNum].minError = error;
         }
         public void RecordMaxError(double error)
         {
-            maxLossErrors[currentRecordingNum] = error;
+            trainingRunsData[currentRecordingNum].maxError = error;
         }
 
         public void RecordAwerageError(double error)
         {
-            awerageLossErrors[currentRecordingNum] = error;
+            trainingRunsData[currentRecordingNum].averageError = error;
         }
 
         public void GoNext()
         {
-            if (currentRecordingNum >= awerageLossErrors.Length - 1) return;
+            if (currentRecordingNum >= runsCount - 1) return;
             currentRecordingNum++;
         }
 
@@ -68,9 +68,10 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             details.AppendLine("Learning stats:");
             for (int i = 0; i < currentRecordingNum; i++)
             {
-                double rate = (awerageLossErrors[i] * 2) + maxLossErrors[i] + maxLossErrors[i];
-                details.Append($"Rate: {rate.ToString("F5")} awg: {awerageLossErrors[i].ToString("F5")}");
-                details.Append($"min: {minLossErrors[i].ToString("F5")} max: {maxLossErrors[i].ToString("F5")}");
+                double rate = (trainingRunsData[i].averageError * 2) + trainingRunsData[i].minError + trainingRunsData[i].maxError;
+                details.Append($"Rate: {rate.ToString("F5")} awg: {trainingRunsData[i].averageError.ToString("F5")}");
+                details.Append($"min: {trainingRunsData[i].minError.ToString("F5")} max: " +
+                    $"{trainingRunsData[i].maxError.ToString("F5")}");
                 details.AppendLine("\\par");
             }
             if (!noTestMetrics)

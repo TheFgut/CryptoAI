@@ -235,6 +235,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                     break;
                 }
             }
+            trainingStatistics.RecordTrainingData(analyticsCollector);
             // Предсказания
             //var predictions = model.Predict(x_train);
             //Console.WriteLine("Predictions:");
@@ -331,6 +332,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             model.Save(path);
             loader = new LocalLoaderAndSaverBSON<NNConfigData>(path, "config");
             loader.Save(_neuralData);
+            trainingStatistics.Save(path);
         }
     }
 

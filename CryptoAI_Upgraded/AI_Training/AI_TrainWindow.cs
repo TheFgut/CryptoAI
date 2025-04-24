@@ -90,9 +90,12 @@ namespace CryptoAI_Upgraded.AI_Training
                     }, trainingConfig, token);
 
                 errorsChart.Series.Clear();
-                DisplayDataOnChart(errorsChart, analyticsCollector.awerageLossErrors, analyticsCollector.runsPassed, Color.Blue);
-                DisplayDataOnChart(errorsChart, analyticsCollector.maxLossErrors, analyticsCollector.runsPassed, Color.Red);
-                DisplayDataOnChart(errorsChart, analyticsCollector.minLossErrors, analyticsCollector.runsPassed, Color.Green);
+                DisplayDataOnChart(errorsChart, analyticsCollector.trainingRunsData.Select(r => r.averageError)
+                    .ToArray(), analyticsCollector.runsPassed, Color.Blue);
+                DisplayDataOnChart(errorsChart, analyticsCollector.trainingRunsData.Select(r => r.maxError)
+                    .ToArray(), analyticsCollector.runsPassed, Color.Red);
+                DisplayDataOnChart(errorsChart, analyticsCollector.trainingRunsData.Select(r => r.minError)
+                    .ToArray(), analyticsCollector.runsPassed, Color.Green);
 
                 if (testingDatasets.Count > 0)
                 {

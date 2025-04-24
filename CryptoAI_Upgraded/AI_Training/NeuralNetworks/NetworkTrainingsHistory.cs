@@ -26,7 +26,10 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 
         public void RecordTrainingData(NNTrainingStats analyticsCollector)
         {
-            
+            for (int i = 0; i < analyticsCollector.runsPassed; i++)
+            {
+                data.runs.Add(analyticsCollector.trainingRunsData[i]);
+            }
         }
 
         public void RecordTestingData(NNTrainingStats analyticsCollector)
@@ -44,17 +47,17 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 
     internal class NetworkTrainingsStatsData
     {
-        private List<TrainRunData> runs { get; set; }
-        private Dictionary<int, TrainRunData> testRuns {  get; set; }
+        public List<NetworkRunData> runs { get; set; }
+        public Dictionary<int, NetworkRunData> testRuns {  get; set; }
 
         public NetworkTrainingsStatsData()
         {
-            if (runs == null) runs = new List<TrainRunData>();
-            if (testRuns == null) testRuns = new Dictionary<int, TrainRunData>();
+            if (runs == null) runs = new List<NetworkRunData>();
+            if (testRuns == null) testRuns = new Dictionary<int, NetworkRunData>();
         }
     }
 
-    public class TrainRunData
+    public class NetworkRunData
     {
         public double averageError { get; set; }
         public double maxError { get; set; }

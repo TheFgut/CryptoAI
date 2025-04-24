@@ -20,6 +20,7 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
         private Dictionary<LocalKlinesDataset, KlinesDay> loadedKlinesCache;
         private float displayedGraphicNum;
 
+        private float scale;
         private const float bigMove = 1;
         private const float smallMove = 0.2f;
 
@@ -44,7 +45,7 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
         }
 
 
-        private void Display(float start)
+        private void Display(float start, float scale = 1)
         {
             int startDatasetId = (int)Math.Floor(start);
             if(startDatasetId < start)
