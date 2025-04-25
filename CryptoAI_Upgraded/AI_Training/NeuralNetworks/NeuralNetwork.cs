@@ -61,7 +61,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         {
             Sequential model = new Sequential();
             NNLayerConfig[] layers = config.networkLayers;
-            float dropout = 0.1f;
+            float dropout = 0;
             //creating input
             if (layers[0].layerType == LayerType.LSTM) model.Add(CreateLSTMLayerFromConfig(layers[0], dropout,
                 layers[1].layerType == LayerType.LSTM, new Keras.Shape(timeFragments, (inputCount * inputsFeatures) + 2)));

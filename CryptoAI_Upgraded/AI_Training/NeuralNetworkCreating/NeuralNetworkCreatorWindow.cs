@@ -29,6 +29,9 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating
             FragmentNumCheckBox.Checked = config.GetBool("FragmentNum");
             QuoteVolumeCheckBox.Checked = config.GetBool("QuoteVolume");
             TradeCountBox.Checked = config.GetBool("TradeCount");
+            PriceDeltaCheckBox.Checked = config.GetBool("PreceDelta");
+            CandleTypeCheckBox.Checked = config.GetBool("CandleType");
+            VolatilityCheckBox.Checked = config.GetBool("Volatility");
 
             InputsCountBox.Text = config.GetStrinOrDefault("InputsCount", "1");
             TimeFragmentsBox.Text = config.GetStrinOrDefault("TimeFragments", "6");
@@ -43,6 +46,9 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating
             config.SetBool("FragmentNum", FragmentNumCheckBox.Checked);
             config.SetBool("QuoteVolume", QuoteVolumeCheckBox.Checked);
             config.SetBool("TradeCount", TradeCountBox.Checked);
+            config.SetBool("PreceDelta", PriceDeltaCheckBox.Checked);
+            config.SetBool("CandleType", CandleTypeCheckBox.Checked);
+            config.SetBool("Volatility", VolatilityCheckBox.Checked);
 
             config.SetString("InputsCount", InputsCountBox.Text);
             config.SetString("TimeFragments", TimeFragmentsBox.Text);
@@ -127,6 +133,9 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating
             if (QuoteVolumeCheckBox.Checked) features.Add(FeatureType.QuoteVolume);
             if (TradeCountBox.Checked) features.Add(FeatureType.TradeCount);
             if (FragmentNumCheckBox.Checked) features.Add(FeatureType.FragmentNum);
+            if (PriceDeltaCheckBox.Checked) features.Add(FeatureType.PriceDelta);
+            if (CandleTypeCheckBox.Checked) features.Add(FeatureType.CandleType);
+            if (VolatilityCheckBox.Checked) features.Add (FeatureType.Volatility);
             if (features.Count == 0)
             {
                 MessageBox.Show($"Network creation failed. Choose at least one input feature", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -197,5 +206,11 @@ public enum FeatureType
     LowPrice,
     QuoteVolume,
     TradeCount,
-    FragmentNum
+    FragmentNum,
+    PriceDelta,
+    /// <summary>
+    /// is going up - 1 or down - 0
+    /// </summary>
+    CandleType,
+    Volatility
 }

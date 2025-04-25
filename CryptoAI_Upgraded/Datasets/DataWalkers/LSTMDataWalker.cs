@@ -101,6 +101,12 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
                     return (double)kline.QuoteVolume;
                 case FeatureType.FragmentNum:
                     return dataFragmentNum;
+                case FeatureType.PriceDelta:
+                    return (double)((kline.ClosePrice - kline.OpenPrice)/ kline.OpenPrice);
+                case FeatureType.CandleType:
+                    return kline.ClosePrice > kline.OpenPrice ? 1 : 0;
+                case FeatureType.Volatility:
+                    return (double)((kline.HighPrice - kline.LowPrice) / kline.OpenPrice);
             }
             throw new Exception($"LSTMDataWalker.GetFeatureValue failed. Unexpected feature type - {feature}");
         }

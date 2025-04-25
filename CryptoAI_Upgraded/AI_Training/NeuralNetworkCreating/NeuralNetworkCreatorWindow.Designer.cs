@@ -45,6 +45,9 @@
             InpCountLabel = new Label();
             label1 = new Label();
             FragmentNumCheckBox = new CheckBox();
+            PriceDeltaCheckBox = new CheckBox();
+            CandleTypeCheckBox = new CheckBox();
+            VolatilityCheckBox = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)LayersGrid).BeginInit();
             SuspendLayout();
             // 
@@ -53,12 +56,12 @@
             LayersGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             LayersGrid.Location = new Point(12, 12);
             LayersGrid.Name = "LayersGrid";
-            LayersGrid.Size = new Size(485, 342);
+            LayersGrid.Size = new Size(485, 384);
             LayersGrid.TabIndex = 0;
             // 
             // AddLayerBut
             // 
-            AddLayerBut.Location = new Point(12, 360);
+            AddLayerBut.Location = new Point(12, 402);
             AddLayerBut.Name = "AddLayerBut";
             AddLayerBut.Size = new Size(273, 23);
             AddLayerBut.TabIndex = 1;
@@ -68,7 +71,7 @@
             // 
             // RemoveLAyersBut
             // 
-            RemoveLAyersBut.Location = new Point(291, 360);
+            RemoveLAyersBut.Location = new Point(291, 402);
             RemoveLAyersBut.Name = "RemoveLAyersBut";
             RemoveLAyersBut.Size = new Size(206, 23);
             RemoveLAyersBut.TabIndex = 2;
@@ -78,7 +81,7 @@
             // 
             // CreateNetworkBut
             // 
-            CreateNetworkBut.Location = new Point(12, 402);
+            CreateNetworkBut.Location = new Point(12, 431);
             CreateNetworkBut.Name = "CreateNetworkBut";
             CreateNetworkBut.Size = new Size(485, 23);
             CreateNetworkBut.TabIndex = 3;
@@ -125,7 +128,7 @@
             // 
             TradeCountBox.AutoSize = true;
             TradeCountBox.Font = new Font("Segoe UI", 14F);
-            TradeCountBox.Location = new Point(526, 387);
+            TradeCountBox.Location = new Point(525, 432);
             TradeCountBox.Name = "TradeCountBox";
             TradeCountBox.Size = new Size(128, 29);
             TradeCountBox.TabIndex = 7;
@@ -158,7 +161,7 @@
             // 
             QuoteVolumeCheckBox.AutoSize = true;
             QuoteVolumeCheckBox.Font = new Font("Segoe UI", 14F);
-            QuoteVolumeCheckBox.Location = new Point(526, 352);
+            QuoteVolumeCheckBox.Location = new Point(525, 397);
             QuoteVolumeCheckBox.Name = "QuoteVolumeCheckBox";
             QuoteVolumeCheckBox.Size = new Size(150, 29);
             QuoteVolumeCheckBox.TabIndex = 10;
@@ -185,7 +188,7 @@
             // 
             IputFeaturesLabel.AutoSize = true;
             IputFeaturesLabel.Font = new Font("Segoe UI", 16F);
-            IputFeaturesLabel.Location = new Point(541, 144);
+            IputFeaturesLabel.Location = new Point(555, 135);
             IputFeaturesLabel.Name = "IputFeaturesLabel";
             IputFeaturesLabel.Size = new Size(147, 30);
             IputFeaturesLabel.TabIndex = 13;
@@ -222,11 +225,53 @@
             FragmentNumCheckBox.Text = "Fragment num";
             FragmentNumCheckBox.UseVisualStyleBackColor = true;
             // 
+            // PriceDeltaCheckBox
+            // 
+            PriceDeltaCheckBox.AutoSize = true;
+            PriceDeltaCheckBox.Checked = true;
+            PriceDeltaCheckBox.CheckState = CheckState.Checked;
+            PriceDeltaCheckBox.Font = new Font("Segoe UI", 14F);
+            PriceDeltaCheckBox.Location = new Point(525, 317);
+            PriceDeltaCheckBox.Name = "PriceDeltaCheckBox";
+            PriceDeltaCheckBox.Size = new Size(120, 29);
+            PriceDeltaCheckBox.TabIndex = 17;
+            PriceDeltaCheckBox.Text = "Price delta";
+            PriceDeltaCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // CandleTypeCheckBox
+            // 
+            CandleTypeCheckBox.AutoSize = true;
+            CandleTypeCheckBox.Checked = true;
+            CandleTypeCheckBox.CheckState = CheckState.Checked;
+            CandleTypeCheckBox.Font = new Font("Segoe UI", 14F);
+            CandleTypeCheckBox.Location = new Point(525, 352);
+            CandleTypeCheckBox.Name = "CandleTypeCheckBox";
+            CandleTypeCheckBox.Size = new Size(131, 29);
+            CandleTypeCheckBox.TabIndex = 18;
+            CandleTypeCheckBox.Text = "Candle type";
+            CandleTypeCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // VolatilityCheckBox
+            // 
+            VolatilityCheckBox.AutoSize = true;
+            VolatilityCheckBox.Checked = true;
+            VolatilityCheckBox.CheckState = CheckState.Checked;
+            VolatilityCheckBox.Font = new Font("Segoe UI", 14F);
+            VolatilityCheckBox.Location = new Point(674, 212);
+            VolatilityCheckBox.Name = "VolatilityCheckBox";
+            VolatilityCheckBox.Size = new Size(104, 29);
+            VolatilityCheckBox.TabIndex = 19;
+            VolatilityCheckBox.Text = "Volatility";
+            VolatilityCheckBox.UseVisualStyleBackColor = true;
+            // 
             // NeuralNetworkCreatorWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(825, 450);
+            ClientSize = new Size(821, 466);
+            Controls.Add(VolatilityCheckBox);
+            Controls.Add(CandleTypeCheckBox);
+            Controls.Add(PriceDeltaCheckBox);
             Controls.Add(FragmentNumCheckBox);
             Controls.Add(label1);
             Controls.Add(InpCountLabel);
@@ -271,5 +316,8 @@
         private Label InpCountLabel;
         private Label label1;
         private CheckBox FragmentNumCheckBox;
+        private CheckBox PriceDeltaCheckBox;
+        private CheckBox CandleTypeCheckBox;
+        private CheckBox VolatilityCheckBox;
     }
 }
