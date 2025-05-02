@@ -28,30 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             courseGraphic = new System.Windows.Forms.DataVisualization.Charting.Chart();
             JumpLeftBut = new Button();
             JumpRightBut = new Button();
             GoLeftBut = new Button();
             GoRightBut = new Button();
             dataPagesDisp = new Label();
+            ZoomInBut = new Button();
+            ZoomOutBut = new Button();
             ((System.ComponentModel.ISupportInitialize)courseGraphic).BeginInit();
             SuspendLayout();
             // 
             // courseGraphic
             // 
-            chartArea1.Name = "ChartArea1";
-            courseGraphic.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            courseGraphic.Legends.Add(legend1);
+            chartArea2.Name = "ChartArea1";
+            courseGraphic.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            courseGraphic.Legends.Add(legend2);
             courseGraphic.Location = new Point(12, 12);
             courseGraphic.Name = "courseGraphic";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            courseGraphic.Series.Add(series1);
+            series2.ChartArea = "ChartArea1";
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            courseGraphic.Series.Add(series2);
             courseGraphic.Size = new Size(732, 355);
             courseGraphic.TabIndex = 0;
             courseGraphic.Text = "chart1";
@@ -106,11 +108,33 @@
             dataPagesDisp.TabIndex = 5;
             dataPagesDisp.Text = "0/0";
             // 
+            // ZoomInBut
+            // 
+            ZoomInBut.Location = new Point(750, 89);
+            ZoomInBut.Name = "ZoomInBut";
+            ZoomInBut.Size = new Size(75, 23);
+            ZoomInBut.TabIndex = 6;
+            ZoomInBut.Text = "Zoom In";
+            ZoomInBut.UseVisualStyleBackColor = true;
+            ZoomInBut.Click += ZoomInBut_Click;
+            // 
+            // ZoomOutBut
+            // 
+            ZoomOutBut.Location = new Point(750, 118);
+            ZoomOutBut.Name = "ZoomOutBut";
+            ZoomOutBut.Size = new Size(75, 23);
+            ZoomOutBut.TabIndex = 7;
+            ZoomOutBut.Text = "Zoom out";
+            ZoomOutBut.UseVisualStyleBackColor = true;
+            ZoomOutBut.Click += ZoomOutBut_Click;
+            // 
             // DatasetGraphicDisplayForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(865, 450);
+            Controls.Add(ZoomOutBut);
+            Controls.Add(ZoomInBut);
             Controls.Add(dataPagesDisp);
             Controls.Add(GoRightBut);
             Controls.Add(GoLeftBut);
@@ -132,5 +156,7 @@
         private Button GoLeftBut;
         private Button GoRightBut;
         private Label dataPagesDisp;
+        private Button ZoomInBut;
+        private Button ZoomOutBut;
     }
 }

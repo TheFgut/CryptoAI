@@ -1,6 +1,7 @@
 ﻿using CryptoAI_Upgraded.AI_Training.NeuralNetworks;
 using CryptoAI_Upgraded.Datasets.DataWalkers;
 using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
+using System.Text;
 using System.Windows.Forms.DataVisualization.Charting;
 
 namespace CryptoAI_Upgraded.AI_Prediction
@@ -40,11 +41,15 @@ namespace CryptoAI_Upgraded.AI_Prediction
         {
             dataWalker = new LSTMDataWalker(datasets, network.networkConfig);
 
-            List<double[]>? result = WalkAt(0);
-            if (result != null) ShwoDataInChart(result[0], result[1]);
+            List<double>[]? result = WalkAt(0);
+            if (result != null)
+            {
+                DrawBranchedChart(result[0], result[1], result[2]);
+                ShowDataText(result[0], result[1], result[2]);
+            }
         }
 
-        public List<double[]>? WalkAt(int step)
+        public List<double>[]? WalkAt(int step)
         {
             int predictionsCount;
             if (!int.TryParse(predictionsCountBox.Text, out predictionsCount))
@@ -56,6 +61,9 @@ namespace CryptoAI_Upgraded.AI_Prediction
             List<double> predictions = new List<double>();
 
             double[,] data = dataWalker.WalkAt(step, out var expected);
+            List<double> networkInputData = Enumerable.Range(0, data.GetLength(0))
+                     .Select(x => data[x, 1])
+                     .ToList();
             double[,,] input = Helpers.ConvertArrTo3DArray(data);
             //double[,,] normalized = Helpers.Normalization.Normalize(out double min, out double max, input);
             int predictionSteps = 0;
@@ -83,11 +91,11 @@ namespace CryptoAI_Upgraded.AI_Prediction
                 dataWalker.WalkAt(step, out expected);
                 step++;
             }
-            return new List<double[]>() { expectedList.ToArray(),
-                predictions.ToArray() };
+            return new List<double>[]{networkInputData,
+                expectedList, predictions };
         }
 
-        private void ShwoDataInChart(double[] expected, double[] predictions)
+        private void ShowDataInChart(double[] expected, double[] predictions)
         {
             // Основной график
             chart1.Series.Clear();
@@ -119,39 +127,103 @@ namespace CryptoAI_Upgraded.AI_Prediction
                 BorderWidth = 2
             };
 
-            details.Text = "Expected:";
-            // Заполнение данных основного графика
-            for (int i = 0; i < expected.Length; i++)
-            {
-                series1.Points.AddXY(i, expected[i]);
-                details.Text += $" {expected[i]}";
-            }
-            details.Text += "\n\nPredictions:";
-            // Заполнение данных мини-графика
-            for (int i = 0; i < predictions.Length; i++)
-            {
-                series2.Points.AddXY(i, predictions[i]);
-                details.Text += $" {predictions[i]}";
-            }
-
             chart1.Series.Add(series1);
             chart1.Series.Add(series2);
 
         }
 
+        public void DrawBranchedChart(List<double> networkInput, List<double> expected, List<double> predictions)
+        {
+            int branchPoint = networkInput.Count - 1;
+            chart1.Series.Clear();
+            chart1.ChartAreas.Clear();
+            chart1.ChartAreas.Add(new ChartArea());
+            //adding origin point
+            expected.Insert(0, networkInput[branchPoint]);
+            predictions.Insert(0, networkInput[branchPoint]);
+            // Основна лінія до розгалуження
+            Series seriesMain = new Series("Network input")
+            {
+                ChartType = SeriesChartType.Line,
+                Color = System.Drawing.Color.Blue,
+                BorderWidth = 2
+            };
+
+            for (int i = 0; i <= branchPoint; i++)
+            {
+                seriesMain.Points.AddXY(i, networkInput[i]);
+            }
+            chart1.Series.Add(seriesMain);
+
+            Series seriesBranch1 = new Series("Expected output")
+            {
+                ChartType = SeriesChartType.Line,
+                Color = System.Drawing.Color.Green,
+                BorderWidth = 2
+            };
+
+            for (int i = branchPoint; i < branchPoint + expected.Count; i++)
+            {
+                seriesBranch1.Points.AddXY(i, expected[i - branchPoint]);
+            }
+            chart1.Series.Add(seriesBranch1);
+
+            Series seriesBranch2 = new Series("Predictions")
+            {
+                ChartType = SeriesChartType.Line,
+                Color = System.Drawing.Color.Red,
+                BorderWidth = 2
+            };
+
+            for (int i = branchPoint; i < branchPoint + predictions.Count; i++)
+            {
+                seriesBranch2.Points.AddXY(i, predictions[i - branchPoint]);
+            }
+            chart1.Series.Add(seriesBranch2);
+        }
+
+        public void ShowDataText(List<double> networkInput, List<double> expected, List<double> predictions)
+        {
+            StringBuilder detailsString = new StringBuilder();
+            detailsString.Append("Network input:");
+            for (int i = 0; i < networkInput.Count; i++)
+            {
+                detailsString.Append($" {Math.Round(networkInput[i], 3)}");
+            }
+            detailsString.Append("\nExpected:");
+            for (int i = 0; i < expected.Count; i++)
+            {
+                detailsString.Append($" {Math.Round(expected[i], 3)}");
+            }
+            detailsString.Append("\nPredictions:");
+            for (int i = 0; i < predictions.Count; i++)
+            {
+                detailsString.Append($" {Math.Round(predictions[i], 3)}");
+            }
+            details.Text = detailsString.ToString();
+        }
+
         private void GoRightBut_Click(object sender, EventArgs e)
         {
             WalkerNum++;
-            List<double[]>? result = WalkAt(WalkerNum);
-            if (result != null) ShwoDataInChart(result[0], result[1]);
+            List<double>[]? result = WalkAt(WalkerNum);
+            if (result != null)
+            {
+                DrawBranchedChart(result[0], result[1], result[2]);
+                ShowDataText(result[0], result[1], result[2]);
+            }
         }
 
         private void GoLeftBut_Click(object sender, EventArgs e)
         {
             if (WalkerNum <= 0) return;
             WalkerNum--;
-            List<double[]>? result = WalkAt(WalkerNum);
-            if(result != null) ShwoDataInChart(result[0], result[1]);
+            List<double>[]? result = WalkAt(WalkerNum);
+            if(result != null)
+            {
+                DrawBranchedChart(result[0], result[1], result[2]);
+                ShowDataText(result[0], result[1], result[2]);
+            }
         }
     }
 }

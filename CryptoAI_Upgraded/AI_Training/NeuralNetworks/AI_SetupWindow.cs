@@ -18,7 +18,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             this.trainingConfig = trainingConfig;
             InitializeComponent();
             stopLearningTresholdTextBox.Text = trainingConfig.minErrorDeltaToStop.ToString();
-            stopWhenErrorRisingCheckbox.Checked = trainingConfig.stopWhenErrorRising;
+            stopWhenErrorNotChangingCheckbox.Checked = trainingConfig.stopWhenErrorRising;
             runsCheckToStopTextBox.Text = trainingConfig.patienceToStop.ToString();
         }
 
@@ -38,7 +38,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 
         private void stopWhenErrorRisingCheckbox_Validated(object sender, EventArgs e)
         {
-            trainingConfig.stopWhenErrorRising = stopWhenErrorRisingCheckbox.Checked;
+            trainingConfig.stopWhenErrorRising = stopWhenErrorNotChangingCheckbox.Checked;
         }
 
         private void runsCheckToStopTextBox_Validated(object sender, EventArgs e)

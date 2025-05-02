@@ -20,7 +20,7 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
         private Dictionary<LocalKlinesDataset, KlinesDay> loadedKlinesCache;
         private float displayedGraphicNum;
 
-        private float scale;
+        private float scale = 1;
         private const float bigMove = 1;
         private const float smallMove = 0.2f;
 
@@ -42,34 +42,53 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
                 displayedGraphicNum = 0;
                 Display(displayedGraphicNum);
             }
+            //InfoWindow info = new InfoWindow("");
+            //if(datasets.Count != 0) info.Show(datasets[0].LoadKlinesFromCache().data);
+            //info.Show();
         }
 
 
-        private void Display(float start, float scale = 1)
+        private void Display(float start)
         {
             int startDatasetId = (int)Math.Floor(start);
-            if(startDatasetId < start)
-            {
-                LocalKlinesDataset datasetToDisp1 = datasets[startDatasetId];
-                LocalKlinesDataset datasetToDisp2 = datasets[startDatasetId + 1];
-                List<KLine> dataToDisp1 = GetFromCacheOrLoad(datasetToDisp1).data;
-                List<KLine> dataToDisp2 = GetFromCacheOrLoad(datasetToDisp2).data;
+            float fractionalStart = start - startDatasetId;
 
-                float dif = start - startDatasetId;
-                int countFromArray1 = (int)(dataToDisp1.Count * (1 - dif));
-                int countFromArray2 = (int)(dataToDisp2.Count * dif);
+            List<KLine> resultArray = new List<KLine>();
 
-                var part1 = dataToDisp1.Skip(dataToDisp1.Count - countFromArray1);
-                var part2 = dataToDisp2.Take(countFromArray2);
-                var resultArray = part1.Concat(part2).ToArray();
-                Display(resultArray.ToList());
-            }
-            else
+            // Сколько дней нужно отобразить с учётом масштаба
+            float datasetsToDisplay = scale;
+
+            int fullDatasetsToLoad = (int)Math.Ceiling(fractionalStart + datasetsToDisplay);
+
+            for (int i = 0; i < fullDatasetsToLoad; i++)
             {
-                LocalKlinesDataset datasetToDisp = datasets[startDatasetId];
-                Display(GetFromCacheOrLoad(datasetToDisp).data);
+                int currentId = startDatasetId + i;
+                if (currentId >= datasets.Count)
+                    break;
+
+                var currentDataset = datasets[currentId];
+                var klines = GetFromCacheOrLoad(currentDataset).data;
+                resultArray.AddRange(klines);
             }
-            dataPagesDisp.Text = $"{Math.Round((double)start, 2)}/{datasets.Count}";
+
+            // Если есть дробная часть старта, нужно обрезать начало
+            if (fractionalStart > 0)
+            {
+                int totalPoints = resultArray.Count;
+                int pointsToSkip = (int)(totalPoints * fractionalStart / fullDatasetsToLoad);
+                resultArray = resultArray.Skip(pointsToSkip).ToList();
+            }
+
+            // Если загружаем больше, чем scale позволяет, обрезаем
+            int expectedPoints = (int)(resultArray.Count * (scale / fullDatasetsToLoad));
+            if (resultArray.Count > expectedPoints)
+            {
+                resultArray = resultArray.Take(expectedPoints).ToList();
+            }
+
+            Display(resultArray);
+
+            dataPagesDisp.Text = $"{Math.Round((double)start, 2)}/{datasets.Count} (scale: {scale:F1})";
         }
 
         /// <summary>
@@ -86,7 +105,7 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
             result = datasetToLoad.LoadKlinesIndependant();
             loadedKlinesCache.Add(datasetToLoad, result);
             return result;
-        } 
+        }
 
         public void Display(List<KLine> data)
         {
@@ -140,11 +159,76 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
 
         private void MoveGraphic(float move)
         {
-            displayedGraphicNum += move;
-            if (displayedGraphicNum > datasets.Count - 1) displayedGraphicNum = 0;
-            if (displayedGraphicNum < 0) displayedGraphicNum = datasets.Count - 1;
+            float newPosition = displayedGraphicNum + move;
+            if (newPosition < 0 || newPosition > datasets.Count - scale)
+                return;
+            displayedGraphicNum = newPosition;
             Display(displayedGraphicNum);
         }
         #endregion
+
+        private void ZoomInBut_Click(object sender, EventArgs e) => ZoomIn();
+
+        private void ZoomOutBut_Click(object sender, EventArgs e) => ZoomOut();
+
+        private void ZoomIn()
+        {
+            scale /= 1.5f;
+            if (scale < 0.2f) scale = 0.2f;
+            if (displayedGraphicNum > datasets.Count - scale)
+                displayedGraphicNum = datasets.Count - scale;
+            Display(displayedGraphicNum);
+        }
+
+        private void ZoomOut()
+        {
+            scale *= 1.5f;
+            if (scale > datasets.Count) scale = datasets.Count;
+            Display(displayedGraphicNum);
+        }
+
+        protected override void OnMouseWheel(MouseEventArgs e)
+        {
+            base.OnMouseWheel(e);
+
+            if (ModifierKeys.HasFlag(Keys.Control))
+            {
+                if (e.Delta > 0)
+                    ZoomIn();
+                else
+                    ZoomOut();
+            }
+            else
+            {
+                float moveAmount = (e.Delta > 0 ? -smallMove : smallMove);
+                MoveGraphic(moveAmount);
+            }
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            switch (keyData)
+            {
+                case Keys.Left:
+                    MoveGraphic(-smallMove);
+                    return true;
+                case Keys.Right:
+                    MoveGraphic(smallMove);
+                    return true;
+                case Keys.PageUp:
+                    MoveGraphic(-bigMove);
+                    return true;
+                case Keys.PageDown:
+                    MoveGraphic(bigMove);
+                    return true;
+                case Keys.OemMinus:
+                    ZoomOut();
+                    return true;
+                case Keys.Oemplus:
+                    ZoomIn();
+                    return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
     }
 }

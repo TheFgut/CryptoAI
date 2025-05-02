@@ -28,23 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
-            stopWhenErrorRisingCheckbox = new CheckBox();
+            stopWhenErrorNotChangingCheckbox = new CheckBox();
             stopLearningTresholdTextBox = new TextBox();
             minDeltaLabel = new Label();
             runsCheckToStopTextBox = new TextBox();
             label1 = new Label();
             SuspendLayout();
             // 
-            // stopWhenErrorRisingCheckbox
+            // stopWhenErrorNotChangingCheckbox
             // 
-            stopWhenErrorRisingCheckbox.AutoSize = true;
-            stopWhenErrorRisingCheckbox.Location = new Point(12, 78);
-            stopWhenErrorRisingCheckbox.Name = "stopWhenErrorRisingCheckbox";
-            stopWhenErrorRisingCheckbox.Size = new Size(141, 19);
-            stopWhenErrorRisingCheckbox.TabIndex = 0;
-            stopWhenErrorRisingCheckbox.Text = "stop when error rising";
-            stopWhenErrorRisingCheckbox.UseVisualStyleBackColor = true;
-            stopWhenErrorRisingCheckbox.Validated += stopWhenErrorRisingCheckbox_Validated;
+            stopWhenErrorNotChangingCheckbox.AutoSize = true;
+            stopWhenErrorNotChangingCheckbox.Location = new Point(12, 78);
+            stopWhenErrorNotChangingCheckbox.Name = "stopWhenErrorNotChangingCheckbox";
+            stopWhenErrorNotChangingCheckbox.Size = new Size(183, 19);
+            stopWhenErrorNotChangingCheckbox.TabIndex = 0;
+            stopWhenErrorNotChangingCheckbox.Text = "stop when error not changing";
+            stopWhenErrorNotChangingCheckbox.UseVisualStyleBackColor = true;
+            stopWhenErrorNotChangingCheckbox.Validated += stopWhenErrorRisingCheckbox_Validated;
             // 
             // stopLearningTresholdTextBox
             // 
@@ -90,7 +90,7 @@
             Controls.Add(runsCheckToStopTextBox);
             Controls.Add(minDeltaLabel);
             Controls.Add(stopLearningTresholdTextBox);
-            Controls.Add(stopWhenErrorRisingCheckbox);
+            Controls.Add(stopWhenErrorNotChangingCheckbox);
             Name = "AI_SetupWindow";
             Text = "AI_SetupWindow";
             ResumeLayout(false);
@@ -99,7 +99,7 @@
 
         #endregion
 
-        private CheckBox stopWhenErrorRisingCheckbox;
+        private CheckBox stopWhenErrorNotChangingCheckbox;
         private TextBox stopLearningTresholdTextBox;
         private Label minDeltaLabel;
         private TextBox runsCheckToStopTextBox;
