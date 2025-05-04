@@ -13,7 +13,7 @@ using Numpy;
 
 namespace CryptoAI_Upgraded
 {
-    public partial class Form1 : Form
+    public partial class MainWindow : Form
     {
         private List<LocalKlinesDataset> choosedLocalDatasets;
         private LoadingKlinesForms? loadingKlinesForms;
@@ -23,7 +23,7 @@ namespace CryptoAI_Upgraded
         private AI_TrainWindow? aiTrainWindow;
         private AIPredictorForm? aiPredictor;
         private DatasetConvertorAndNormalizerWindow? datasetNormalizerWindow;
-        public Form1()
+        public MainWindow()
         {
             choosedLocalDatasets = new List<LocalKlinesDataset>();
             InitializeComponent();

@@ -16,6 +16,16 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
         /// value from 0 to 1 that indicates how close we are to the end of walking
         /// </summary>
         public float walkingProgress { get; private set; }
+
+        public KLine position
+        {
+            get
+            {
+                var currentDataset = datasets[currentDatasetIndex];
+                var currentData = currentDataset.LoadKlinesFromCache().data;
+                return currentData[localDatasetPos];
+            }
+        }
         protected List<LocalKlinesDataset> datasets;
         protected bool finishedWalking;
 
@@ -90,6 +100,7 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
 
             return result;
         }
+
 
         protected bool checkIfFinishedWalking(int drag = 0)
         {

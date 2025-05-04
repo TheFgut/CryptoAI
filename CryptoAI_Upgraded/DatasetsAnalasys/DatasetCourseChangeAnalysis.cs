@@ -43,7 +43,7 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
                 MessageBox.Show($"Datasets count should be more than one", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            analizeTask = Analize(1);
+            analizeTask = Analize(neuralNetwork.outputCount);
         }
 
         private async Task Analize(int predictionsLength)
@@ -53,7 +53,6 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
             //datas
             LinkedList<double> errors = new LinkedList<double>();
             LinkedList<double> guessedDir = new LinkedList<double>();//1-guessed, 0-not guessed
-            new ModelDetailsWindow(neuralNetwork).Show();
             //metrics
             int analizeStepsAmount = 0;
             int skippedSteps = 0;
@@ -67,6 +66,7 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
 
                 do
                 {
+                    KLine pos = dataWalker.position;
                     List<double[]>? predictionResult = Walk(dataWalker, predictionsLength);
 
                     if (predictionResult == null) break;
@@ -88,15 +88,17 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
                     //getting guessed dir
                     double finalPred = 0;
                     double finalEx = 0;
-                    for (int i = 0; i < predictionResult[0].Length; i++)
-                    {
-                        finalPred += predictionResult[0][i];
-                        finalEx += predictionResult[1][i];
-                    }
+                    //for (int i = 0; i < predictionResult[0].Length; i++)
+                    //{
+                    //    finalPred += predictionResult[0][i];
+                    //    finalEx += predictionResult[1][i];
+                    //}
+                    finalPred = predictionResult[0][predictionResult[0].Length - 1] - (double)pos.OpenPrice;
+                    finalEx = predictionResult[1][predictionResult[0].Length - 1] - (double)pos.OpenPrice;
                     guessedDir.AddLast(Math.Sign(finalPred) == Math.Sign(finalEx) ? 1 : 0);
                 } while (true);
                 await Task.Yield();
-                averageError = errors.Average() * 100;
+                averageError = errors.Average();
                 guessedDirPercent = guessedDir.Average() * 100;
             }
             catch (Exception ex)
