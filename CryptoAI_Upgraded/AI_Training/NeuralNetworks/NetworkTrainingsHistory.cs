@@ -80,15 +80,26 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         public double averageError { get; set; }
         public double maxError { get; set; }
         public double minError { get; set; }
-        public List<DatasetID> datasetIDs { get; set; }
+        public List<DatasetID> trainingDatasetIDs { get; set; }
+        public double avarageTestError { get; set; }
+        public double maxTestError { get; set; }
+        public double minTestError { get; set; }
+        public bool noTestMetrics { get; set; }
 
         public NetworkRunData()
         {
-            if(datasetIDs == null) datasetIDs = new List<DatasetID>();
+            if(trainingDatasetIDs == null) trainingDatasetIDs = new List<DatasetID>();
         }
         public override string ToString()
         {
-            return $"D:{datasetIDs.Count} AwgErr:{averageError}";
+            return $"D:{trainingDatasetIDs.Count} AwgErr:{averageError}";
+        }
+
+        public static NetworkRunData Default()
+        {
+            NetworkRunData def = new NetworkRunData();
+            def.noTestMetrics = true;
+            return def;
         }
     }
 

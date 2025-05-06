@@ -10,28 +10,22 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
     {
         //training
         public NetworkRunData[] trainingRunsData {  get; private set; }
-        //testing
-        public double avarageTestError { get; private set; }
-        public double maxTestError { get; private set; }
-        public double minTestError { get; private set; }
-        private bool noTestMetrics { get; set; }
-
-
         public int runsCount { get; private set; }
 
         private int currentRecordingNum;
         public int runsPassed => currentRecordingNum;
+
+        public NetworkRunData lastRun => trainingRunsData[currentRecordingNum];
         public NNTrainingStats(int runsCount, List<DatasetID> datasetIds) 
         {
             this.runsCount = runsCount;
             trainingRunsData = new NetworkRunData[runsCount];
             for (int i = 0; i < trainingRunsData.Length; i++)
             {
-                trainingRunsData[i] = new NetworkRunData();
-                trainingRunsData[i].datasetIDs = datasetIds;
+                trainingRunsData[i] = NetworkRunData.Default();
+                trainingRunsData[i].trainingDatasetIDs = datasetIds;
             }
             currentRecordingNum = 0;
-            noTestMetrics = true;
         }
 
         public void RecordMinError(double error)
@@ -56,10 +50,10 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 
         public void RecordTestMetrics(double awgTestError, double minTestError, double maxTestError)
         {
-            avarageTestError = awgTestError;
-            this.minTestError = minTestError;
-            this.maxTestError = maxTestError;
-            noTestMetrics = false;
+            trainingRunsData[currentRecordingNum].avarageTestError = awgTestError;
+            trainingRunsData[currentRecordingNum].minTestError = minTestError;
+            trainingRunsData[currentRecordingNum].maxTestError = maxTestError;
+            trainingRunsData[currentRecordingNum].noTestMetrics = false;
         }
 
         public string ToRichTextString()
@@ -69,22 +63,29 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             details.AppendLine("Learning stats:");
             for (int i = 0; i < currentRecordingNum; i++)
             {
-                double rate = (trainingRunsData[i].averageError * 2) + trainingRunsData[i].minError + trainingRunsData[i].maxError;
-                details.Append($"Rate: {rate.ToString("F5")} awg: {trainingRunsData[i].averageError.ToString("F5")}");
-                details.Append($"min: {trainingRunsData[i].minError.ToString("F5")} max: " +
-                    $"{trainingRunsData[i].maxError.ToString("F5")}");
+                NetworkRunData run = trainingRunsData[i];
+                //training metrics
+                double rate = (run.averageError * 2) + run.minError + run.maxError;
+                details.Append($"Rate: {rate.ToString("F5")} awg: {run.averageError.ToString("F5")}");
+                details.Append($"min: {run.minError.ToString("F5")} max: " +
+                    $"{run.maxError.ToString("F5")}");
+                details.AppendLine("\\par");
+                //testing metrics
+                if (i == currentRecordingNum - 1) details.AppendLine("{\\fs25");
+                if (!run.noTestMetrics)
+                {
+                    details.AppendLine("Test results:");
+                    details.AppendLine($"Average error: {run.avarageTestError}");
+                    details.AppendLine($"Max error: {run.maxTestError}");
+                    details.AppendLine($"Min error: {run.minTestError}");
+                }
+                else
+                {
+                    details.AppendLine("Ne testing");
+                }
                 details.AppendLine("\\par");
             }
-            if (!noTestMetrics)
-            {
-                details.AppendLine("{\\fs25");
-                details.AppendLine("Test results:");
-                details.AppendLine($"Average error: {avarageTestError}");
-                details.AppendLine($"Max error: {maxTestError}");
-                details.AppendLine($"Min error: {minTestError}");
-                details.AppendLine("}");
-                details.AppendLine("}");
-            }
+            details.AppendLine("}}");
             return details.ToString();
         }
     }

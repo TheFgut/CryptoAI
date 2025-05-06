@@ -6,6 +6,7 @@ using CryptoAI_Upgraded.Datasets;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 using CryptoAI_Upgraded.DataSaving;
+using Newtonsoft.Json.Linq;
 
 namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 {
@@ -163,11 +164,11 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             //Console.WriteLine(predictions.repr);
         }
 
-        public async Task TrainLSTMNetwork(LSTMDataWalker dataWalker,int batchesCount,
+        public async Task TrainLSTMNetwork(LSTMDataWalker trainDataWalker, int batchesCount,
             NNTrainingStats analyticsCollector, Action<float> onProgressChange, TrainingConfigData trainingSettings,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken, LSTMDataWalker? testDataWalker = null, bool testEveryRun = true)
         {
-            if (dataWalker == null) throw new Exception("NeuralNetwork.Train dataWalker cant be null");
+            if (trainDataWalker == null) throw new Exception("NeuralNetwork.Train dataWalker cant be null");
             if (trainingSettings.runsCount <= 0) throw new Exception("NeuralNetwork.Train runsCount should be higher than one");
             EarlyStopping earlyStopping = new EarlyStopping(trainingSettings.patienceToStop,
                 trainingSettings.minErrorDeltaToStop);
@@ -187,13 +188,13 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                     for (int i = 0; i < batchesCount; i++)
                     {
                         double[] expectedOutput;
-                        double[,] input = dataWalker.Walk(out expectedOutput);
+                        double[,] input = trainDataWalker.Walk(out expectedOutput);
                         
                         //List<double[,]> normalized = Helpers.Normalization.Normalize(out double min, out double max, input);              
                         inputBatches.Add(Helpers.ArrayValuesInjection.InjectValues(input,0,0));
                         outputBatches.Add(expectedOutput);
                         await Task.Delay(10);
-                        if (dataWalker.isFinishedWalking()) break;
+                        if (trainDataWalker.isFinishedWalking()) break;
                     }
                     if (inputBatches.Count == 0 || outputBatches.Count == 0) break;
 
@@ -215,7 +216,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                         cancellationToken.ThrowIfCancellationRequested();
                     }
                     await Task.Delay(10);
-                    float newProgress = (float)(Math.Floor((((run-1) + dataWalker.walkingProgress) / 
+                    float newProgress = (float)(Math.Floor((((run-1) + trainDataWalker.walkingProgress) / 
                         (float)trainingSettings.runsCount) *100)/100);//to do check run progress
                     if(newProgress != progress)
                     {
@@ -223,17 +224,33 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                         onProgressChange?.Invoke(progress);
                     }
 
-                } while (!dataWalker.isFinishedWalking());
-                dataWalker.ResetDataWalker();
+                } while (!trainDataWalker.isFinishedWalking());
+                trainDataWalker.ResetDataWalker();
                 double awgError = errorsSum / walksIterations;
                 analyticsCollector.RecordAwerageError(awgError);
                 analyticsCollector.RecordMinError(minError);
                 analyticsCollector.RecordMaxError(maxError);
-                analyticsCollector.GoNext();
-                if (trainingSettings.stopWhenErrorRising && earlyStopping.CheckShouldStop(awgError))
+                if (testEveryRun && testDataWalker != null)
+                {
+                    try
+                    {
+                        await TestLSTMNetwork(testDataWalker, analyticsCollector, null, new CancellationToken());
+                        testDataWalker?.ResetDataWalker();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception($"Exception during execution of testing {ex.Message}\n" +
+                            $" {ex.StackTrace}");
+                    }
+                }
+
+                if (trainingSettings.stopWhenErrorRising && 
+                    earlyStopping.CheckShouldStop(analyticsCollector.lastRun.noTestMetrics ? analyticsCollector.lastRun.averageError :
+                    analyticsCollector.lastRun.avarageTestError))
                 {
                     break;
                 }
+                analyticsCollector.GoNext();
             }
             trainingStatistics.RecordTrainingData(analyticsCollector);
             // Предсказания

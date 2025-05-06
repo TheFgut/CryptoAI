@@ -28,13 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
             StartLearningBut = new Button();
             StopLearningBut = new Button();
             TrainingProgressBar = new ProgressBar();
-            errorsChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            lossesChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             runsCountBox = new TextBox();
             networkManagePanel1 = new NeuralNetworks.UI.NetworkManagePanel();
             trainingDatasetsManager = new DatasetsManaging.UI.DatasetsManagerPanel();
@@ -43,12 +49,16 @@
             TrainingETA = new Label();
             richTextBox1 = new RichTextBox();
             learningSettings = new Button();
-            ((System.ComponentModel.ISupportInitialize)errorsChart).BeginInit();
+            TestErrorsChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            lastPredictionsChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            ((System.ComponentModel.ISupportInitialize)lossesChart).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)TestErrorsChart).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)lastPredictionsChart).BeginInit();
             SuspendLayout();
             // 
             // StartLearningBut
             // 
-            StartLearningBut.Location = new Point(12, 415);
+            StartLearningBut.Location = new Point(12, 610);
             StartLearningBut.Name = "StartLearningBut";
             StartLearningBut.Size = new Size(75, 23);
             StartLearningBut.TabIndex = 0;
@@ -58,7 +68,7 @@
             // 
             // StopLearningBut
             // 
-            StopLearningBut.Location = new Point(93, 415);
+            StopLearningBut.Location = new Point(93, 610);
             StopLearningBut.Name = "StopLearningBut";
             StopLearningBut.Size = new Size(75, 23);
             StopLearningBut.TabIndex = 1;
@@ -68,30 +78,30 @@
             // 
             // TrainingProgressBar
             // 
-            TrainingProgressBar.Location = new Point(12, 444);
+            TrainingProgressBar.Location = new Point(12, 639);
             TrainingProgressBar.Name = "TrainingProgressBar";
             TrainingProgressBar.Size = new Size(414, 23);
             TrainingProgressBar.TabIndex = 3;
             // 
-            // errorsChart
+            // lossesChart
             // 
-            chartArea1.Name = "ChartArea1";
-            errorsChart.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            errorsChart.Legends.Add(legend1);
-            errorsChart.Location = new Point(12, 12);
-            errorsChart.Name = "errorsChart";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            errorsChart.Series.Add(series1);
-            errorsChart.Size = new Size(454, 134);
-            errorsChart.TabIndex = 4;
-            errorsChart.Text = "chart1";
+            chartArea4.Name = "ChartArea1";
+            lossesChart.ChartAreas.Add(chartArea4);
+            legend4.Name = "Legend1";
+            lossesChart.Legends.Add(legend4);
+            lossesChart.Location = new Point(12, 12);
+            lossesChart.Name = "lossesChart";
+            series4.ChartArea = "ChartArea1";
+            series4.Legend = "Legend1";
+            series4.Name = "Series1";
+            lossesChart.Series.Add(series4);
+            lossesChart.Size = new Size(454, 134);
+            lossesChart.TabIndex = 4;
+            lossesChart.Text = "chart1";
             // 
             // runsCountBox
             // 
-            runsCountBox.Location = new Point(12, 386);
+            runsCountBox.Location = new Point(12, 581);
             runsCountBox.Name = "runsCountBox";
             runsCountBox.Size = new Size(156, 23);
             runsCountBox.TabIndex = 5;
@@ -119,10 +129,10 @@
             // 
             // trainingResultPanel
             // 
-            trainingResultPanel.Location = new Point(12, 152);
+            trainingResultPanel.Location = new Point(12, 450);
             trainingResultPanel.Name = "trainingResultPanel";
             trainingResultPanel.ReadOnly = true;
-            trainingResultPanel.Size = new Size(454, 218);
+            trainingResultPanel.Size = new Size(454, 115);
             trainingResultPanel.TabIndex = 9;
             trainingResultPanel.Text = "";
             // 
@@ -140,7 +150,7 @@
             // 
             TrainingETA.AutoSize = true;
             TrainingETA.Font = new Font("Segoe UI", 12F);
-            TrainingETA.Location = new Point(432, 446);
+            TrainingETA.Location = new Point(432, 641);
             TrainingETA.Name = "TrainingETA";
             TrainingETA.Size = new Size(63, 21);
             TrainingETA.TabIndex = 12;
@@ -148,7 +158,7 @@
             // 
             // richTextBox1
             // 
-            richTextBox1.Location = new Point(174, 386);
+            richTextBox1.Location = new Point(174, 581);
             richTextBox1.Name = "richTextBox1";
             richTextBox1.ReadOnly = true;
             richTextBox1.Size = new Size(252, 52);
@@ -157,7 +167,7 @@
             // 
             // learningSettings
             // 
-            learningSettings.Location = new Point(432, 386);
+            learningSettings.Location = new Point(432, 581);
             learningSettings.Name = "learningSettings";
             learningSettings.Size = new Size(52, 52);
             learningSettings.TabIndex = 14;
@@ -165,11 +175,45 @@
             learningSettings.UseVisualStyleBackColor = true;
             learningSettings.Click += learningSettings_Click;
             // 
+            // TestErrorsChart
+            // 
+            chartArea5.Name = "ChartArea1";
+            TestErrorsChart.ChartAreas.Add(chartArea5);
+            legend5.Name = "Legend1";
+            TestErrorsChart.Legends.Add(legend5);
+            TestErrorsChart.Location = new Point(12, 152);
+            TestErrorsChart.Name = "TestErrorsChart";
+            series5.ChartArea = "ChartArea1";
+            series5.Legend = "Legend1";
+            series5.Name = "Series1";
+            TestErrorsChart.Series.Add(series5);
+            TestErrorsChart.Size = new Size(454, 138);
+            TestErrorsChart.TabIndex = 15;
+            TestErrorsChart.Text = "chart1";
+            // 
+            // lastPredictionsChart
+            // 
+            chartArea6.Name = "ChartArea1";
+            lastPredictionsChart.ChartAreas.Add(chartArea6);
+            legend6.Name = "Legend1";
+            lastPredictionsChart.Legends.Add(legend6);
+            lastPredictionsChart.Location = new Point(12, 296);
+            lastPredictionsChart.Name = "lastPredictionsChart";
+            series6.ChartArea = "ChartArea1";
+            series6.Legend = "Legend1";
+            series6.Name = "Series1";
+            lastPredictionsChart.Series.Add(series6);
+            lastPredictionsChart.Size = new Size(454, 148);
+            lastPredictionsChart.TabIndex = 16;
+            lastPredictionsChart.Text = "chart1";
+            // 
             // AI_TrainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(871, 483);
+            ClientSize = new Size(875, 669);
+            Controls.Add(lastPredictionsChart);
+            Controls.Add(TestErrorsChart);
             Controls.Add(learningSettings);
             Controls.Add(richTextBox1);
             Controls.Add(TrainingETA);
@@ -178,14 +222,16 @@
             Controls.Add(trainingDatasetsManager);
             Controls.Add(networkManagePanel1);
             Controls.Add(runsCountBox);
-            Controls.Add(errorsChart);
+            Controls.Add(lossesChart);
             Controls.Add(TrainingProgressBar);
             Controls.Add(StopLearningBut);
             Controls.Add(StartLearningBut);
             Name = "AI_TrainWindow";
             Text = "AI_TrainWindow";
             FormClosing += AI_TrainWindow_FormClosing;
-            ((System.ComponentModel.ISupportInitialize)errorsChart).EndInit();
+            ((System.ComponentModel.ISupportInitialize)lossesChart).EndInit();
+            ((System.ComponentModel.ISupportInitialize)TestErrorsChart).EndInit();
+            ((System.ComponentModel.ISupportInitialize)lastPredictionsChart).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -195,7 +241,7 @@
         private Button StartLearningBut;
         private Button StopLearningBut;
         private ProgressBar TrainingProgressBar;
-        private System.Windows.Forms.DataVisualization.Charting.Chart errorsChart;
+        private System.Windows.Forms.DataVisualization.Charting.Chart lossesChart;
         private TextBox runsCountBox;
         private NeuralNetworks.UI.NetworkManagePanel networkManagePanel1;
         private DatasetsManaging.UI.DatasetsManagerPanel trainingDatasetsManager;
@@ -204,5 +250,7 @@
         private Label TrainingETA;
         private RichTextBox richTextBox1;
         private Button learningSettings;
+        private System.Windows.Forms.DataVisualization.Charting.Chart TestErrorsChart;
+        private System.Windows.Forms.DataVisualization.Charting.Chart lastPredictionsChart;
     }
 }

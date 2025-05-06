@@ -74,6 +74,9 @@ namespace CryptoAI_Upgraded.AI_Training
             {
                 object referencedProgressInt = 0;
                 LSTMDataWalker dataWalker = new LSTMDataWalker(learningDatasets, neuralNetwork.networkConfig);
+                LSTMDataWalker? testDataWalker = testingDatasets.Count == 0 ? null :
+                    new LSTMDataWalker(testingDatasets, neuralNetwork.networkConfig);
+
                 await neuralNetwork.TrainLSTMNetwork(dataWalker, 16, analyticsCollector,
                     (progressValue) =>
                     {
@@ -88,20 +91,19 @@ namespace CryptoAI_Upgraded.AI_Training
                             int eta = (int)((timer.ElapsedMilliseconds / 1000 / progressValue) * (1 - progressValue));
                             TrainingETA.Text = $"ETA: {Helpers.FormatDuration(eta)}";
                         });
-                    }, trainingConfig, token);
+                    }, trainingConfig, token, testDataWalker);
 
-                errorsChart.Series.Clear();
-                DisplayDataOnChart(errorsChart, analyticsCollector.trainingRunsData.Select(r => r.averageError)
-                    .ToArray(), analyticsCollector.runsPassed, Color.Blue);
-                DisplayDataOnChart(errorsChart, analyticsCollector.trainingRunsData.Select(r => r.maxError)
-                    .ToArray(), analyticsCollector.runsPassed, Color.Red);
-                DisplayDataOnChart(errorsChart, analyticsCollector.trainingRunsData.Select(r => r.minError)
-                    .ToArray(), analyticsCollector.runsPassed, Color.Green);
+                lossesChart.Series.Clear();
+                DisplayDataOnChart(lossesChart, analyticsCollector.trainingRunsData.Select(r => r.averageError)
+                    .ToArray(), analyticsCollector.runsPassed,"loss awerage error", Color.Yellow);
+                DisplayDataOnChart(lossesChart, analyticsCollector.trainingRunsData.Select(r => r.maxError)
+                    .ToArray(), analyticsCollector.runsPassed, "loss max error", Color.Red);
+                DisplayDataOnChart(lossesChart, analyticsCollector.trainingRunsData.Select(r => r.minError)
+                    .ToArray(), analyticsCollector.runsPassed, "loss min error", Color.Green);
 
-                if (testingDatasets.Count > 0)
-                {
-                    await Test(token, analyticsCollector);
-                }
+                TestErrorsChart.Series.Clear();
+                DisplayDataOnChart(TestErrorsChart, analyticsCollector.trainingRunsData.Select(r => r.avarageTestError)
+                    .ToArray(), analyticsCollector.runsPassed, "test awerage error", Color.Green);
             }
             catch (Exception ex)
             {
@@ -138,41 +140,16 @@ namespace CryptoAI_Upgraded.AI_Training
 
         private async Task Test(CancellationToken token, NNTrainingStats analyticsCollector)
         {
-            Stopwatch timer = Stopwatch.StartNew();
-            try
-            {
-                object referencedProgressInt = 0;
-                LSTMDataWalker dataWalker = new LSTMDataWalker(testingDatasets, neuralNetwork.networkConfig);
-                await neuralNetwork.TestLSTMNetwork(dataWalker, analyticsCollector,
-                    (progressValue) =>
-                    {
-                        int progressValueInt = (int)(progressValue * 100);
-                        if ((int)referencedProgressInt == progressValueInt) return;
-                        referencedProgressInt = progressValueInt;
-                        Invoke(
-                            () =>
-                            {
-                                TrainingProgressBar.Value = progressValueInt;
-                            });
-                    }, token);
-            }
-            catch (Exception ex)
-            {
-                Invoke((Action)(() =>
-                {
-                    MessageBox.Show($"Exception during execution of testing {ex.Message}\n {ex.StackTrace}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }));
-            }
-            trainingTask = null;
-            timer.Stop();
+
         }
-        private void DisplayDataOnChart(Chart chart, double[] data,int count, Color color)
+        private void DisplayDataOnChart(Chart chart, double[] data,int count, string name, Color color)
         {
             // Создание и настройка ряда данных
             var series = new Series
             {
                 ChartType = SeriesChartType.Line, // Тип графика: линия
-                Color = System.Drawing.Color.Blue,
+                Color = color,
+                Name = name,
                 BorderWidth = 2
             };
             chart.Series.Add(series);
