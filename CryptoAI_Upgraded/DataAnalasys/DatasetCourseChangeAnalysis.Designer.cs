@@ -28,6 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             AnalyzeBut = new Button();
             AnaliseResultDisp = new RichTextBox();
             AnalizeProgressBar = new ProgressBar();
@@ -35,6 +38,9 @@
             networkManagePanel1 = new AI_Training.NeuralNetworks.UI.NetworkManagePanel();
             CheckGuessedDirectionBox = new CheckBox();
             CheckErrorBox = new CheckBox();
+            backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            PredictionsGraphic = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            ((System.ComponentModel.ISupportInitialize)PredictionsGraphic).BeginInit();
             SuspendLayout();
             // 
             // AnalyzeBut
@@ -71,6 +77,7 @@
             datasetsManagerPanel1.onDataChanged = null;
             datasetsManagerPanel1.Size = new Size(278, 152);
             datasetsManagerPanel1.TabIndex = 7;
+            datasetsManagerPanel1.title = "Datasets manager";
             // 
             // networkManagePanel1
             // 
@@ -105,11 +112,28 @@
             CheckErrorBox.Text = "checkErrorValues";
             CheckErrorBox.UseVisualStyleBackColor = true;
             // 
+            // PredictionsGraphic
+            // 
+            chartArea1.Name = "ChartArea1";
+            PredictionsGraphic.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            PredictionsGraphic.Legends.Add(legend1);
+            PredictionsGraphic.Location = new Point(3, 78);
+            PredictionsGraphic.Name = "PredictionsGraphic";
+            series1.ChartArea = "ChartArea1";
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            PredictionsGraphic.Series.Add(series1);
+            PredictionsGraphic.Size = new Size(474, 185);
+            PredictionsGraphic.TabIndex = 11;
+            PredictionsGraphic.Text = "chart1";
+            // 
             // DatasetCourseChangeAnalysis
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(842, 519);
+            Controls.Add(PredictionsGraphic);
             Controls.Add(CheckErrorBox);
             Controls.Add(CheckGuessedDirectionBox);
             Controls.Add(networkManagePanel1);
@@ -119,6 +143,7 @@
             Controls.Add(AnalyzeBut);
             Name = "DatasetCourseChangeAnalysis";
             Text = "DatasetCourseChangeAnalysis";
+            ((System.ComponentModel.ISupportInitialize)PredictionsGraphic).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -132,5 +157,7 @@
         private AI_Training.NeuralNetworks.UI.NetworkManagePanel networkManagePanel1;
         private CheckBox CheckGuessedDirectionBox;
         private CheckBox CheckErrorBox;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.DataVisualization.Charting.Chart PredictionsGraphic;
     }
 }

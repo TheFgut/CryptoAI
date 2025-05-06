@@ -1,20 +1,11 @@
 ﻿using CryptoAI_Upgraded.AI_Training.NeuralNetworks;
-using CryptoAI_Upgraded.AI_Training.NeuralNetworks.UI;
 using CryptoAI_Upgraded.Datasets;
 using CryptoAI_Upgraded.Datasets.DataWalkers;
 using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
-using Microsoft.VisualBasic.Devices;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+using System.Windows.Forms.DataVisualization.Charting;
 using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using static CryptoAI_Upgraded.Helpers;
+using CryptoAI_Upgraded.DataAnalasys;
 
 namespace CryptoAI_Upgraded.DatasetsAnalasys
 {
@@ -52,6 +43,8 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
             Stopwatch timer = Stopwatch.StartNew();
             //datas
             LinkedList<double> errors = new LinkedList<double>();
+            List<double> real = new List<double>();
+            List<double> predict = new List<double>();
             LinkedList<double> guessedDir = new LinkedList<double>();//1-guessed, 0-not guessed
             //metrics
             int analizeStepsAmount = 0;
@@ -74,6 +67,7 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
                     AnaliseResultDisp.Text += $"Step: {predictionResult[0][0]} {predictionResult[1][0]}\n";
                     //getting error metrics and datas
                     double error = 0;
+    
                     for (int i = 0; i < predictionResult[1].Length;i++)
                     {
                         if (predictionResult[1][i] == double.NaN)
@@ -93,8 +87,12 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
                     //    finalPred += predictionResult[0][i];
                     //    finalEx += predictionResult[1][i];
                     //}
-                    finalPred = predictionResult[0][predictionResult[0].Length - 1] - (double)pos.OpenPrice;
-                    finalEx = predictionResult[1][predictionResult[0].Length - 1] - (double)pos.OpenPrice;
+                    double lastReal = predictionResult[0][predictionResult[0].Length - 1];
+                    double lastPred = predictionResult[1][predictionResult[0].Length - 1];
+                    real.Add(lastReal);
+                    predict.Add(lastPred);
+                    finalPred = lastReal - (double)pos.OpenPrice;
+                    finalEx = lastPred - (double)pos.OpenPrice;
                     guessedDir.AddLast(Math.Sign(finalPred) == Math.Sign(finalEx) ? 1 : 0);
                 } while (true);
                 await Task.Yield();
@@ -118,7 +116,9 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
                 AnaliseResultDisp.Text += $"Average error: {averageError}\n";
                 AnaliseResultDisp.Text += $"Guessed dir percent: {guessedDirPercent}%\n";
                 MessageBox.Show($"Analize duration: {timer.ElapsedMilliseconds / 1000f} seconds", "Analize finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
+                double[] sma = MovingAverage.Simple(real.ToArray(), 3);
+                PlotMultipleSeries(new[] { "real" , "predictions", "sma"}, real.ToArray(), predict.ToArray(), sma);
+                new MultiSeriesChartForm(real.ToArray(), predict.ToArray(), sma).Show();
             }));
         }
 
@@ -162,7 +162,7 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
                 predictions.ToArray() };
         }
 
-
+        
         private void AssingModel(NeuralNetwork? model)
         {
             this.neuralNetwork = model;
@@ -174,6 +174,62 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
             {
                 AnalyzeBut.Enabled = true;
             }
+        }
+
+        public void PlotMultipleSeries(string[] labels, params double[][] dataArrays)
+        {
+            if (labels.Length != dataArrays.Length)
+                throw new ArgumentException("Количество меток должно совпадать с количеством массивов данных.");
+
+            // Очистим старые серии и настройки
+            PredictionsGraphic.Series.Clear();
+            PredictionsGraphic.ChartAreas.Clear();
+            PredictionsGraphic.Legends.Clear();
+
+            // Создаем область для построения
+            var area = new ChartArea("MainArea");
+            PredictionsGraphic.ChartAreas.Add(area);
+
+            // Легенда
+            var legend = new Legend("Legend");
+            PredictionsGraphic.Legends.Add(legend);
+
+            // Цвета можно задать заранее или сгенерировать случайно
+            Color[] palette = new[]
+            {
+            Color.Blue, Color.Red, Color.Green, Color.Orange, Color.Purple,
+            Color.Brown, Color.Magenta, Color.Cyan, Color.Lime, Color.Sienna
+            };
+
+            for (int i = 0; i < dataArrays.Length; i++)
+            {
+                var series = new Series(labels[i])
+                {
+                    ChartType = SeriesChartType.Line,
+                    ChartArea = "MainArea",
+                    Legend = "Legend",
+                    BorderWidth = 2,
+                    Color = palette[i % palette.Length]
+                };
+
+                // Добавляем точки в серию
+                var data = dataArrays[i];
+                for (int x = 0; x < data.Length; x++)
+                {
+                    series.Points.AddXY(x, data[x]);
+                }
+
+                PredictionsGraphic.Series.Add(series);
+            }
+
+            // Настройки осей (опционально)
+            area.AxisX.Title = "Індекс";
+            area.AxisY.Title = "Значення";
+            area.AxisY.Minimum = dataArrays.Min(arr => arr.Min());
+            area.AxisY.Maximum = dataArrays.Max(arr => arr.Max());
+            area.AxisY.LabelStyle.Format = "F2";
+            area.AxisX.MajorGrid.LineDashStyle = ChartDashStyle.Dash;
+            area.AxisY.MajorGrid.LineDashStyle = ChartDashStyle.Dash;
         }
     }
 }

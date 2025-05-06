@@ -243,6 +243,49 @@ namespace CryptoAI_Upgraded
             }
         }
 
+        public static class MovingAverage
+        {
+            /// <summary>
+            /// Простая скользящая средняя (SMA).
+            /// Возвращает массив той же длины: до i&lt;period−1 ставит NaN, дальше — среднее за последние period точек.
+            /// </summary>
+            public static double[] Simple(double[] data, int period)
+            {
+                double[] sma = new double[data.Length];
+                double sum = 0;
+                for (int i = 0; i < data.Length; i++)
+                {
+                    sum += data[i];
+                    if (i >= period)
+                        sum -= data[i - period];
+
+                    if (i >= period - 1)
+                        sma[i] = sum / period;
+                    else
+                        sma[i] = data[i];
+                }
+                return sma;
+            }
+
+            /// <summary>
+            /// Экспоненциальная скользящая средняя (EMA).
+            /// alpha = 2 / (period + 1). Начальное значение EMA[0] = data[0].
+            /// </summary>
+            public static double[] Exponential(double[] data, int period)
+            {
+                double[] ema = new double[data.Length];
+                if (data.Length == 0) return ema;
+
+                double alpha = 2.0 / (period + 1);
+                ema[0] = data[0];
+                for (int i = 1; i < data.Length; i++)
+                {
+                    ema[i] = alpha * data[i] + (1 - alpha) * ema[i - 1];
+                }
+                return ema;
+            }
+        }
+
         public static double[,,] ConvertListTo3DArray(List<double[,]> list)
         {
             // Получаем размеры
