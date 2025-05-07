@@ -69,7 +69,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks.UI
 
         }
 
-        private void AssignNetwork(NeuralNetwork? neuralNetwork)
+        public void AssignNetwork(NeuralNetwork? neuralNetwork)
         {
             this.neuralNetwork = neuralNetwork;
             if (neuralNetwork == null)

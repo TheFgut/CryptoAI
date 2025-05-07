@@ -172,6 +172,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             if (trainingSettings.runsCount <= 0) throw new Exception("NeuralNetwork.Train runsCount should be higher than one");
             EarlyStopping earlyStopping = new EarlyStopping(trainingSettings.patienceToStop,
                 trainingSettings.minErrorDeltaToStop);
+            double bestAwerageTestError = double.MaxValue;
             float progress = 0;
             for (int run = 1; run <= trainingSettings.runsCount; run++)
             {
@@ -223,7 +224,6 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                         progress = newProgress;
                         onProgressChange?.Invoke(progress);
                     }
-
                 } while (!trainDataWalker.isFinishedWalking());
                 trainDataWalker.ResetDataWalker();
                 double awgError = errorsSum / walksIterations;
@@ -244,14 +244,23 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                     }
                 }
 
+                double awerageErrorToCheck = analyticsCollector.lastRun.noTestMetrics ? analyticsCollector.lastRun.averageError :
+                    analyticsCollector.lastRun.avarageTestError;
                 if (trainingSettings.stopWhenErrorRising && 
-                    earlyStopping.CheckShouldStop(analyticsCollector.lastRun.noTestMetrics ? analyticsCollector.lastRun.averageError :
-                    analyticsCollector.lastRun.avarageTestError))
+                    earlyStopping.CheckShouldStop(awerageErrorToCheck))
                 {
                     break;
                 }
+                if (bestAwerageTestError > awerageErrorToCheck)
+                {
+                    trainingStatistics = new NetworkTrainingsStats();
+                    trainingStatistics.RecordTrainingData(analyticsCollector);
+                    Save($"{DataPaths.networksPath}\\temporarySavedNetwork", true);
+                    bestAwerageTestError = awerageErrorToCheck;
+                }
                 analyticsCollector.GoNext();
             }
+            trainingStatistics = new NetworkTrainingsStats();
             trainingStatistics.RecordTrainingData(analyticsCollector);
             // Предсказания
             //var predictions = model.Predict(x_train);
@@ -344,8 +353,16 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             return transformedArray;
         }
 
-        public void Save(string path)
+        public void Save(string path, bool everwriteIfExist = false)
         {
+            if (Directory.Exists(path) && Directory.GetFiles(path).Length != 0)
+            {
+                if (File.Exists($"{path}\\config.bson") && everwriteIfExist)
+                {
+                    Directory.Delete(path,true);
+                }
+                else throw new Exception("There is something exist at the directory to save.");
+            }
             model.Save(path);
             loader = new LocalLoaderAndSaverBSON<NNConfigData>(path, "config");
             loader.Save(_neuralData);

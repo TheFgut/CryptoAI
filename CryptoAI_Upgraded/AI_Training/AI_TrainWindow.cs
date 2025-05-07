@@ -23,6 +23,7 @@ namespace CryptoAI_Upgraded.AI_Training
         {
             InitializeComponent();
             networkManagePanel1.onNetworkChanges += AssingModel;
+            LoadBestNetworkBut.Enabled = false;
             AssingModel(null);
             learningDatasets = trainingDatasetsManager.choosedLocalDatasets;
             trainingDatasetsManager.title = "Training datasets";
@@ -95,7 +96,7 @@ namespace CryptoAI_Upgraded.AI_Training
 
                 lossesChart.Series.Clear();
                 DisplayDataOnChart(lossesChart, analyticsCollector.trainingRunsData.Select(r => r.averageError)
-                    .ToArray(), analyticsCollector.runsPassed,"loss awerage error", Color.Yellow);
+                    .ToArray(), analyticsCollector.runsPassed, "loss awerage error", Color.Yellow);
                 DisplayDataOnChart(lossesChart, analyticsCollector.trainingRunsData.Select(r => r.maxError)
                     .ToArray(), analyticsCollector.runsPassed, "loss max error", Color.Red);
                 DisplayDataOnChart(lossesChart, analyticsCollector.trainingRunsData.Select(r => r.minError)
@@ -104,6 +105,7 @@ namespace CryptoAI_Upgraded.AI_Training
                 TestErrorsChart.Series.Clear();
                 DisplayDataOnChart(TestErrorsChart, analyticsCollector.trainingRunsData.Select(r => r.avarageTestError)
                     .ToArray(), analyticsCollector.runsPassed, "test awerage error", Color.Green);
+                LoadBestNetworkBut.Enabled = true;
             }
             catch (Exception ex)
             {
@@ -138,11 +140,7 @@ namespace CryptoAI_Upgraded.AI_Training
             }));
         }
 
-        private async Task Test(CancellationToken token, NNTrainingStats analyticsCollector)
-        {
-
-        }
-        private void DisplayDataOnChart(Chart chart, double[] data,int count, string name, Color color)
+        private void DisplayDataOnChart(Chart chart, double[] data, int count, string name, Color color)
         {
             // Создание и настройка ряда данных
             var series = new Series
@@ -222,6 +220,15 @@ namespace CryptoAI_Upgraded.AI_Training
         private void AI_TrainWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
             trainConfigLoader.Save(trainingConfig);
+        }
+
+        private void LoadBestNetworkBut_Click(object sender, EventArgs e)
+        {
+            NeuralNetwork? network = new NeuralNetwork($"{DataPaths.networksPath}\\temporarySavedNetwork");
+            networkManagePanel1.AssignNetwork(network);
+            
+            MessageBox.Show($"Stats:\n{network.trainingStatistics.lastTrain.ToString()}", "Best network assigned",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

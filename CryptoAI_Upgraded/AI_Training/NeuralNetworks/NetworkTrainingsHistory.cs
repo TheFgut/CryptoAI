@@ -11,6 +11,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
     public class NetworkTrainingsStats
     {
         private NetworkTrainingsStatsData data;
+        public NetworkRunData? lastTrain => data.runs.Count > 0 ? data.runs[data.runs.Count - 1] : null;
 
         public NetworkTrainingsStats()
         {
@@ -43,11 +44,6 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             {
                 data.runs.Add(analyticsCollector.trainingRunsData[i]);
             }
-        }
-
-        public void RecordTestingData(NNTrainingStats analyticsCollector)
-        {
-
         }
 
         public void Save(string path)
@@ -92,7 +88,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         }
         public override string ToString()
         {
-            return $"D:{trainingDatasetIDs.Count} AwgErr:{averageError}";
+            return $"D:{trainingDatasetIDs.Count} AwgTestErr:{avarageTestError}";
         }
 
         public static NetworkRunData Default()

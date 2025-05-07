@@ -28,15 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             StartLearningBut = new Button();
             StopLearningBut = new Button();
             TrainingProgressBar = new ProgressBar();
@@ -51,6 +51,7 @@
             learningSettings = new Button();
             TestErrorsChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             lastPredictionsChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            LoadBestNetworkBut = new Button();
             ((System.ComponentModel.ISupportInitialize)lossesChart).BeginInit();
             ((System.ComponentModel.ISupportInitialize)TestErrorsChart).BeginInit();
             ((System.ComponentModel.ISupportInitialize)lastPredictionsChart).BeginInit();
@@ -85,16 +86,16 @@
             // 
             // lossesChart
             // 
-            chartArea4.Name = "ChartArea1";
-            lossesChart.ChartAreas.Add(chartArea4);
-            legend4.Name = "Legend1";
-            lossesChart.Legends.Add(legend4);
+            chartArea1.Name = "ChartArea1";
+            lossesChart.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            lossesChart.Legends.Add(legend1);
             lossesChart.Location = new Point(12, 12);
             lossesChart.Name = "lossesChart";
-            series4.ChartArea = "ChartArea1";
-            series4.Legend = "Legend1";
-            series4.Name = "Series1";
-            lossesChart.Series.Add(series4);
+            series1.ChartArea = "ChartArea1";
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            lossesChart.Series.Add(series1);
             lossesChart.Size = new Size(454, 134);
             lossesChart.TabIndex = 4;
             lossesChart.Text = "chart1";
@@ -132,7 +133,7 @@
             trainingResultPanel.Location = new Point(12, 450);
             trainingResultPanel.Name = "trainingResultPanel";
             trainingResultPanel.ReadOnly = true;
-            trainingResultPanel.Size = new Size(454, 115);
+            trainingResultPanel.Size = new Size(414, 115);
             trainingResultPanel.TabIndex = 9;
             trainingResultPanel.Text = "";
             // 
@@ -177,41 +178,52 @@
             // 
             // TestErrorsChart
             // 
-            chartArea5.Name = "ChartArea1";
-            TestErrorsChart.ChartAreas.Add(chartArea5);
-            legend5.Name = "Legend1";
-            TestErrorsChart.Legends.Add(legend5);
+            chartArea2.Name = "ChartArea1";
+            TestErrorsChart.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            TestErrorsChart.Legends.Add(legend2);
             TestErrorsChart.Location = new Point(12, 152);
             TestErrorsChart.Name = "TestErrorsChart";
-            series5.ChartArea = "ChartArea1";
-            series5.Legend = "Legend1";
-            series5.Name = "Series1";
-            TestErrorsChart.Series.Add(series5);
+            series2.ChartArea = "ChartArea1";
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            TestErrorsChart.Series.Add(series2);
             TestErrorsChart.Size = new Size(454, 138);
             TestErrorsChart.TabIndex = 15;
             TestErrorsChart.Text = "chart1";
             // 
             // lastPredictionsChart
             // 
-            chartArea6.Name = "ChartArea1";
-            lastPredictionsChart.ChartAreas.Add(chartArea6);
-            legend6.Name = "Legend1";
-            lastPredictionsChart.Legends.Add(legend6);
+            chartArea3.Name = "ChartArea1";
+            lastPredictionsChart.ChartAreas.Add(chartArea3);
+            legend3.Name = "Legend1";
+            lastPredictionsChart.Legends.Add(legend3);
             lastPredictionsChart.Location = new Point(12, 296);
             lastPredictionsChart.Name = "lastPredictionsChart";
-            series6.ChartArea = "ChartArea1";
-            series6.Legend = "Legend1";
-            series6.Name = "Series1";
-            lastPredictionsChart.Series.Add(series6);
+            series3.ChartArea = "ChartArea1";
+            series3.Legend = "Legend1";
+            series3.Name = "Series1";
+            lastPredictionsChart.Series.Add(series3);
             lastPredictionsChart.Size = new Size(454, 148);
             lastPredictionsChart.TabIndex = 16;
             lastPredictionsChart.Text = "chart1";
+            // 
+            // LoadBestNetworkBut
+            // 
+            LoadBestNetworkBut.Location = new Point(432, 450);
+            LoadBestNetworkBut.Name = "LoadBestNetworkBut";
+            LoadBestNetworkBut.Size = new Size(52, 115);
+            LoadBestNetworkBut.TabIndex = 17;
+            LoadBestNetworkBut.Text = "Load best trained net.";
+            LoadBestNetworkBut.UseVisualStyleBackColor = true;
+            LoadBestNetworkBut.Click += LoadBestNetworkBut_Click;
             // 
             // AI_TrainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(875, 669);
+            Controls.Add(LoadBestNetworkBut);
             Controls.Add(lastPredictionsChart);
             Controls.Add(TestErrorsChart);
             Controls.Add(learningSettings);
@@ -252,5 +264,6 @@
         private Button learningSettings;
         private System.Windows.Forms.DataVisualization.Charting.Chart TestErrorsChart;
         private System.Windows.Forms.DataVisualization.Charting.Chart lastPredictionsChart;
+        private Button LoadBestNetworkBut;
     }
 }
