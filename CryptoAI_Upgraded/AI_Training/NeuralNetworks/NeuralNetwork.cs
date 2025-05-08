@@ -170,6 +170,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         {
             if (trainDataWalker == null) throw new Exception("NeuralNetwork.Train dataWalker cant be null");
             if (trainingSettings.runsCount <= 0) throw new Exception("NeuralNetwork.Train runsCount should be higher than one");
+            NetworkTrainingsStats originalStatistics = trainingStatistics;
             EarlyStopping earlyStopping = new EarlyStopping(trainingSettings.patienceToStop,
                 trainingSettings.minErrorDeltaToStop);
             double bestAwerageTestError = double.MaxValue;
@@ -253,14 +254,14 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                 }
                 if (bestAwerageTestError > awerageErrorToCheck)
                 {
-                    trainingStatistics = new NetworkTrainingsStats();
+                    trainingStatistics = (NetworkTrainingsStats)originalStatistics.Clone();
                     trainingStatistics.RecordTrainingData(analyticsCollector);
                     Save($"{DataPaths.networksPath}\\temporarySavedNetwork", true);
                     bestAwerageTestError = awerageErrorToCheck;
                 }
                 analyticsCollector.GoNext();
             }
-            trainingStatistics = new NetworkTrainingsStats();
+            trainingStatistics = originalStatistics;
             trainingStatistics.RecordTrainingData(analyticsCollector);
             // Предсказания
             //var predictions = model.Predict(x_train);

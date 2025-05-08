@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 {
-    public class NetworkTrainingsStats
+    public class NetworkTrainingsStats : ICloneable
     {
         private NetworkTrainingsStatsData data;
         public NetworkRunData? lastTrain => data.runs.Count > 0 ? data.runs[data.runs.Count - 1] : null;
@@ -16,6 +16,11 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         public NetworkTrainingsStats()
         {
             data = new NetworkTrainingsStatsData();
+        }
+
+        protected NetworkTrainingsStats(NetworkTrainingsStatsData data)
+        {
+            this.data = data;
         }
 
         public NetworkTrainingsStats(string path)
@@ -57,6 +62,12 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         {
             return data.runs.ToArray();
         }
+
+        public object Clone()
+        {
+            NetworkTrainingsStats statistics = new NetworkTrainingsStats(data.Clone());
+            return statistics;
+        }
     }
 
     public class NetworkTrainingsStatsData
@@ -68,6 +79,14 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         {
             if (runs == null) runs = new List<NetworkRunData>();
             if (testRuns == null) testRuns = new Dictionary<int, NetworkRunData>();
+        }
+
+        public NetworkTrainingsStatsData Clone()
+        {
+            NetworkTrainingsStatsData clone = new NetworkTrainingsStatsData();
+            clone.runs = new(runs);
+            clone.testRuns = new(testRuns);
+            return clone;
         }
     }
 
