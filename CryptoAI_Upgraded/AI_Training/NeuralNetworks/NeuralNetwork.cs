@@ -226,7 +226,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                         onProgressChange?.Invoke(progress);
                     }
                 } while (!trainDataWalker.isFinishedWalking());
-                trainDataWalker.ResetDataWalker(run - ((int)Math.Floor((double)(run/batchesCount))));
+                trainDataWalker.ResetDataWalker();
                 double awgError = errorsSum / walksIterations;
                 analyticsCollector.RecordAwerageError(awgError);
                 analyticsCollector.RecordMinError(minError);
