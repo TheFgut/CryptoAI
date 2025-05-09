@@ -189,7 +189,8 @@ public enum ActivationFunc
     tanh,
     relu,
     sigmoid,
-    linear
+    linear,
+    leaky_relu
 }
 
 public enum LayerType

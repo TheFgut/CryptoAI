@@ -78,7 +78,7 @@ namespace CryptoAI_Upgraded.AI_Training
                 LSTMDataWalker? testDataWalker = testingDatasets.Count == 0 ? null :
                     new LSTMDataWalker(testingDatasets, neuralNetwork.networkConfig);
 
-                await neuralNetwork.TrainLSTMNetwork(dataWalker, 16, analyticsCollector,
+                await neuralNetwork.TrainLSTMNetwork(dataWalker, 8, analyticsCollector,
                     (progressValue) =>
                     {
                         int progressValueInt = (int)(progressValue * 100);

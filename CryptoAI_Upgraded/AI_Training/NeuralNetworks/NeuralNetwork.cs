@@ -92,7 +92,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         {
             string? activationString = config.activation == ActivationFunc.linear ? null : config.activation.ToString();
             return new LSTM(config.neuronsCount, input_shape: inputShape, activation: activationString, return_sequences: returnSequences
-                , bias_initializer: "ones", recurrent_activation: "sigmoid", dropout: dropout);
+                , bias_initializer: "ones", recurrent_activation: ActivationFunc.sigmoid.ToString(), dropout: dropout);//do not change reccucrent activation to prevent gradient explosion
             //kernel_initializer: "orthogonal",
             //,  recurrent_initializer: "orthogonal",
             //      
@@ -226,7 +226,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                         onProgressChange?.Invoke(progress);
                     }
                 } while (!trainDataWalker.isFinishedWalking());
-                trainDataWalker.ResetDataWalker();
+                trainDataWalker.ResetDataWalker(run - ((int)Math.Floor((double)(run/batchesCount))));
                 double awgError = errorsSum / walksIterations;
                 analyticsCollector.RecordAwerageError(awgError);
                 analyticsCollector.RecordMinError(minError);
@@ -256,6 +256,10 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 
                 double awerageErrorToCheck = analyticsCollector.lastRun.noTestMetrics ? analyticsCollector.lastRun.averageError :
                     analyticsCollector.lastRun.avarageTestError;
+                if (double.IsNaN(awerageErrorToCheck))
+                {
+                    throw new Exception("Something went wrong. Awerage error is now NaN");
+                }
                 if (trainingSettings.stopWhenErrorRising && 
                     earlyStopping.CheckShouldStop(awerageErrorToCheck))
                 {

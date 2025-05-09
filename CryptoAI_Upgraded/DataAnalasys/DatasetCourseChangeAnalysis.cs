@@ -59,8 +59,8 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
 
                 do
                 {
-                    KLine pos = dataWalker.position;
                     List<double[]>? predictionResult = Walk(dataWalker, predictionsLength);
+                    KLine pos = dataWalker.position;
 
                     if (predictionResult == null) break;
                     analizeStepsAmount++;
@@ -93,7 +93,7 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
                     predict.Add(lastPred);
                     finalPred = lastReal - (double)pos.OpenPrice;
                     finalEx = lastPred - (double)pos.OpenPrice;
-                    guessedDir.AddLast(Math.Sign(finalPred) == Math.Sign(finalEx) ? 1 : 0);
+                    guessedDir.AddLast(getDirection(finalPred) == getDirection(finalEx) ? 1 : 0);
                 } while (true);
                 await Task.Yield();
                 averageError = errors.Average();
@@ -162,7 +162,6 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
                 predictions.ToArray() };
         }
 
-        
         private void AssingModel(NeuralNetwork? model)
         {
             this.neuralNetwork = model;
@@ -230,6 +229,12 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
             area.AxisY.LabelStyle.Format = "F2";
             area.AxisX.MajorGrid.LineDashStyle = ChartDashStyle.Dash;
             area.AxisY.MajorGrid.LineDashStyle = ChartDashStyle.Dash;
+        }
+
+        private int getDirection(double dir)
+        {
+            double neutralCoef = 0.003;
+            return Math.Abs(dir) < neutralCoef ? 0 : Math.Sign(dir);
         }
     }
 }
