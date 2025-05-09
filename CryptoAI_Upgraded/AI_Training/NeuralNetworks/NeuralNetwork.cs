@@ -218,8 +218,8 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                         cancellationToken.ThrowIfCancellationRequested();
                     }
                     await Task.Delay(10);
-                    float newProgress = (float)(Math.Floor((((run-1) + trainDataWalker.walkingProgress) / 
-                        (float)trainingSettings.runsCount) *100)/100);//to do check run progress
+                    float newProgress = (float)(Math.Floor((((run-1) + trainDataWalker.walkingProgress * 0.8) / 
+                        (float)trainingSettings.runsCount) *100)/100);
                     if(newProgress != progress)
                     {
                         progress = newProgress;
@@ -235,7 +235,16 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                 {
                     try
                     {
-                        await TestLSTMNetwork(testDataWalker, analyticsCollector, null, new CancellationToken());
+                        await TestLSTMNetwork(testDataWalker, analyticsCollector, (progress) =>
+                        {
+                            float newProgress = (float)(Math.Floor((((run - 1) + 0.8 + progress * 0.2) /
+                                (float)trainingSettings.runsCount) * 100) / 100);
+                            if (newProgress != progress)
+                            {
+                                progress = newProgress;
+                                onProgressChange?.Invoke(progress);
+                            }
+                        }, new CancellationToken());
                         testDataWalker?.ResetDataWalker();
                     }
                     catch (Exception ex)
@@ -308,13 +317,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                     cancellationToken.ThrowIfCancellationRequested();
                 }
                 await Task.Delay(10);
-                //float newProgress = (float)(Math.Floor((((run - 1) + dataWalker.walkingProgress) / (float)runsCount) * 100) / 100);//to do check run progress
-                //if (newProgress != progress)
-                //{
-                //    progress = newProgress;
-                //    onProgressChange?.Invoke(progress);
-                //}
-
+                onProgressChange?.Invoke(dataWalker.walkingProgress);
             } while (!dataWalker.isFinishedWalking());
             analyticsCollector.RecordTestMetrics(predictionsErrorSum / walkSteps, minError, maxError);
         }

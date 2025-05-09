@@ -13,7 +13,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         public int runsCount { get; private set; }
 
         private int currentRecordingNum;
-        public int runsPassed => currentRecordingNum;
+        public int runsPassed => currentRecordingNum + 1;
 
         public NetworkRunData lastRun => trainingRunsData[currentRecordingNum];
         public NNTrainingStats(int runsCount, List<DatasetID> datasetIds) 
