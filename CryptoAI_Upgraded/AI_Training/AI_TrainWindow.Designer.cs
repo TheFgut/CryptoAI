@@ -52,6 +52,9 @@
             TestErrorsChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             lastPredictionsChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             LoadBestNetworkBut = new Button();
+            label1 = new Label();
+            batchesCountTextBox = new TextBox();
+            label2 = new Label();
             ((System.ComponentModel.ISupportInitialize)lossesChart).BeginInit();
             ((System.ComponentModel.ISupportInitialize)TestErrorsChart).BeginInit();
             ((System.ComponentModel.ISupportInitialize)lastPredictionsChart).BeginInit();
@@ -61,7 +64,7 @@
             // 
             StartLearningBut.Location = new Point(12, 610);
             StartLearningBut.Name = "StartLearningBut";
-            StartLearningBut.Size = new Size(75, 23);
+            StartLearningBut.Size = new Size(108, 23);
             StartLearningBut.TabIndex = 0;
             StartLearningBut.Text = "Start";
             StartLearningBut.UseVisualStyleBackColor = true;
@@ -69,9 +72,9 @@
             // 
             // StopLearningBut
             // 
-            StopLearningBut.Location = new Point(93, 610);
+            StopLearningBut.Location = new Point(126, 610);
             StopLearningBut.Name = "StopLearningBut";
-            StopLearningBut.Size = new Size(75, 23);
+            StopLearningBut.Size = new Size(100, 23);
             StopLearningBut.TabIndex = 1;
             StopLearningBut.Text = "Stop";
             StopLearningBut.UseVisualStyleBackColor = true;
@@ -104,7 +107,7 @@
             // 
             runsCountBox.Location = new Point(12, 581);
             runsCountBox.Name = "runsCountBox";
-            runsCountBox.Size = new Size(156, 23);
+            runsCountBox.Size = new Size(108, 23);
             runsCountBox.TabIndex = 5;
             runsCountBox.Text = "10";
             runsCountBox.Validated += runsCountBox_Validated;
@@ -133,7 +136,7 @@
             trainingResultPanel.Location = new Point(12, 450);
             trainingResultPanel.Name = "trainingResultPanel";
             trainingResultPanel.ReadOnly = true;
-            trainingResultPanel.Size = new Size(414, 115);
+            trainingResultPanel.Size = new Size(414, 101);
             trainingResultPanel.TabIndex = 9;
             trainingResultPanel.Text = "";
             // 
@@ -159,7 +162,7 @@
             // 
             // richTextBox1
             // 
-            richTextBox1.Location = new Point(174, 581);
+            richTextBox1.Location = new Point(232, 581);
             richTextBox1.Name = "richTextBox1";
             richTextBox1.ReadOnly = true;
             richTextBox1.Size = new Size(252, 52);
@@ -168,7 +171,7 @@
             // 
             // learningSettings
             // 
-            learningSettings.Location = new Point(432, 581);
+            learningSettings.Location = new Point(489, 581);
             learningSettings.Name = "learningSettings";
             learningSettings.Size = new Size(52, 52);
             learningSettings.TabIndex = 14;
@@ -218,11 +221,40 @@
             LoadBestNetworkBut.UseVisualStyleBackColor = true;
             LoadBestNetworkBut.Click += LoadBestNetworkBut_Click;
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(12, 563);
+            label1.Name = "label1";
+            label1.Size = new Size(73, 15);
+            label1.TabIndex = 18;
+            label1.Text = "Trains.Count";
+            // 
+            // batchesCountTextBox
+            // 
+            batchesCountTextBox.Location = new Point(126, 581);
+            batchesCountTextBox.Name = "batchesCountTextBox";
+            batchesCountTextBox.Size = new Size(100, 23);
+            batchesCountTextBox.TabIndex = 19;
+            batchesCountTextBox.Validated += batchesCountTextBox_Validated;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(126, 563);
+            label2.Name = "label2";
+            label2.Size = new Size(84, 15);
+            label2.TabIndex = 20;
+            label2.Text = "Batches.Count";
+            // 
             // AI_TrainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(875, 669);
+            Controls.Add(label2);
+            Controls.Add(batchesCountTextBox);
+            Controls.Add(label1);
             Controls.Add(LoadBestNetworkBut);
             Controls.Add(lastPredictionsChart);
             Controls.Add(TestErrorsChart);
@@ -265,5 +297,8 @@
         private System.Windows.Forms.DataVisualization.Charting.Chart TestErrorsChart;
         private System.Windows.Forms.DataVisualization.Charting.Chart lastPredictionsChart;
         private Button LoadBestNetworkBut;
+        private Label label1;
+        private TextBox batchesCountTextBox;
+        private Label label2;
     }
 }

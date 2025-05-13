@@ -9,6 +9,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
     public class TrainingConfigData
     {
         public int runsCount {  get; set; }
+        public int batchesCount {  get; set; }
         public bool stopWhenErrorRising {  get; set; }
         public double minErrorDeltaToStop {  get; set; }
         public int patienceToStop { get; set; }
@@ -22,6 +23,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                 def.stopWhenErrorRising = true;
                 def.minErrorDeltaToStop = 0.01;
                 def.patienceToStop = 3;
+                def.batchesCount = 16;
                 return def;
             }
         }

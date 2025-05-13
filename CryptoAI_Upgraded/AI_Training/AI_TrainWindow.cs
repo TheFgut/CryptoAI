@@ -41,6 +41,7 @@ namespace CryptoAI_Upgraded.AI_Training
         public void InitConfiguration()
         {
             runsCountBox.Text = trainingConfig.runsCount.ToString();
+            batchesCountTextBox.Text = trainingConfig.batchesCount.ToString();
             SavableConfig testDatasetsConfig = new SavableConfig(DataPaths.appConfigurationPath, "testDatasetsConfig");
             testingDatasetsManager.InitFromConfig(testDatasetsConfig);
             SavableConfig trainingDatasetsConfig = new SavableConfig(DataPaths.appConfigurationPath, "trainingDatasetsConfig");
@@ -78,7 +79,7 @@ namespace CryptoAI_Upgraded.AI_Training
                 LSTMDataWalker? testDataWalker = testingDatasets.Count == 0 ? null :
                     new LSTMDataWalker(testingDatasets, neuralNetwork.networkConfig);
 
-                await neuralNetwork.TrainLSTMNetwork(dataWalker, 8, analyticsCollector,
+                await neuralNetwork.TrainLSTMNetwork(dataWalker, trainingConfig.batchesCount, analyticsCollector,
                     (progressValue) =>
                     {
                         int progressValueInt = (int)(progressValue * 100);
@@ -186,20 +187,6 @@ namespace CryptoAI_Upgraded.AI_Training
             }
         }
 
-        private void runsCountBox_Validated(object sender, EventArgs e)
-        {
-            int result;
-            if (!int.TryParse(runsCountBox.Text, out result))
-            {
-                MessageBox.Show($"Your input: \"{runsCountBox.Text}\" is incorrect. Please write a number", "IputError",
-                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                runsCountBox.Text = trainingConfig.runsCount.ToString();
-                return;
-            }
-            trainingConfig.runsCount = result;
-            trainConfigLoader.Save(trainingConfig);
-        }
-
         private void ActivateAllButs()
         {
             StartLearningBut.Enabled = true;
@@ -226,9 +213,46 @@ namespace CryptoAI_Upgraded.AI_Training
         {
             NeuralNetwork? network = new NeuralNetwork($"{DataPaths.networksPath}\\temporarySavedNetwork");
             networkManagePanel1.AssignNetwork(network);
-            
+
             MessageBox.Show($"Stats:\n{network.trainingStatistics.lastTrain.ToString()}", "Best network assigned",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
+        #region validation
+
+        private void runsCountBox_Validated(object sender, EventArgs e)
+        {
+            int result;
+            if (!int.TryParse(runsCountBox.Text, out result))
+            {
+                MessageBox.Show($"Your input: \"{runsCountBox.Text}\" is incorrect. Please write a number", "IputError",
+                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                runsCountBox.Text = trainingConfig.runsCount.ToString();
+                return;
+            }
+            trainingConfig.runsCount = result;
+            trainConfigLoader.Save(trainingConfig);
+        }
+
+        private void batchesCountTextBox_Validated(object sender, EventArgs e)
+        {
+            int result;
+            if (!int.TryParse(batchesCountTextBox.Text, out result))
+            {
+                MessageBox.Show($"Your input: \"{batchesCountTextBox.Text}\" is incorrect. Please write a number", "IputError",
+                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                batchesCountTextBox.Text = trainingConfig.batchesCount.ToString();
+                return;
+            }
+            if(result <= 0)
+            {
+                MessageBox.Show($"Your input: \"{batchesCountTextBox.Text}\" is incorrect. Batches count can`t be less than 1", "IputError",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                batchesCountTextBox.Text = trainingConfig.batchesCount.ToString();
+                return;
+            }
+            trainingConfig.batchesCount = result;
+            trainConfigLoader.Save(trainingConfig);
+        }
+        #endregion
     }
 }
