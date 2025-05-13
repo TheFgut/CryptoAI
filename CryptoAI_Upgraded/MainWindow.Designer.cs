@@ -29,13 +29,11 @@
         private void InitializeComponent()
         {
             OpenLoadDataWindowBut = new Button();
-            displayDataBut = new Button();
-            LoadLocalDatasetsBut = new Button();
-            DisplayGraphics = new Button();
             AnalyzeCourseChangeBut = new Button();
             trainAI_But = new Button();
             AIPredictorBut = new Button();
             NormalizeDatasetBut = new Button();
+            CloudServiceBut = new Button();
             SuspendLayout();
             // 
             // OpenLoadDataWindowBut
@@ -48,49 +46,19 @@
             OpenLoadDataWindowBut.UseVisualStyleBackColor = true;
             OpenLoadDataWindowBut.Click += OpenLoadDataWindowBut_Click;
             // 
-            // displayDataBut
-            // 
-            displayDataBut.Location = new Point(12, 403);
-            displayDataBut.Name = "displayDataBut";
-            displayDataBut.Size = new Size(140, 23);
-            displayDataBut.TabIndex = 1;
-            displayDataBut.Text = "display data";
-            displayDataBut.UseVisualStyleBackColor = true;
-            displayDataBut.Click += displayDataBut_Click;
-            // 
-            // LoadLocalDatasetsBut
-            // 
-            LoadLocalDatasetsBut.Location = new Point(633, 12);
-            LoadLocalDatasetsBut.Name = "LoadLocalDatasetsBut";
-            LoadLocalDatasetsBut.Size = new Size(133, 23);
-            LoadLocalDatasetsBut.TabIndex = 3;
-            LoadLocalDatasetsBut.Text = "Load local datasets";
-            LoadLocalDatasetsBut.UseVisualStyleBackColor = true;
-            LoadLocalDatasetsBut.Click += LoadLocalDatasetsBut_Click;
-            // 
-            // DisplayGraphics
-            // 
-            DisplayGraphics.Location = new Point(524, 12);
-            DisplayGraphics.Name = "DisplayGraphics";
-            DisplayGraphics.Size = new Size(103, 23);
-            DisplayGraphics.TabIndex = 4;
-            DisplayGraphics.Text = "DisplayGraphics";
-            DisplayGraphics.UseVisualStyleBackColor = true;
-            DisplayGraphics.Click += DisplayGraphics_Click;
-            // 
             // AnalyzeCourseChangeBut
             // 
-            AnalyzeCourseChangeBut.Location = new Point(370, 12);
+            AnalyzeCourseChangeBut.Location = new Point(263, 12);
             AnalyzeCourseChangeBut.Name = "AnalyzeCourseChangeBut";
             AnalyzeCourseChangeBut.Size = new Size(148, 23);
             AnalyzeCourseChangeBut.TabIndex = 5;
-            AnalyzeCourseChangeBut.Text = "AnalizeCourseChange";
+            AnalyzeCourseChangeBut.Text = "Analize network";
             AnalyzeCourseChangeBut.UseVisualStyleBackColor = true;
             AnalyzeCourseChangeBut.Click += AnalyzeCourseChangeBut_Click;
             // 
             // trainAI_But
             // 
-            trainAI_But.Location = new Point(265, 12);
+            trainAI_But.Location = new Point(158, 12);
             trainAI_But.Name = "trainAI_But";
             trainAI_But.Size = new Size(99, 23);
             trainAI_But.TabIndex = 6;
@@ -100,7 +68,7 @@
             // 
             // AIPredictorBut
             // 
-            AIPredictorBut.Location = new Point(265, 41);
+            AIPredictorBut.Location = new Point(158, 41);
             AIPredictorBut.Name = "AIPredictorBut";
             AIPredictorBut.Size = new Size(99, 23);
             AIPredictorBut.TabIndex = 7;
@@ -114,25 +82,32 @@
             NormalizeDatasetBut.Name = "NormalizeDatasetBut";
             NormalizeDatasetBut.Size = new Size(140, 23);
             NormalizeDatasetBut.TabIndex = 8;
-            NormalizeDatasetBut.Text = "DatasetsNormalization";
+            NormalizeDatasetBut.Text = "Datasets normalizer";
             NormalizeDatasetBut.UseVisualStyleBackColor = true;
             NormalizeDatasetBut.Click += NormalizeDatasetBut_Click;
             // 
-            // Form1
+            // CloudServiceBut
+            // 
+            CloudServiceBut.Location = new Point(263, 41);
+            CloudServiceBut.Name = "CloudServiceBut";
+            CloudServiceBut.Size = new Size(148, 23);
+            CloudServiceBut.TabIndex = 9;
+            CloudServiceBut.Text = "Cloud service";
+            CloudServiceBut.UseVisualStyleBackColor = true;
+            // 
+            // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(420, 78);
+            Controls.Add(CloudServiceBut);
             Controls.Add(NormalizeDatasetBut);
             Controls.Add(AIPredictorBut);
             Controls.Add(trainAI_But);
             Controls.Add(AnalyzeCourseChangeBut);
-            Controls.Add(DisplayGraphics);
-            Controls.Add(LoadLocalDatasetsBut);
-            Controls.Add(displayDataBut);
             Controls.Add(OpenLoadDataWindowBut);
-            Name = "Form1";
-            Text = "Form1";
+            Name = "MainWindow";
+            Text = "CryptoAnalizer";
             Shown += Form1_Shown;
             ResumeLayout(false);
         }
@@ -140,12 +115,10 @@
         #endregion
 
         private Button OpenLoadDataWindowBut;
-        private Button displayDataBut;
-        private Button LoadLocalDatasetsBut;
-        private Button DisplayGraphics;
         private Button AnalyzeCourseChangeBut;
         private Button trainAI_But;
         private Button AIPredictorBut;
         private Button NormalizeDatasetBut;
+        private Button CloudServiceBut;
     }
 }

@@ -37,6 +37,7 @@
             // 
             // LoadDatasetsBut
             // 
+            LoadDatasetsBut.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             LoadDatasetsBut.Location = new Point(29, 391);
             LoadDatasetsBut.Name = "LoadDatasetsBut";
             LoadDatasetsBut.Size = new Size(264, 23);
@@ -47,6 +48,7 @@
             // 
             // SelectedDatasetsDisp
             // 
+            SelectedDatasetsDisp.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             SelectedDatasetsDisp.FormattingEnabled = true;
             SelectedDatasetsDisp.ItemHeight = 15;
             SelectedDatasetsDisp.Location = new Point(29, 24);
@@ -56,6 +58,7 @@
             // 
             // RemoveSelectedElementBut
             // 
+            RemoveSelectedElementBut.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             RemoveSelectedElementBut.Enabled = false;
             RemoveSelectedElementBut.Location = new Point(29, 362);
             RemoveSelectedElementBut.Name = "RemoveSelectedElementBut";
@@ -67,6 +70,7 @@
             // 
             // RemoveAllElementsBut
             // 
+            RemoveAllElementsBut.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             RemoveAllElementsBut.Location = new Point(218, 362);
             RemoveAllElementsBut.Name = "RemoveAllElementsBut";
             RemoveAllElementsBut.Size = new Size(75, 23);
@@ -77,6 +81,7 @@
             // 
             // countDisp
             // 
+            countDisp.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             countDisp.BackColor = SystemColors.ButtonFace;
             countDisp.Location = new Point(29, 420);
             countDisp.Name = "countDisp";

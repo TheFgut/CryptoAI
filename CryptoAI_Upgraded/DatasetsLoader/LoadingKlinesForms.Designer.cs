@@ -35,6 +35,7 @@
             label2 = new Label();
             toDate = new DateTimePicker();
             TimeIntervalBox = new ComboBox();
+            PairComboBox = new ComboBox();
             SuspendLayout();
             // 
             // LoadBut
@@ -95,11 +96,20 @@
             TimeIntervalBox.Size = new Size(200, 23);
             TimeIntervalBox.TabIndex = 8;
             // 
+            // PairComboBox
+            // 
+            PairComboBox.FormattingEnabled = true;
+            PairComboBox.Location = new Point(22, 187);
+            PairComboBox.Name = "PairComboBox";
+            PairComboBox.Size = new Size(200, 23);
+            PairComboBox.TabIndex = 9;
+            // 
             // LoadingKlinesForms
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(479, 290);
+            Controls.Add(PairComboBox);
             Controls.Add(TimeIntervalBox);
             Controls.Add(toDate);
             Controls.Add(label2);
@@ -107,7 +117,6 @@
             Controls.Add(fromDate);
             Controls.Add(display);
             Controls.Add(LoadBut);
-            FormBorderStyle = FormBorderStyle.FixedSingle;
             Name = "LoadingKlinesForms";
             Text = "LoadingKlinesForms";
             ResumeLayout(false);
@@ -123,5 +132,6 @@
         private Label label2;
         private DateTimePicker toDate;
         private ComboBox TimeIntervalBox;
+        private ComboBox PairComboBox;
     }
 }

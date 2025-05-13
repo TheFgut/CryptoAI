@@ -32,6 +32,9 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating
             PriceDeltaCheckBox.Checked = config.GetBool("PreceDelta");
             CandleTypeCheckBox.Checked = config.GetBool("CandleType");
             VolatilityCheckBox.Checked = config.GetBool("Volatility");
+            WMA7CheckBox.Checked = config.GetBool("WMA7");
+            WMA25CheckBox.Checked = config.GetBool("WMA25");
+            WMA99CheckBox.Checked = config.GetBool("WMA99");
 
             InputsCountBox.Text = config.GetStrinOrDefault("InputsCount", "1");
             TimeFragmentsBox.Text = config.GetStrinOrDefault("TimeFragments", "6");
@@ -49,6 +52,9 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating
             config.SetBool("PreceDelta", PriceDeltaCheckBox.Checked);
             config.SetBool("CandleType", CandleTypeCheckBox.Checked);
             config.SetBool("Volatility", VolatilityCheckBox.Checked);
+            config.SetBool("WMA7", WMA7CheckBox.Checked);
+            config.SetBool("WMA25", WMA25CheckBox.Checked);
+            config.SetBool("WMA99", WMA99CheckBox.Checked);
 
             config.SetString("InputsCount", InputsCountBox.Text);
             config.SetString("TimeFragments", TimeFragmentsBox.Text);
@@ -136,6 +142,9 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating
             if (PriceDeltaCheckBox.Checked) features.Add(FeatureType.PriceDelta);
             if (CandleTypeCheckBox.Checked) features.Add(FeatureType.CandleType);
             if (VolatilityCheckBox.Checked) features.Add (FeatureType.Volatility);
+            if (WMA7CheckBox.Checked) features.Add(FeatureType.WMA7);
+            if (WMA25CheckBox.Checked) features.Add(FeatureType.WMA25);
+            if (WMA99CheckBox.Checked) features.Add(FeatureType.WMA99);
             if (features.Count == 0)
             {
                 MessageBox.Show($"Network creation failed. Choose at least one input feature", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -213,5 +222,8 @@ public enum FeatureType
     /// is going up - 1 or down - 0
     /// </summary>
     CandleType,
-    Volatility
+    Volatility,
+    WMA7,
+    WMA25,
+    WMA99
 }

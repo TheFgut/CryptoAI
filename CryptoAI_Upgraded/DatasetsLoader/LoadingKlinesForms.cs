@@ -1,12 +1,7 @@
 ﻿using Binance.Net.Clients;
 using Binance.Net.Enums;
-using Binance.Net.Interfaces;
 using CryptoAI_Upgraded.DataSaving;
 using CryptoAI_Upgraded.Datasets;
-using CryptoExchange.Net.Requests;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Bson;
-using System.Windows.Forms;
 
 namespace CryptoAI_Upgraded
 {
@@ -18,6 +13,7 @@ namespace CryptoAI_Upgraded
             display.Text = Application.CommonAppDataPath;
             TimeIntervalBox.DataSource = Enum.GetValues(typeof(KlineInterval));
             TimeIntervalBox.SelectedIndex = 1;
+            PairComboBox.DataSource = Enum.GetValues(typeof(Pair));
         }
 
         private async void LoadBut_Click(object sender, EventArgs e)
@@ -32,7 +28,9 @@ namespace CryptoAI_Upgraded
                 return;
             }
 
-            await LoadDataset(fromDateData, toDateData, "ETHUSDT", (KlineInterval)TimeIntervalBox.SelectedItem);
+            Pair? selectedPair = (Pair?)PairComboBox.SelectedItem;
+            await LoadDataset(fromDateData, toDateData, selectedPair == null ? Pair.ETHUSDT.ToString() :
+                selectedPair.ToString(), (KlineInterval)TimeIntervalBox.SelectedItem);
         }
 
         private async Task LoadDataset(DateTime from, DateTime to, string pair, KlineInterval interval)
@@ -88,4 +86,10 @@ namespace CryptoAI_Upgraded
 
         }
     }
+}
+
+public enum Pair
+{
+    ETHUSDT,
+    BTCUSDT
 }

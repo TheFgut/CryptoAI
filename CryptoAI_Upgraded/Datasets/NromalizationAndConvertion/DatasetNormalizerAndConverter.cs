@@ -1,4 +1,5 @@
-﻿using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
+﻿using CryptoAI_Upgraded.Datasets.DataWalkers;
+using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,17 @@ namespace CryptoAI_Upgraded.Datasets.NromalizationAndConvertion
 {
     public class DatasetNormalizerAndConverter
     {
+        private WeightedMovingAverageWalker WMA7;
+        private WeightedMovingAverageWalker WMA25;
+        private WeightedMovingAverageWalker WMA99;
+
+        public DatasetNormalizerAndConverter()
+        {
+            WMA7 = new WeightedMovingAverageWalker(7);
+            WMA25 = new WeightedMovingAverageWalker(25);
+            WMA99 = new WeightedMovingAverageWalker(99);
+        }
+
         public void Convert(List<LocalKlinesDataset> datasets, string savePath)
         {
             if (datasets == null || datasets.Count == 0)
@@ -70,6 +82,9 @@ namespace CryptoAI_Upgraded.Datasets.NromalizationAndConvertion
                     data.HighPrice = Helpers.Normalization.Normalize(data.HighPrice, lowestPrice, highestPrice);
                     data.QuoteVolume = Helpers.Normalization.Normalize(data.QuoteVolume, quteVolumeMin, quteVolumeMax);
                     data.TradeCount = Helpers.Normalization.Normalize(data.TradeCount, tradeCountMin, traddeCountMax);
+                    data.WMA7 = WMA7.Next((double)data.ClosePrice);
+                    data.WMA25 = WMA25.Next((double)data.ClosePrice);
+                    data.WMA99 = WMA99.Next((double)data.ClosePrice);
                 }
                 string fileSavePath = $"{savePath}\\{dataset.fileName}.bson";
                 dataset.SaveToAnotherLocation(fileSavePath);

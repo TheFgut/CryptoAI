@@ -278,6 +278,40 @@ namespace CryptoAI_Upgraded
                 }
                 return ema;
             }
+
+            /// <summary>
+            /// Взвешенная скользящая средняя (WMA).
+            /// Возвращает массив той же длины: до i &lt; period–1 ставит NaN, дальше — WMA за последние period точек.
+            /// </summary>
+            public static double[] Weighted(double[] data, int period)
+            {
+                int n = data.Length;
+                double[] wma = new double[n];
+                double weightSum = period * (period + 1) / 2.0;
+
+                for (int i = 0; i < n; i++)
+                {
+                    if (i < period - 1)
+                    {
+                        wma[i] = double.NaN;
+                        continue;
+                    }
+
+                    double weightedSum = 0;
+                    // j=0 — самая новая точка (i), вес = period;
+                    // j=period−1 — самая старая точка (i−period+1), вес = 1
+                    for (int j = 0; j < period; j++)
+                    {
+                        double value = data[i - j];
+                        double weight = period - j;
+                        weightedSum += value * weight;
+                    }
+
+                    wma[i] = weightedSum / weightSum;
+                }
+
+                return wma;
+            }
         }
 
         public static double[,,] ConvertListTo3DArray(List<double[,]> list)

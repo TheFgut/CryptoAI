@@ -48,6 +48,9 @@
             PriceDeltaCheckBox = new CheckBox();
             CandleTypeCheckBox = new CheckBox();
             VolatilityCheckBox = new CheckBox();
+            WMA7CheckBox = new CheckBox();
+            WMA25CheckBox = new CheckBox();
+            WMA99CheckBox = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)LayersGrid).BeginInit();
             SuspendLayout();
             // 
@@ -264,11 +267,53 @@
             VolatilityCheckBox.Text = "Volatility";
             VolatilityCheckBox.UseVisualStyleBackColor = true;
             // 
+            // WMA7CheckBox
+            // 
+            WMA7CheckBox.AutoSize = true;
+            WMA7CheckBox.Checked = true;
+            WMA7CheckBox.CheckState = CheckState.Checked;
+            WMA7CheckBox.Font = new Font("Segoe UI", 14F);
+            WMA7CheckBox.Location = new Point(674, 247);
+            WMA7CheckBox.Name = "WMA7CheckBox";
+            WMA7CheckBox.Size = new Size(88, 29);
+            WMA7CheckBox.TabIndex = 20;
+            WMA7CheckBox.Text = "WMA7";
+            WMA7CheckBox.UseVisualStyleBackColor = true;
+            // 
+            // WMA25CheckBox
+            // 
+            WMA25CheckBox.AutoSize = true;
+            WMA25CheckBox.Checked = true;
+            WMA25CheckBox.CheckState = CheckState.Checked;
+            WMA25CheckBox.Font = new Font("Segoe UI", 14F);
+            WMA25CheckBox.Location = new Point(674, 282);
+            WMA25CheckBox.Name = "WMA25CheckBox";
+            WMA25CheckBox.Size = new Size(98, 29);
+            WMA25CheckBox.TabIndex = 21;
+            WMA25CheckBox.Text = "WMA25";
+            WMA25CheckBox.UseVisualStyleBackColor = true;
+            // 
+            // WMA99CheckBox
+            // 
+            WMA99CheckBox.AutoSize = true;
+            WMA99CheckBox.Checked = true;
+            WMA99CheckBox.CheckState = CheckState.Checked;
+            WMA99CheckBox.Font = new Font("Segoe UI", 14F);
+            WMA99CheckBox.Location = new Point(674, 317);
+            WMA99CheckBox.Name = "WMA99CheckBox";
+            WMA99CheckBox.Size = new Size(98, 29);
+            WMA99CheckBox.TabIndex = 22;
+            WMA99CheckBox.Text = "WMA99";
+            WMA99CheckBox.UseVisualStyleBackColor = true;
+            // 
             // NeuralNetworkCreatorWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(821, 466);
+            Controls.Add(WMA99CheckBox);
+            Controls.Add(WMA25CheckBox);
+            Controls.Add(WMA7CheckBox);
             Controls.Add(VolatilityCheckBox);
             Controls.Add(CandleTypeCheckBox);
             Controls.Add(PriceDeltaCheckBox);
@@ -319,5 +364,8 @@
         private CheckBox PriceDeltaCheckBox;
         private CheckBox CandleTypeCheckBox;
         private CheckBox VolatilityCheckBox;
+        private CheckBox WMA7CheckBox;
+        private CheckBox WMA25CheckBox;
+        private CheckBox WMA99CheckBox;
     }
 }

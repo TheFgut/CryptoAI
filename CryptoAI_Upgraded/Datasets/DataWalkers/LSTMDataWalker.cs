@@ -33,6 +33,7 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
             this.expectedOutput = networkConfig.outputCount;
             this.timeFragments = networkConfig.timeFragments;
             features = networkConfig.features;
+
         }
 
         public double[,] Walk(out double[] expectedData)
@@ -83,6 +84,14 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
             return input;
         }
 
+        /// <summary>
+        /// should be called for data sorted by time one by one!!!!!!
+        /// </summary>
+        /// <param name="kline"></param>
+        /// <param name="feature"></param>
+        /// <param name="dataFragmentNum"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         private double GetFeatureValue(KLine kline, FeatureType feature, double dataFragmentNum)
         {
             switch (feature)
@@ -107,6 +116,12 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
                     return kline.ClosePrice > kline.OpenPrice ? 1 : 0;
                 case FeatureType.Volatility:
                     return (double)((kline.HighPrice - kline.LowPrice) / kline.OpenPrice);
+                case FeatureType.WMA7:
+                    return kline.WMA7;
+                case FeatureType.WMA25:
+                    return kline.WMA25;
+                case FeatureType.WMA99:
+                    return kline.WMA99;
             }
             throw new Exception($"LSTMDataWalker.GetFeatureValue failed. Unexpected feature type - {feature}");
         }

@@ -36,6 +36,10 @@ namespace CryptoAI_Upgraded.Datasets
         public decimal TakerBuyBaseVolume;
         public decimal TakerBuyQuoteVolume;
         public decimal TradeCount;
+        //calculated
+        public double WMA7;
+        public double WMA25;
+        public double WMA99;
 
         public KLine()
         {
