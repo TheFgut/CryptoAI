@@ -36,6 +36,13 @@ namespace CryptoAI_Upgraded.DatasetsManaging.UI
             UpdateData();
         }
 
+        public void InitFromConfig(List<LocalKlinesDataset> datasets)
+        {
+            if (datasets == null || datasets.Count == 0) throw new Exception("Datasets cant be null or 0 count");
+            choosedLocalDatasets = datasets;
+            UpdateData();
+        }
+
         private void SaveConfig()
         {
             if (config == null) return;

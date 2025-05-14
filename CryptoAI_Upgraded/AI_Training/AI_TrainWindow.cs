@@ -5,12 +5,13 @@ using System.Windows.Forms.DataVisualization.Charting;
 using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
 using CryptoAI_Upgraded.DataSaving;
 using CryptoAI_Upgraded.DataLocalChoosing;
+using CryptoAI_Upgraded.DataAnalasys;
 
 namespace CryptoAI_Upgraded.AI_Training
 {
     public partial class AI_TrainWindow : Form
     {
-        private List<LocalKlinesDataset> learningDatasets;
+        private List<LocalKlinesDataset> trainingDatasets;
         private List<LocalKlinesDataset> testingDatasets;
         private Task? trainingTask;
         private CancellationTokenSource? trainingCnacellationToken;
@@ -25,7 +26,7 @@ namespace CryptoAI_Upgraded.AI_Training
             networkManagePanel1.onNetworkChanges += AssingModel;
             LoadBestNetworkBut.Enabled = false;
             AssingModel(null);
-            learningDatasets = trainingDatasetsManager.choosedLocalDatasets;
+            trainingDatasets = trainingDatasetsManager.choosedLocalDatasets;
             trainingDatasetsManager.title = "Training datasets";
             testingDatasets = testingDatasetsManager.choosedLocalDatasets;
             testingDatasetsManager.title = "Testing datasets";
@@ -71,11 +72,11 @@ namespace CryptoAI_Upgraded.AI_Training
         {
             Stopwatch timer = Stopwatch.StartNew();
             NNTrainingStats analyticsCollector = new NNTrainingStats(trainingConfig.runsCount,
-                learningDatasets.Select(d => new DatasetID(d)).ToList());
+                trainingDatasets.Select(d => new DatasetID(d)).ToList());
             try
             {
                 object referencedProgressInt = 0;
-                LSTMDataWalker dataWalker = new LSTMDataWalker(learningDatasets, neuralNetwork.networkConfig);
+                LSTMDataWalker dataWalker = new LSTMDataWalker(trainingDatasets, neuralNetwork.networkConfig);
                 LSTMDataWalker? testDataWalker = testingDatasets.Count == 0 ? null :
                     new LSTMDataWalker(testingDatasets, neuralNetwork.networkConfig);
 
@@ -95,16 +96,35 @@ namespace CryptoAI_Upgraded.AI_Training
                         });
                     }, trainingConfig, token, testDataWalker);
 
+                if(testingDatasets.Count > 0)
+                {
+                    NerworkAccuraccyAnalizer testAnalizer = new NerworkAccuraccyAnalizer();
+                    NetworkAccAnalize testAnalize = await testAnalizer.Analize(neuralNetwork, testingDatasets);
+                    if (testAnalize.success)
+                    {
+                        Helpers.DataPlotting.PlotMultipleSeries(lestPredictionsChart, new string[] { "test_predict", "test_real" },
+                            testAnalize.predict.ToArray(), testAnalize.real.ToArray());
+                    }
+                    NerworkAccuraccyAnalizer trainAnalizer = new NerworkAccuraccyAnalizer();
+                    NetworkAccAnalize trainAnalize = await trainAnalizer.Analize(neuralNetwork, trainingDatasets);
+                    if (trainAnalize.success)
+                    {
+                        Helpers.DataPlotting.PlotMultipleSeries(trainPredictionsChart, new string[] { "train_predict", "train_real" },
+                            trainAnalize.predict.ToArray(), trainAnalize.real.ToArray());
+                    }
+                }
+
+
                 lossesChart.Series.Clear();
-                DisplayDataOnChart(lossesChart, analyticsCollector.trainingRunsData.Select(r => r.averageError)
+                Helpers.DataPlotting.DisplayDataOnChart(lossesChart, analyticsCollector.trainingRunsData.Select(r => r.averageError)
                     .ToArray(), analyticsCollector.runsPassed, "loss awerage error", Color.Yellow);
-                DisplayDataOnChart(lossesChart, analyticsCollector.trainingRunsData.Select(r => r.maxError)
+                Helpers.DataPlotting.DisplayDataOnChart(lossesChart, analyticsCollector.trainingRunsData.Select(r => r.maxError)
                     .ToArray(), analyticsCollector.runsPassed, "loss max error", Color.Red);
-                DisplayDataOnChart(lossesChart, analyticsCollector.trainingRunsData.Select(r => r.minError)
+                Helpers.DataPlotting.DisplayDataOnChart(lossesChart, analyticsCollector.trainingRunsData.Select(r => r.minError)
                     .ToArray(), analyticsCollector.runsPassed, "loss min error", Color.Green);
 
                 TestErrorsChart.Series.Clear();
-                DisplayDataOnChart(TestErrorsChart, analyticsCollector.trainingRunsData.Select(r => r.avarageTestError)
+                Helpers.DataPlotting.DisplayDataOnChart(TestErrorsChart, analyticsCollector.trainingRunsData.Select(r => r.avarageTestError)
                     .ToArray(), analyticsCollector.runsPassed, "test awerage error", Color.Green);
                 LoadBestNetworkBut.Enabled = true;
             }
@@ -115,7 +135,7 @@ namespace CryptoAI_Upgraded.AI_Training
                     MessageBox.Show($"Exception during execution for training {ex.Message}\n {ex.StackTrace}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }));
             }
-
+            
             try
             {
                 trainingResultPanel.Rtf = analyticsCollector.ToRichTextString();
@@ -141,24 +161,7 @@ namespace CryptoAI_Upgraded.AI_Training
             }));
         }
 
-        private void DisplayDataOnChart(Chart chart, double[] data, int count, string name, Color color)
-        {
-            // Создание и настройка ряда данных
-            var series = new Series
-            {
-                ChartType = SeriesChartType.Line, // Тип графика: линия
-                Color = color,
-                Name = name,
-                BorderWidth = 2
-            };
-            chart.Series.Add(series);
 
-            // Добавление точек в график
-            for (int i = 0; i < count; i++)
-            {
-                series.Points.AddXY(i, data[i]);
-            }
-        }
 
         private void StartLearningBut_Click(object sender, EventArgs e)
         {

@@ -37,6 +37,9 @@
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
             StartLearningBut = new Button();
             StopLearningBut = new Button();
             TrainingProgressBar = new ProgressBar();
@@ -50,19 +53,21 @@
             richTextBox1 = new RichTextBox();
             learningSettings = new Button();
             TestErrorsChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            lastPredictionsChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            lestPredictionsChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             LoadBestNetworkBut = new Button();
             label1 = new Label();
             batchesCountTextBox = new TextBox();
             label2 = new Label();
+            trainPredictionsChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             ((System.ComponentModel.ISupportInitialize)lossesChart).BeginInit();
             ((System.ComponentModel.ISupportInitialize)TestErrorsChart).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)lastPredictionsChart).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)lestPredictionsChart).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)trainPredictionsChart).BeginInit();
             SuspendLayout();
             // 
             // StartLearningBut
             // 
-            StartLearningBut.Location = new Point(12, 610);
+            StartLearningBut.Location = new Point(12, 730);
             StartLearningBut.Name = "StartLearningBut";
             StartLearningBut.Size = new Size(108, 23);
             StartLearningBut.TabIndex = 0;
@@ -72,7 +77,7 @@
             // 
             // StopLearningBut
             // 
-            StopLearningBut.Location = new Point(126, 610);
+            StopLearningBut.Location = new Point(126, 730);
             StopLearningBut.Name = "StopLearningBut";
             StopLearningBut.Size = new Size(100, 23);
             StopLearningBut.TabIndex = 1;
@@ -82,7 +87,7 @@
             // 
             // TrainingProgressBar
             // 
-            TrainingProgressBar.Location = new Point(12, 639);
+            TrainingProgressBar.Location = new Point(12, 759);
             TrainingProgressBar.Name = "TrainingProgressBar";
             TrainingProgressBar.Size = new Size(414, 23);
             TrainingProgressBar.TabIndex = 3;
@@ -99,13 +104,13 @@
             series1.Legend = "Legend1";
             series1.Name = "Series1";
             lossesChart.Series.Add(series1);
-            lossesChart.Size = new Size(454, 134);
+            lossesChart.Size = new Size(472, 122);
             lossesChart.TabIndex = 4;
             lossesChart.Text = "chart1";
             // 
             // runsCountBox
             // 
-            runsCountBox.Location = new Point(12, 581);
+            runsCountBox.Location = new Point(12, 701);
             runsCountBox.Name = "runsCountBox";
             runsCountBox.Size = new Size(108, 23);
             runsCountBox.TabIndex = 5;
@@ -133,7 +138,7 @@
             // 
             // trainingResultPanel
             // 
-            trainingResultPanel.Location = new Point(12, 450);
+            trainingResultPanel.Location = new Point(12, 570);
             trainingResultPanel.Name = "trainingResultPanel";
             trainingResultPanel.ReadOnly = true;
             trainingResultPanel.Size = new Size(414, 101);
@@ -154,7 +159,7 @@
             // 
             TrainingETA.AutoSize = true;
             TrainingETA.Font = new Font("Segoe UI", 12F);
-            TrainingETA.Location = new Point(432, 641);
+            TrainingETA.Location = new Point(432, 761);
             TrainingETA.Name = "TrainingETA";
             TrainingETA.Size = new Size(63, 21);
             TrainingETA.TabIndex = 12;
@@ -162,7 +167,7 @@
             // 
             // richTextBox1
             // 
-            richTextBox1.Location = new Point(232, 581);
+            richTextBox1.Location = new Point(232, 701);
             richTextBox1.Name = "richTextBox1";
             richTextBox1.ReadOnly = true;
             richTextBox1.Size = new Size(252, 52);
@@ -171,7 +176,7 @@
             // 
             // learningSettings
             // 
-            learningSettings.Location = new Point(489, 581);
+            learningSettings.Location = new Point(489, 701);
             learningSettings.Name = "learningSettings";
             learningSettings.Size = new Size(52, 52);
             learningSettings.TabIndex = 14;
@@ -185,35 +190,35 @@
             TestErrorsChart.ChartAreas.Add(chartArea2);
             legend2.Name = "Legend1";
             TestErrorsChart.Legends.Add(legend2);
-            TestErrorsChart.Location = new Point(12, 152);
+            TestErrorsChart.Location = new Point(12, 140);
             TestErrorsChart.Name = "TestErrorsChart";
             series2.ChartArea = "ChartArea1";
             series2.Legend = "Legend1";
             series2.Name = "Series1";
             TestErrorsChart.Series.Add(series2);
-            TestErrorsChart.Size = new Size(454, 138);
+            TestErrorsChart.Size = new Size(472, 125);
             TestErrorsChart.TabIndex = 15;
             TestErrorsChart.Text = "chart1";
             // 
-            // lastPredictionsChart
+            // lestPredictionsChart
             // 
             chartArea3.Name = "ChartArea1";
-            lastPredictionsChart.ChartAreas.Add(chartArea3);
+            lestPredictionsChart.ChartAreas.Add(chartArea3);
             legend3.Name = "Legend1";
-            lastPredictionsChart.Legends.Add(legend3);
-            lastPredictionsChart.Location = new Point(12, 296);
-            lastPredictionsChart.Name = "lastPredictionsChart";
+            lestPredictionsChart.Legends.Add(legend3);
+            lestPredictionsChart.Location = new Point(12, 409);
+            lestPredictionsChart.Name = "lestPredictionsChart";
             series3.ChartArea = "ChartArea1";
             series3.Legend = "Legend1";
             series3.Name = "Series1";
-            lastPredictionsChart.Series.Add(series3);
-            lastPredictionsChart.Size = new Size(454, 148);
-            lastPredictionsChart.TabIndex = 16;
-            lastPredictionsChart.Text = "chart1";
+            lestPredictionsChart.Series.Add(series3);
+            lestPredictionsChart.Size = new Size(472, 135);
+            lestPredictionsChart.TabIndex = 16;
+            lestPredictionsChart.Text = "chart1";
             // 
             // LoadBestNetworkBut
             // 
-            LoadBestNetworkBut.Location = new Point(432, 450);
+            LoadBestNetworkBut.Location = new Point(432, 570);
             LoadBestNetworkBut.Name = "LoadBestNetworkBut";
             LoadBestNetworkBut.Size = new Size(52, 115);
             LoadBestNetworkBut.TabIndex = 17;
@@ -224,7 +229,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(12, 563);
+            label1.Location = new Point(12, 683);
             label1.Name = "label1";
             label1.Size = new Size(73, 15);
             label1.TabIndex = 18;
@@ -232,7 +237,7 @@
             // 
             // batchesCountTextBox
             // 
-            batchesCountTextBox.Location = new Point(126, 581);
+            batchesCountTextBox.Location = new Point(126, 701);
             batchesCountTextBox.Name = "batchesCountTextBox";
             batchesCountTextBox.Size = new Size(100, 23);
             batchesCountTextBox.TabIndex = 19;
@@ -241,22 +246,39 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(126, 563);
+            label2.Location = new Point(126, 683);
             label2.Name = "label2";
             label2.Size = new Size(84, 15);
             label2.TabIndex = 20;
             label2.Text = "Batches.Count";
             // 
+            // trainPredictionsChart
+            // 
+            chartArea4.Name = "ChartArea1";
+            trainPredictionsChart.ChartAreas.Add(chartArea4);
+            legend4.Name = "Legend1";
+            trainPredictionsChart.Legends.Add(legend4);
+            trainPredictionsChart.Location = new Point(12, 271);
+            trainPredictionsChart.Name = "trainPredictionsChart";
+            series4.ChartArea = "ChartArea1";
+            series4.Legend = "Legend1";
+            series4.Name = "Series1";
+            trainPredictionsChart.Series.Add(series4);
+            trainPredictionsChart.Size = new Size(472, 132);
+            trainPredictionsChart.TabIndex = 21;
+            trainPredictionsChart.Text = "chart1";
+            // 
             // AI_TrainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(875, 669);
+            ClientSize = new Size(864, 786);
+            Controls.Add(trainPredictionsChart);
             Controls.Add(label2);
             Controls.Add(batchesCountTextBox);
             Controls.Add(label1);
             Controls.Add(LoadBestNetworkBut);
-            Controls.Add(lastPredictionsChart);
+            Controls.Add(lestPredictionsChart);
             Controls.Add(TestErrorsChart);
             Controls.Add(learningSettings);
             Controls.Add(richTextBox1);
@@ -275,7 +297,8 @@
             FormClosing += AI_TrainWindow_FormClosing;
             ((System.ComponentModel.ISupportInitialize)lossesChart).EndInit();
             ((System.ComponentModel.ISupportInitialize)TestErrorsChart).EndInit();
-            ((System.ComponentModel.ISupportInitialize)lastPredictionsChart).EndInit();
+            ((System.ComponentModel.ISupportInitialize)lestPredictionsChart).EndInit();
+            ((System.ComponentModel.ISupportInitialize)trainPredictionsChart).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -295,10 +318,11 @@
         private RichTextBox richTextBox1;
         private Button learningSettings;
         private System.Windows.Forms.DataVisualization.Charting.Chart TestErrorsChart;
-        private System.Windows.Forms.DataVisualization.Charting.Chart lastPredictionsChart;
+        private System.Windows.Forms.DataVisualization.Charting.Chart lestPredictionsChart;
         private Button LoadBestNetworkBut;
         private Label label1;
         private TextBox batchesCountTextBox;
         private Label label2;
+        private System.Windows.Forms.DataVisualization.Charting.Chart trainPredictionsChart;
     }
 }

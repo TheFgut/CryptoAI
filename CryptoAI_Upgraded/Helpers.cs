@@ -1,4 +1,6 @@
 ﻿
+using System.Windows.Forms.DataVisualization.Charting;
+
 namespace CryptoAI_Upgraded
 {
     public static class Helpers
@@ -311,6 +313,84 @@ namespace CryptoAI_Upgraded
                 }
 
                 return wma;
+            }
+        }
+
+        public static class DataPlotting
+        {
+            public static void PlotMultipleSeries(Chart chart, string[] labels, params double[][] dataArrays)
+            {
+                if (labels.Length != dataArrays.Length)
+                    throw new ArgumentException("Количество меток должно совпадать с количеством массивов данных.");
+
+                // Очистим старые серии и настройки
+                chart.Series.Clear();
+                chart.ChartAreas.Clear();
+                chart.Legends.Clear();
+
+                // Создаем область для построения
+                var area = new ChartArea("MainArea");
+                chart.ChartAreas.Add(area);
+
+                // Легенда
+                var legend = new Legend("Legend");
+                chart.Legends.Add(legend);
+
+                // Цвета можно задать заранее или сгенерировать случайно
+                Color[] palette = new[]
+                {
+            Color.Blue, Color.Red, Color.Green, Color.Orange, Color.Purple,
+            Color.Brown, Color.Magenta, Color.Cyan, Color.Lime, Color.Sienna
+            };
+
+                for (int i = 0; i < dataArrays.Length; i++)
+                {
+                    var series = new Series(labels[i])
+                    {
+                        ChartType = SeriesChartType.Line,
+                        ChartArea = "MainArea",
+                        Legend = "Legend",
+                        BorderWidth = 2,
+                        Color = palette[i % palette.Length]
+                    };
+
+                    // Добавляем точки в серию
+                    var data = dataArrays[i];
+                    for (int x = 0; x < data.Length; x++)
+                    {
+                        series.Points.AddXY(x, data[x]);
+                    }
+
+                    chart.Series.Add(series);
+                }
+
+                // Настройки осей (опционально)
+                area.AxisX.Title = "Індекс";
+                area.AxisY.Title = "Значення";
+                area.AxisY.Minimum = dataArrays.Min(arr => arr.Min());
+                area.AxisY.Maximum = dataArrays.Max(arr => arr.Max());
+                area.AxisY.LabelStyle.Format = "F2";
+                area.AxisX.MajorGrid.LineDashStyle = ChartDashStyle.Dash;
+                area.AxisY.MajorGrid.LineDashStyle = ChartDashStyle.Dash;
+            }
+
+            public static void DisplayDataOnChart(Chart chart, double[] data, int count, string name, Color color)
+            {
+                // Создание и настройка ряда данных
+                var series = new Series
+                {
+                    ChartType = SeriesChartType.Line, // Тип графика: линия
+                    Color = color,
+                    Name = name,
+                    BorderWidth = 2
+                };
+                chart.Series.Add(series);
+
+                // Добавление точек в график
+                for (int i = 0; i < count; i++)
+                {
+                    series.Points.AddXY(i, data[i]);
+                }
             }
         }
 
