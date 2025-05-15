@@ -42,6 +42,11 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             trainingRunsData[currentRecordingNum].averageError = error;
         }
 
+        public void RecordTrainingSpeed(double speed)
+        {
+            trainingRunsData[currentRecordingNum].trainSpeed = speed;
+        }
+
         public void GoNext()
         {
             if (currentRecordingNum >= runsCount - 1) return;

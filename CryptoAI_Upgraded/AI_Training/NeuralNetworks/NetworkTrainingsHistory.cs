@@ -90,6 +90,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         public double averageError { get; set; }
         public double maxError { get; set; }
         public double minError { get; set; }
+        public double trainSpeed {  get; set; }
         public List<DatasetID> trainingDatasetIDs { get; set; }
         public double avarageTestError { get; set; }
         public double maxTestError { get; set; }
@@ -102,7 +103,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         }
         public override string ToString()
         {
-            return $"D:{trainingDatasetIDs.Count} AwgTestErr:{avarageTestError}";
+            return $"D:{trainingDatasetIDs.Count} lrSpeed:{trainSpeed.ToString("F6")} AwgTestErr:{avarageTestError.ToString("F6")}";
         }
 
         public static NetworkRunData Default()

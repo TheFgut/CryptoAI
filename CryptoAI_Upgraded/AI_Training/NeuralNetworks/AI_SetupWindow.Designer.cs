@@ -33,6 +33,13 @@
             minDeltaLabel = new Label();
             runsCheckToStopTextBox = new TextBox();
             label1 = new Label();
+            ReduceLrOnPlateauCheckBox = new CheckBox();
+            label2 = new Label();
+            label3 = new Label();
+            label4 = new Label();
+            redLrOnPlPatienceTextBox = new TextBox();
+            redLrOnPlFactorTextBox = new TextBox();
+            redLrOnPlMinLrTextBox = new TextBox();
             SuspendLayout();
             // 
             // stopWhenErrorNotChangingCheckbox
@@ -81,11 +88,80 @@
             label1.TabIndex = 4;
             label1.Text = "Patience";
             // 
+            // ReduceLrOnPlateauCheckBox
+            // 
+            ReduceLrOnPlateauCheckBox.AutoSize = true;
+            ReduceLrOnPlateauCheckBox.Location = new Point(334, 78);
+            ReduceLrOnPlateauCheckBox.Name = "ReduceLrOnPlateauCheckBox";
+            ReduceLrOnPlateauCheckBox.Size = new Size(131, 19);
+            ReduceLrOnPlateauCheckBox.TabIndex = 5;
+            ReduceLrOnPlateauCheckBox.Text = "reduce lr on plateau";
+            ReduceLrOnPlateauCheckBox.UseVisualStyleBackColor = true;
+            ReduceLrOnPlateauCheckBox.Validated += ReduceLrOnPlateauCheckBox_Validated;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(298, 12);
+            label2.Name = "label2";
+            label2.Size = new Size(52, 15);
+            label2.TabIndex = 6;
+            label2.Text = "Patience";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(379, 12);
+            label3.Name = "label3";
+            label3.Size = new Size(40, 15);
+            label3.TabIndex = 7;
+            label3.Text = "Factor";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(444, 12);
+            label4.Name = "label4";
+            label4.Size = new Size(38, 15);
+            label4.TabIndex = 8;
+            label4.Text = "MinLr";
+            // 
+            // redLrOnPlPatienceTextBox
+            // 
+            redLrOnPlPatienceTextBox.Location = new Point(298, 36);
+            redLrOnPlPatienceTextBox.Name = "redLrOnPlPatienceTextBox";
+            redLrOnPlPatienceTextBox.Size = new Size(65, 23);
+            redLrOnPlPatienceTextBox.TabIndex = 9;
+            redLrOnPlPatienceTextBox.Validated += redLrOnPlPatienceTextBox_Validated;
+            // 
+            // redLrOnPlFactorTextBox
+            // 
+            redLrOnPlFactorTextBox.Location = new Point(368, 36);
+            redLrOnPlFactorTextBox.Name = "redLrOnPlFactorTextBox";
+            redLrOnPlFactorTextBox.Size = new Size(60, 23);
+            redLrOnPlFactorTextBox.TabIndex = 10;
+            redLrOnPlFactorTextBox.Validated += redLrOnPlFactorTextBox_Validated;
+            // 
+            // redLrOnPlMinLrTextBox
+            // 
+            redLrOnPlMinLrTextBox.Location = new Point(434, 36);
+            redLrOnPlMinLrTextBox.Name = "redLrOnPlMinLrTextBox";
+            redLrOnPlMinLrTextBox.Size = new Size(64, 23);
+            redLrOnPlMinLrTextBox.TabIndex = 11;
+            redLrOnPlMinLrTextBox.Validated += redLrOnPlMinLrTextBox_Validated;
+            // 
             // AI_SetupWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(199, 119);
+            ClientSize = new Size(510, 119);
+            Controls.Add(redLrOnPlMinLrTextBox);
+            Controls.Add(redLrOnPlFactorTextBox);
+            Controls.Add(redLrOnPlPatienceTextBox);
+            Controls.Add(label4);
+            Controls.Add(label3);
+            Controls.Add(label2);
+            Controls.Add(ReduceLrOnPlateauCheckBox);
             Controls.Add(label1);
             Controls.Add(runsCheckToStopTextBox);
             Controls.Add(minDeltaLabel);
@@ -104,5 +180,12 @@
         private Label minDeltaLabel;
         private TextBox runsCheckToStopTextBox;
         private Label label1;
+        private CheckBox ReduceLrOnPlateauCheckBox;
+        private Label label2;
+        private Label label3;
+        private Label label4;
+        private TextBox redLrOnPlPatienceTextBox;
+        private TextBox redLrOnPlFactorTextBox;
+        private TextBox redLrOnPlMinLrTextBox;
     }
 }

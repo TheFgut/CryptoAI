@@ -57,11 +57,11 @@ namespace CryptoAI_Upgraded.DataAnalasys
                     analize.predict.Add(lastPred);
                     finalPred = lastReal - (double)pos.OpenPrice;
                     finalEx = lastPred - (double)pos.OpenPrice;
-                    analize.guessedDir.AddLast(getDirection(finalPred) == getDirection(finalEx) ? 1 : 0);
+                    analize.guessedDirections.AddLast(getDirection(finalPred) == getDirection(finalEx) ? 1 : 0);
                 } while (true);
                 await Task.Yield();
                 analize.averageError = analize.errors.Average();
-                analize.guessedDirPercent = analize.guessedDir.Average() * 100;
+                analize.guessedDirPercent = analize.guessedDirections.Average() * 100;
             }
             catch (Exception ex)
             {
@@ -131,7 +131,7 @@ namespace CryptoAI_Upgraded.DataAnalasys
         public LinkedList<double> errors = new LinkedList<double>();
         public List<double> real = new List<double>();
         public List<double> predict = new List<double>();
-        public LinkedList<double> guessedDir = new LinkedList<double>();//1-guessed, 0-not guessed
+        public LinkedList<double> guessedDirections = new LinkedList<double>();//1-guessed, 0-not guessed
         //metrics
         public int analizeStepsAmount = 0;
         public int skippedSteps = 0;

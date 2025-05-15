@@ -6,7 +6,10 @@ using CryptoAI_Upgraded.Datasets;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 using CryptoAI_Upgraded.DataSaving;
-using Newtonsoft.Json.Linq;
+using Python.Runtime;
+using Keras.Callbacks;
+using Keras.Optimizers;
+using Keras;
 
 namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 {
@@ -33,16 +36,23 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         public int layersCount => _neuralData.networkLayers.Length;
 
         private LocalLoaderAndSaverBSON<NNConfigData>? loader;
+        public dynamic optimizer;
         public BaseModel model;//close
         private NNConfigData _neuralData;
         public NetworkTrainingsStats trainingStatistics { get; private set; }
         public NNConfigData networkConfig => _neuralData;//to do make clone
 
+        public double traaining_speed {  
+            get => optimizer.GetAttr("lr"); 
+            set => optimizer.SetAttr("lr", value.ToPython());
+        }
 
         #region creation
         public NeuralNetwork(NNConfigData config)
         {
+            double value = 0;
             _neuralData = config;
+            
             this.model = CreateNetwork(config);
             trainingStatistics = new NetworkTrainingsStats();
         }
@@ -51,6 +61,11 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         {
             if (string.IsNullOrEmpty(loadPath)) throw new ArgumentNullException("NeuralNetwork.Creation failed. loadPath cant be null or empty");
             model = Sequential.LoadModel(loadPath);
+            using (Py.GIL())
+            {
+                dynamic pyModel = model.ToPython();
+                optimizer = pyModel.optimizer;
+            }
             loader = new LocalLoaderAndSaverBSON<NNConfigData>(loadPath, "config");
             NNConfigData? neuralData = loader.Load();
             if (neuralData == null) throw new Exception("NeuralNetwork.Constructor Network loading failed");
@@ -80,11 +95,14 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             ///"mean_squared_error" - сильнее ошибка - сильнее наказание, но из-за этого предсказание всегда 0
             ///huber_loss - для данных с выбросами
             // Компиляция модели
-            var optimizer = new Keras.Optimizers.Nadam(lr: 0.00001f);
             model.Compile("adam",
                           loss: "huber_loss"
                           , metrics: new string[] { "mae" });
-
+            using (Py.GIL())
+            {
+                dynamic pyModel = model.ToPython();
+                optimizer = pyModel.optimizer;
+            }
             return model;
         }
 
@@ -164,7 +182,8 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             //Console.WriteLine(predictions.repr);
         }
 
-        public async Task TrainLSTMNetwork(LSTMDataWalker trainDataWalker, int batchesCount,
+
+        public async Task TrainLSTMNetwork_Old(LSTMDataWalker trainDataWalker, int batchesCount,
             NNTrainingStats analyticsCollector, Action<float> onProgressChange, TrainingConfigData trainingSettings,
             CancellationToken cancellationToken, LSTMDataWalker? testDataWalker = null, bool testEveryRun = true)
         {
@@ -173,6 +192,8 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             NetworkTrainingsStats originalStatistics = trainingStatistics;
             EarlyStopping earlyStopping = new EarlyStopping(trainingSettings.patienceToStop,
                 trainingSettings.minErrorDeltaToStop);
+            ManualReduceLROnPlateau reduceLrOnPlateau = new ManualReduceLROnPlateau(this, trainingSettings.redLrOnPlPatience,
+                trainingSettings.redLrOnPlFactor, trainingSettings.redLrOnPlMinLr);
             double bestAwerageTestError = double.MaxValue;
             float progress = 0;
             for (int run = 1; run <= trainingSettings.runsCount; run++)
@@ -205,6 +226,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                     NDarray<double> inputArr = np.array(Helpers.ConvertListTo3DArray(inputBatches));
                     NDarray<double> expectedOutputArr = np.array(outputArr);
                     var metrics = model.TrainOnBatch(inputArr, expectedOutputArr);
+
                     errorsSum += metrics[1];
                     minError = metrics[1] < minError ? metrics[1] : minError;
                     maxError = metrics[1] > maxError ? metrics[1] : maxError;
@@ -212,6 +234,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                     walksIterations++;
                     if (cancellationToken.IsCancellationRequested)//cancellation of task
                     {
+                        analyticsCollector.RecordTrainingSpeed(traaining_speed);
                         analyticsCollector.RecordAwerageError(errorsSum / walksIterations);
                         analyticsCollector.RecordMinError(minError);
                         analyticsCollector.RecordMaxError(maxError);
@@ -228,6 +251,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                 } while (!trainDataWalker.isFinishedWalking());
                 trainDataWalker.ResetDataWalker();
                 double awgError = errorsSum / walksIterations;
+                analyticsCollector.RecordTrainingSpeed(traaining_speed);
                 analyticsCollector.RecordAwerageError(awgError);
                 analyticsCollector.RecordMinError(minError);
                 analyticsCollector.RecordMaxError(maxError);
@@ -265,6 +289,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                 {
                     break;
                 }
+                if (trainingSettings.reduceLrOnPlateau) reduceLrOnPlateau.Check(awerageErrorToCheck);
                 if (bestAwerageTestError > awerageErrorToCheck)
                 {
                     trainingStatistics = (NetworkTrainingsStats)originalStatistics.Clone();
@@ -280,6 +305,38 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             //var predictions = model.Predict(x_train);
             //Console.WriteLine("Predictions:");
             //Console.WriteLine(predictions.repr);
+        }
+
+        public async Task TrainLSTMNetwork(LSTMDataWalker trainDataWalker, int batchesCount,
+           NNTrainingStats analyticsCollector, Action<float> onProgressChange, TrainingConfigData trainingSettings,
+           CancellationToken cancellationToken, LSTMDataWalker? testDataWalker = null, bool testEveryRun = true)
+        {
+            if (trainDataWalker == null) throw new Exception("NeuralNetwork.Train dataWalker cant be null");
+            if (trainingSettings.runsCount <= 0) throw new Exception("NeuralNetwork.Train runsCount should be higher than one");
+
+            //training
+            List<double[,]> inputData = new List<double[,]>();
+            List<double[]> outputData = new List<double[]>();
+            do
+            {
+                double[] expectedOutput;
+                double[,] input = trainDataWalker.Walk(out expectedOutput);
+
+                inputData.Add(Helpers.ArrayValuesInjection.InjectValues(input, 0, 0));
+                outputData.Add(expectedOutput);
+                await Task.Delay(10);
+            } while (!trainDataWalker.isFinishedWalking());
+
+            double[,] outputArr = Helpers.ConvertListTo2DArray(outputData);
+
+            NDarray<double> inputArr = np.array(Helpers.ConvertListTo3DArray(inputData));
+            NDarray<double> expectedOutputArr = np.array(outputArr);
+            //adding callbacks
+            List<Callback> callbacks = new List<Callback>();
+            callbacks.Add(new ReduceLROnPlateau());
+
+            model.Fit(inputArr, expectedOutputArr, batch_size : batchesCount, epochs : trainingSettings.runsCount,
+                callbacks: callbacks.ToArray());
         }
 
         public async Task TestLSTMNetwork(LSTMDataWalker dataWalker,

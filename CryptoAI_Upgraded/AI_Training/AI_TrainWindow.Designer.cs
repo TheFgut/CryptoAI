@@ -28,18 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea7 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend7 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea8 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend8 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
             StartLearningBut = new Button();
             StopLearningBut = new Button();
             TrainingProgressBar = new ProgressBar();
@@ -50,7 +50,6 @@
             trainingResultPanel = new RichTextBox();
             testingDatasetsManager = new DatasetsManaging.UI.DatasetsManagerPanel();
             TrainingETA = new Label();
-            richTextBox1 = new RichTextBox();
             learningSettings = new Button();
             TestErrorsChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             lestPredictionsChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -59,6 +58,8 @@
             batchesCountTextBox = new TextBox();
             label2 = new Label();
             trainPredictionsChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            TrainingSpeedTextBox = new TextBox();
+            label3 = new Label();
             ((System.ComponentModel.ISupportInitialize)lossesChart).BeginInit();
             ((System.ComponentModel.ISupportInitialize)TestErrorsChart).BeginInit();
             ((System.ComponentModel.ISupportInitialize)lestPredictionsChart).BeginInit();
@@ -94,16 +95,16 @@
             // 
             // lossesChart
             // 
-            chartArea1.Name = "ChartArea1";
-            lossesChart.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            lossesChart.Legends.Add(legend1);
+            chartArea5.Name = "ChartArea1";
+            lossesChart.ChartAreas.Add(chartArea5);
+            legend5.Name = "Legend1";
+            lossesChart.Legends.Add(legend5);
             lossesChart.Location = new Point(12, 12);
             lossesChart.Name = "lossesChart";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            lossesChart.Series.Add(series1);
+            series5.ChartArea = "ChartArea1";
+            series5.Legend = "Legend1";
+            series5.Name = "Series1";
+            lossesChart.Series.Add(series5);
             lossesChart.Size = new Size(472, 122);
             lossesChart.TabIndex = 4;
             lossesChart.Text = "chart1";
@@ -165,18 +166,9 @@
             TrainingETA.TabIndex = 12;
             TrainingETA.Text = "ETA: 0.1";
             // 
-            // richTextBox1
-            // 
-            richTextBox1.Location = new Point(232, 701);
-            richTextBox1.Name = "richTextBox1";
-            richTextBox1.ReadOnly = true;
-            richTextBox1.Size = new Size(252, 52);
-            richTextBox1.TabIndex = 13;
-            richTextBox1.Text = "";
-            // 
             // learningSettings
             // 
-            learningSettings.Location = new Point(489, 701);
+            learningSettings.Location = new Point(374, 701);
             learningSettings.Name = "learningSettings";
             learningSettings.Size = new Size(52, 52);
             learningSettings.TabIndex = 14;
@@ -186,32 +178,32 @@
             // 
             // TestErrorsChart
             // 
-            chartArea2.Name = "ChartArea1";
-            TestErrorsChart.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            TestErrorsChart.Legends.Add(legend2);
+            chartArea6.Name = "ChartArea1";
+            TestErrorsChart.ChartAreas.Add(chartArea6);
+            legend6.Name = "Legend1";
+            TestErrorsChart.Legends.Add(legend6);
             TestErrorsChart.Location = new Point(12, 140);
             TestErrorsChart.Name = "TestErrorsChart";
-            series2.ChartArea = "ChartArea1";
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            TestErrorsChart.Series.Add(series2);
+            series6.ChartArea = "ChartArea1";
+            series6.Legend = "Legend1";
+            series6.Name = "Series1";
+            TestErrorsChart.Series.Add(series6);
             TestErrorsChart.Size = new Size(472, 125);
             TestErrorsChart.TabIndex = 15;
             TestErrorsChart.Text = "chart1";
             // 
             // lestPredictionsChart
             // 
-            chartArea3.Name = "ChartArea1";
-            lestPredictionsChart.ChartAreas.Add(chartArea3);
-            legend3.Name = "Legend1";
-            lestPredictionsChart.Legends.Add(legend3);
+            chartArea7.Name = "ChartArea1";
+            lestPredictionsChart.ChartAreas.Add(chartArea7);
+            legend7.Name = "Legend1";
+            lestPredictionsChart.Legends.Add(legend7);
             lestPredictionsChart.Location = new Point(12, 409);
             lestPredictionsChart.Name = "lestPredictionsChart";
-            series3.ChartArea = "ChartArea1";
-            series3.Legend = "Legend1";
-            series3.Name = "Series1";
-            lestPredictionsChart.Series.Add(series3);
+            series7.ChartArea = "ChartArea1";
+            series7.Legend = "Legend1";
+            series7.Name = "Series1";
+            lestPredictionsChart.Series.Add(series7);
             lestPredictionsChart.Size = new Size(472, 135);
             lestPredictionsChart.TabIndex = 16;
             lestPredictionsChart.Text = "chart1";
@@ -254,25 +246,45 @@
             // 
             // trainPredictionsChart
             // 
-            chartArea4.Name = "ChartArea1";
-            trainPredictionsChart.ChartAreas.Add(chartArea4);
-            legend4.Name = "Legend1";
-            trainPredictionsChart.Legends.Add(legend4);
+            chartArea8.Name = "ChartArea1";
+            trainPredictionsChart.ChartAreas.Add(chartArea8);
+            legend8.Name = "Legend1";
+            trainPredictionsChart.Legends.Add(legend8);
             trainPredictionsChart.Location = new Point(12, 271);
             trainPredictionsChart.Name = "trainPredictionsChart";
-            series4.ChartArea = "ChartArea1";
-            series4.Legend = "Legend1";
-            series4.Name = "Series1";
-            trainPredictionsChart.Series.Add(series4);
+            series8.ChartArea = "ChartArea1";
+            series8.Legend = "Legend1";
+            series8.Name = "Series1";
+            trainPredictionsChart.Series.Add(series8);
             trainPredictionsChart.Size = new Size(472, 132);
             trainPredictionsChart.TabIndex = 21;
             trainPredictionsChart.Text = "chart1";
+            // 
+            // TrainingSpeedTextBox
+            // 
+            TrainingSpeedTextBox.Location = new Point(232, 701);
+            TrainingSpeedTextBox.Name = "TrainingSpeedTextBox";
+            TrainingSpeedTextBox.Size = new Size(108, 23);
+            TrainingSpeedTextBox.TabIndex = 22;
+            TrainingSpeedTextBox.Text = "10";
+            TrainingSpeedTextBox.Validated += TrainingSpeedTextBox_Validated;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(232, 683);
+            label3.Name = "label3";
+            label3.Size = new Size(83, 15);
+            label3.TabIndex = 23;
+            label3.Text = "Training speed";
             // 
             // AI_TrainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(864, 786);
+            Controls.Add(label3);
+            Controls.Add(TrainingSpeedTextBox);
             Controls.Add(trainPredictionsChart);
             Controls.Add(label2);
             Controls.Add(batchesCountTextBox);
@@ -281,7 +293,6 @@
             Controls.Add(lestPredictionsChart);
             Controls.Add(TestErrorsChart);
             Controls.Add(learningSettings);
-            Controls.Add(richTextBox1);
             Controls.Add(TrainingETA);
             Controls.Add(testingDatasetsManager);
             Controls.Add(trainingResultPanel);
@@ -315,7 +326,6 @@
         private RichTextBox trainingResultPanel;
         private DatasetsManaging.UI.DatasetsManagerPanel testingDatasetsManager;
         private Label TrainingETA;
-        private RichTextBox richTextBox1;
         private Button learningSettings;
         private System.Windows.Forms.DataVisualization.Charting.Chart TestErrorsChart;
         private System.Windows.Forms.DataVisualization.Charting.Chart lestPredictionsChart;
@@ -324,5 +334,7 @@
         private TextBox batchesCountTextBox;
         private Label label2;
         private System.Windows.Forms.DataVisualization.Charting.Chart trainPredictionsChart;
+        private TextBox TrainingSpeedTextBox;
+        private Label label3;
     }
 }

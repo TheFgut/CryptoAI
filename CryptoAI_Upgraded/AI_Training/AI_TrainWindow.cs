@@ -6,6 +6,8 @@ using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
 using CryptoAI_Upgraded.DataSaving;
 using CryptoAI_Upgraded.DataLocalChoosing;
 using CryptoAI_Upgraded.DataAnalasys;
+using Python.Runtime;
+using Keras.Optimizers;
 
 namespace CryptoAI_Upgraded.AI_Training
 {
@@ -30,6 +32,7 @@ namespace CryptoAI_Upgraded.AI_Training
             trainingDatasetsManager.title = "Training datasets";
             testingDatasets = testingDatasetsManager.choosedLocalDatasets;
             testingDatasetsManager.title = "Testing datasets";
+            TrainingSpeedTextBox.Enabled = false;
 
             trainConfigLoader = new LocalLoaderAndSaverBSON<TrainingConfigData>(DataPaths.appConfigurationPath, "trainingSettings");
             TrainingConfigData? loadedConfig = trainConfigLoader.Load();
@@ -73,14 +76,16 @@ namespace CryptoAI_Upgraded.AI_Training
             Stopwatch timer = Stopwatch.StartNew();
             NNTrainingStats analyticsCollector = new NNTrainingStats(trainingConfig.runsCount,
                 trainingDatasets.Select(d => new DatasetID(d)).ToList());
+            NetworkAccAnalize testAnalize = null;
             try
             {
+
                 object referencedProgressInt = 0;
                 LSTMDataWalker dataWalker = new LSTMDataWalker(trainingDatasets, neuralNetwork.networkConfig);
                 LSTMDataWalker? testDataWalker = testingDatasets.Count == 0 ? null :
                     new LSTMDataWalker(testingDatasets, neuralNetwork.networkConfig);
 
-                await neuralNetwork.TrainLSTMNetwork(dataWalker, trainingConfig.batchesCount, analyticsCollector,
+                await neuralNetwork.TrainLSTMNetwork_Old(dataWalker, trainingConfig.batchesCount, analyticsCollector,
                     (progressValue) =>
                     {
                         int progressValueInt = (int)(progressValue * 100);
@@ -96,10 +101,10 @@ namespace CryptoAI_Upgraded.AI_Training
                         });
                     }, trainingConfig, token, testDataWalker);
 
-                if(testingDatasets.Count > 0)
+                if (testingDatasets.Count > 0)
                 {
                     NerworkAccuraccyAnalizer testAnalizer = new NerworkAccuraccyAnalizer();
-                    NetworkAccAnalize testAnalize = await testAnalizer.Analize(neuralNetwork, testingDatasets);
+                    testAnalize = await testAnalizer.Analize(neuralNetwork, testingDatasets);
                     if (testAnalize.success)
                     {
                         Helpers.DataPlotting.PlotMultipleSeries(lestPredictionsChart, new string[] { "test_predict", "test_real" },
@@ -135,11 +140,12 @@ namespace CryptoAI_Upgraded.AI_Training
                     MessageBox.Show($"Exception during execution for training {ex.Message}\n {ex.StackTrace}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }));
             }
-            
+
             try
             {
                 trainingResultPanel.Rtf = analyticsCollector.ToRichTextString();
                 trainingResultPanel.SelectionStart = trainingResultPanel.TextLength;
+                if (testAnalize != null && testAnalize.success) trainingResultPanel.Rtf += $"{testAnalize.guessedDirPercent}";
                 trainingResultPanel.ScrollToCaret();
             }
             catch (Exception ex)
@@ -155,7 +161,8 @@ namespace CryptoAI_Upgraded.AI_Training
             timer.Stop();
             Invoke((Action)(() =>
             {
-                MessageBox.Show($"Training duration: {timer.ElapsedMilliseconds / 1000f} seconds", "Training finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($"Training duration: {timer.ElapsedMilliseconds / 1000f} seconds",
+                    "Training finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 TrainingProgressBar.Value = 0;
                 ActivateAllButs();
             }));
@@ -183,10 +190,14 @@ namespace CryptoAI_Upgraded.AI_Training
             {
                 StartLearningBut.Enabled = false;
                 StopLearningBut.Enabled = false;
+                TrainingSpeedTextBox.Enabled = false;
             }
             else
             {
                 StartLearningBut.Enabled = true;
+                TrainingSpeedTextBox.Enabled = true;
+                TrainingSpeedTextBox.Text = neuralNetwork.traaining_speed.ToString();
+
             }
         }
 
@@ -246,7 +257,7 @@ namespace CryptoAI_Upgraded.AI_Training
                 batchesCountTextBox.Text = trainingConfig.batchesCount.ToString();
                 return;
             }
-            if(result <= 0)
+            if (result <= 0)
             {
                 MessageBox.Show($"Your input: \"{batchesCountTextBox.Text}\" is incorrect. Batches count can`t be less than 1", "IputError",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -257,5 +268,18 @@ namespace CryptoAI_Upgraded.AI_Training
             trainConfigLoader.Save(trainingConfig);
         }
         #endregion
+
+        private void TrainingSpeedTextBox_Validated(object sender, EventArgs e)
+        {
+            double result;
+            if (!double.TryParse(TrainingSpeedTextBox.Text, out result))
+            {
+                MessageBox.Show($"Your input: \"{TrainingSpeedTextBox.Text}\" is incorrect. Please write a number", "IputError",
+                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                TrainingSpeedTextBox.Text = neuralNetwork.traaining_speed.ToString();
+                return;
+            }
+            neuralNetwork.traaining_speed = result;
+        }
     }
 }

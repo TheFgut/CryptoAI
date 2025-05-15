@@ -1,13 +1,5 @@
 ﻿using CryptoAI_Upgraded.AI_Training.NeuralNetworks;
 using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
-using CryptoExchange.Net.CommonObjects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace CryptoAI_Upgraded.Datasets.DataWalkers
 {

@@ -10,9 +10,15 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
     {
         public int runsCount {  get; set; }
         public int batchesCount {  get; set; }
+        //early stopping
         public bool stopWhenErrorRising {  get; set; }
         public double minErrorDeltaToStop {  get; set; }
         public int patienceToStop { get; set; }
+        //ReduceLROnPlateau
+        public bool reduceLrOnPlateau {  get; set; }
+        public int redLrOnPlPatience { get; set; }
+        public double redLrOnPlFactor { get; set; }
+        public double redLrOnPlMinLr { get; set; }
         public TrainingConfigData() { }
 
         public static TrainingConfigData Default
