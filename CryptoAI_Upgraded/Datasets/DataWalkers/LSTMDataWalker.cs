@@ -7,7 +7,7 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
     {
         public int nnInput { get; protected set; }
         public int expectedOutput { get; protected set; }
-        public int timeFragments { get; protected set; }
+        public int windowLen { get; protected set; }
         public int currentStep
         {
             get
@@ -17,27 +17,44 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
             }
         }
 
+        public KLine position
+        {
+            get
+            {
+                int localPos = localDatasetPos + windowLen + nnInput - 1;
+                var currentDataset = datasets[currentDatasetIndex];
+                var currentData = currentDataset.LoadKlinesFromCache().data;
+                while (localPos >= currentData.Count)
+                {
+                    localPos -= currentData.Count;
+                    if (currentDatasetIndex + 1 >= datasets.Count) throw new Exception("position is out of bounds");
+                    currentDataset = datasets[currentDatasetIndex + 1];
+                    currentData = currentDataset.LoadKlinesFromCache().data;
+                }
+                return currentData[localPos];
+            }
+        }
+
         private FeatureType[] features;
 
         public LSTMDataWalker(List<LocalKlinesDataset> datasets, NNConfigData networkConfig) : base(datasets, networkConfig.inputsLen + networkConfig.outputCount)
         {
             this.nnInput = networkConfig.inputsLen;
             this.expectedOutput = networkConfig.outputCount;
-            this.timeFragments = networkConfig.timeFragments;
+            this.windowLen = networkConfig.window;
             features = networkConfig.features;
-
         }
 
         public double[,] Walk(out double[] expectedData)
         {
             int datasetIndexContainer = currentDatasetIndex;
             int datasetPosHolder = localDatasetPos; 
-            double[,] input = new double[timeFragments, (nnInput * features.Length)];
+            double[,] input = new double[windowLen, (nnInput * features.Length)];
             expectedData = new double[expectedOutput];
 
 
             List<KLine> outputKlines;
-            for (int fragment = 0; fragment < timeFragments; fragment++)
+            for (int windowPos = 0; windowPos < windowLen; windowPos++)
             {
                 bool walkPerformed;
                 List<KLine> inputKlines = WalkFragment(out outputKlines, out walkPerformed);
@@ -56,11 +73,12 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
                 {
                     foreach (FeatureType feature in features)
                     {
-                        input[fragment, dataNum] = GetFeatureValue(inputKlines[element], feature, (element + 1.0)/ inputKlines.Count);
+                        input[windowPos, dataNum] = GetFeatureValue(inputKlines[element], feature, (element + 1.0)/ inputKlines.Count);
                         dataNum++;
                     }
                 }
-                if(fragment == timeFragments - expectedOutput)
+                //at the last iteration of filling inputs getting outputs
+                if(windowPos == windowLen - 1)
                 {
                     for (int i = 0; i < outputKlines.Count; i++)
                     {
@@ -72,7 +90,7 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
             currentDatasetIndex = datasetIndexContainer;
 
             MovePositionOneStep();
-            finishedWalking = checkIfFinishedWalking(timeFragments);
+            finishedWalking = checkIfFinishedWalking(windowLen);
             return input;
         }
 
@@ -121,9 +139,7 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
         public double[,] WalkAt(int index, out double[] expectedData)
         {
             SetPosition(index);
-            double[] expected;
-            double[,] data = Walk(out expected);
-            expectedData = expected;
+            double[,] data = Walk(out expectedData);
             return data;
         }
 

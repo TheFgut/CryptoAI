@@ -40,7 +40,7 @@
             LowPriceCheckBox = new CheckBox();
             QuoteVolumeCheckBox = new CheckBox();
             InputsCountBox = new TextBox();
-            TimeFragmentsBox = new TextBox();
+            WindowLenBox = new TextBox();
             IputFeaturesLabel = new Label();
             InpCountLabel = new Label();
             label1 = new Label();
@@ -173,19 +173,19 @@
             // 
             // InputsCountBox
             // 
-            InputsCountBox.Location = new Point(576, 62);
+            InputsCountBox.Location = new Point(586, 62);
             InputsCountBox.Name = "InputsCountBox";
             InputsCountBox.Size = new Size(100, 23);
             InputsCountBox.TabIndex = 11;
             InputsCountBox.Text = "1";
             // 
-            // TimeFragmentsBox
+            // WindowLenBox
             // 
-            TimeFragmentsBox.Location = new Point(576, 91);
-            TimeFragmentsBox.Name = "TimeFragmentsBox";
-            TimeFragmentsBox.Size = new Size(100, 23);
-            TimeFragmentsBox.TabIndex = 12;
-            TimeFragmentsBox.Text = "60";
+            WindowLenBox.Location = new Point(586, 91);
+            WindowLenBox.Name = "WindowLenBox";
+            WindowLenBox.Size = new Size(100, 23);
+            WindowLenBox.TabIndex = 12;
+            WindowLenBox.Text = "60";
             // 
             // IputFeaturesLabel
             // 
@@ -202,18 +202,18 @@
             InpCountLabel.AutoSize = true;
             InpCountLabel.Location = new Point(507, 70);
             InpCountLabel.Name = "InpCountLabel";
-            InpCountLabel.Size = new Size(61, 15);
+            InpCountLabel.Size = new Size(57, 15);
             InpCountLabel.TabIndex = 14;
-            InpCountLabel.Text = "Inp. count";
+            InpCountLabel.Text = "Input len.";
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(507, 99);
+            label1.Location = new Point(507, 94);
             label1.Name = "label1";
-            label1.Size = new Size(59, 15);
+            label1.Size = new Size(73, 15);
             label1.TabIndex = 15;
-            label1.Text = "T.F. count";
+            label1.Text = "Window len.";
             // 
             // FragmentNumCheckBox
             // 
@@ -321,7 +321,7 @@
             Controls.Add(label1);
             Controls.Add(InpCountLabel);
             Controls.Add(IputFeaturesLabel);
-            Controls.Add(TimeFragmentsBox);
+            Controls.Add(WindowLenBox);
             Controls.Add(InputsCountBox);
             Controls.Add(QuoteVolumeCheckBox);
             Controls.Add(LowPriceCheckBox);
@@ -356,7 +356,7 @@
         private CheckBox LowPriceCheckBox;
         private CheckBox QuoteVolumeCheckBox;
         private TextBox InputsCountBox;
-        private TextBox TimeFragmentsBox;
+        private TextBox WindowLenBox;
         private Label IputFeaturesLabel;
         private Label InpCountLabel;
         private Label label1;

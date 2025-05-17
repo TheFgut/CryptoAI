@@ -4,18 +4,18 @@ using Keras.Models;
 using Numpy;
 using CryptoAI_Upgraded.Datasets;
 using System.ComponentModel;
-using System.Text.Json.Serialization;
 using CryptoAI_Upgraded.DataSaving;
 using Python.Runtime;
 using Keras.Callbacks;
 using Keras.Optimizers;
 using Keras;
+using Newtonsoft.Json;
 
 namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 {
     public class NeuralNetwork
     {
-        public int timeFragments => _neuralData.timeFragments;
+        public int timeFragments => _neuralData.window;
 
         public int inputCount => _neuralData.inputsLen;//data fragments input at the same time
         public int inputsFeatures => _neuralData.featuresCount;
@@ -42,7 +42,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
         public NetworkTrainingsStats trainingStatistics { get; private set; }
         public NNConfigData networkConfig => _neuralData;//to do make clone
 
-        public double traaining_speed {  
+        public double training_speed {  
             get => optimizer.GetAttr("lr"); 
             set => optimizer.SetAttr("lr", value.ToPython());
         }
@@ -234,7 +234,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                     walksIterations++;
                     if (cancellationToken.IsCancellationRequested)//cancellation of task
                     {
-                        analyticsCollector.RecordTrainingSpeed(traaining_speed);
+                        analyticsCollector.RecordTrainingSpeed(training_speed);
                         analyticsCollector.RecordAwerageError(errorsSum / walksIterations);
                         analyticsCollector.RecordMinError(minError);
                         analyticsCollector.RecordMaxError(maxError);
@@ -251,7 +251,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                 } while (!trainDataWalker.isFinishedWalking());
                 trainDataWalker.ResetDataWalker();
                 double awgError = errorsSum / walksIterations;
-                analyticsCollector.RecordTrainingSpeed(traaining_speed);
+                analyticsCollector.RecordTrainingSpeed(training_speed);
                 analyticsCollector.RecordAwerageError(awgError);
                 analyticsCollector.RecordMinError(minError);
                 analyticsCollector.RecordMaxError(maxError);
@@ -437,7 +437,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 
     public class NNConfigData
     {
-        public int timeFragments {  get; set; }
+        [JsonProperty("timeFragments")]public int window {  get; set; }
         public NNLayerConfig[] networkLayers { get; set; }
         /// <summary>
         /// count of time elements to input
@@ -456,10 +456,10 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 
         }
 
-        public NNConfigData(BindingList<NNLayerConfig> config, FeatureType[] features, int timeFragments, int inputsLen)
+        public NNConfigData(BindingList<NNLayerConfig> config, FeatureType[] features, int window, int inputsLen)
         {
             if (config == null || config.Count < 2) throw new ArgumentNullException("NNConfigData.Creation failed. config cant be null or count cant be less than 2");
-            this.timeFragments = timeFragments;
+            this.window = window;
             this.inputsLen = inputsLen;
             this.features = features;
             networkLayers = config.ToArray();

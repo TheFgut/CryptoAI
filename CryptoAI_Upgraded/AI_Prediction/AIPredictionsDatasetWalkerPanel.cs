@@ -1,4 +1,5 @@
 ﻿using CryptoAI_Upgraded.AI_Training.NeuralNetworks;
+using CryptoAI_Upgraded.Datasets;
 using CryptoAI_Upgraded.Datasets.DataWalkers;
 using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
 using System.Text;
@@ -60,10 +61,10 @@ namespace CryptoAI_Upgraded.AI_Prediction
 
             List<double> predictions = new List<double>();
 
+            List<KLine> inputRaw = dataWalker.getAmountOfFragmentsFromCurrentPosUnsafe
+                (network.networkConfig.window + network.networkConfig.inputsLen - 1);
             double[,] data = dataWalker.WalkAt(step, out var expected);
-            List<double> networkInputData = Enumerable.Range(0, data.GetLength(0))
-                     .Select(x => data[x, 1])
-                     .ToList();
+            List<double> networkInputData = inputRaw.Select(i => (double)i.ClosePrice).ToList();
             double[,,] input = Helpers.ConvertArrTo3DArray(data);
             //double[,,] normalized = Helpers.Normalization.Normalize(out double min, out double max, input);
             int predictionSteps = 0;
@@ -93,43 +94,6 @@ namespace CryptoAI_Upgraded.AI_Prediction
             }
             return new List<double>[]{networkInputData,
                 expectedList, predictions };
-        }
-
-        private void ShowDataInChart(double[] expected, double[] predictions)
-        {
-            // Основной график
-            chart1.Series.Clear();
-            chart1.ChartAreas.Clear();
-
-            // Добавление области для основного графика
-            var mainArea = new ChartArea("MainArea");
-            chart1.ChartAreas.Add(mainArea);
-
-            // Настройка осей основного графика
-            mainArea.AxisX.Title = "Время";
-            mainArea.AxisY.Title = "Цена";
-
-            // Ряд для основного графика
-            Series series1 = new Series("Line 1")
-            {
-                ChartType = SeriesChartType.Line,
-                Name = "Expected",
-                Color = System.Drawing.Color.Blue,
-                BorderWidth = 2
-            };
-
-            // Создаем вторую линию
-            Series series2 = new Series("Line 2")
-            {
-                ChartType = SeriesChartType.Line,
-                Name = "Prediction",
-                Color = System.Drawing.Color.Red,
-                BorderWidth = 2
-            };
-
-            chart1.Series.Add(series1);
-            chart1.Series.Add(series2);
-
         }
 
         public void DrawBranchedChart(List<double> networkInput, List<double> expected, List<double> predictions)

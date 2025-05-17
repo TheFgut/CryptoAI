@@ -2,11 +2,7 @@
 using CryptoAI_Upgraded.Datasets;
 using CryptoAI_Upgraded.Datasets.DataWalkers;
 using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading.Tasks;
-using static CryptoAI_Upgraded.Helpers;
 
 namespace CryptoAI_Upgraded.DataAnalasys
 {
@@ -24,8 +20,8 @@ namespace CryptoAI_Upgraded.DataAnalasys
 
                 do
                 {
-                    List<double[]>? predictionResult = Walk(dataWalker, neuralNetwork, neuralNetwork.outputCount);
                     KLine pos = dataWalker.position;
+                    List<double[]>? predictionResult = Walk(dataWalker, neuralNetwork, neuralNetwork.outputCount);
 
                     if (predictionResult == null) break;
                     analize.analizeStepsAmount++;
@@ -52,7 +48,7 @@ namespace CryptoAI_Upgraded.DataAnalasys
                     //    finalEx += predictionResult[1][i];
                     //}
                     double lastReal = predictionResult[0][predictionResult[0].Length - 1];
-                    double lastPred = predictionResult[1][predictionResult[0].Length - 1];
+                    double lastPred = predictionResult[1][predictionResult[1].Length - 1];
                     analize.real.Add(lastReal);
                     analize.predict.Add(lastPred);
                     finalPred = lastReal - (double)pos.OpenPrice;
@@ -99,7 +95,7 @@ namespace CryptoAI_Upgraded.DataAnalasys
             }
 
             //getting expected arr
-            List<double> expectedList = new List<double>();
+            List<double> expectedList = new List<double>(expected);
             int startStep = dataWalker.currentStep;
             int step = startStep;
             for (int i = 0; i < predictionsLength; i++)

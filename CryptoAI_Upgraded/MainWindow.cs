@@ -7,6 +7,7 @@ using CryptoAI_Upgraded.Datasets;
 using CryptoAI_Upgraded.Datasets.NromalizationAndConvertion;
 using CryptoAI_Upgraded.DatasetsAnalasys;
 using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
+using CryptoAI_Upgraded.RealtimeTrading;
 using Keras.Layers;
 using Keras.Models;
 using Numpy;
@@ -23,6 +24,7 @@ namespace CryptoAI_Upgraded
         private AI_TrainWindow? aiTrainWindow;
         private AIPredictorForm? aiPredictor;
         private DatasetConvertorAndNormalizerWindow? datasetNormalizerWindow;
+        private RealtimeTradeWindow? realtimeTradeWindow;
         public MainWindow()
         {
             choosedLocalDatasets = new List<LocalKlinesDataset>();
@@ -124,6 +126,16 @@ namespace CryptoAI_Upgraded
                 datasetNormalizerWindow = new DatasetConvertorAndNormalizerWindow();
                 datasetNormalizerWindow.FormClosed += (sender, args) => datasetNormalizerWindow = null;
                 datasetNormalizerWindow.Show();
+            }
+        }
+
+        private void RealtimeTradingWindow_Click(object sender, EventArgs e)
+        {
+            if (realtimeTradeWindow == null)
+            {
+                realtimeTradeWindow = new RealtimeTradeWindow();
+                realtimeTradeWindow.FormClosed += (sender, args) => realtimeTradeWindow = null;
+                realtimeTradeWindow.Show();
             }
         }
     }

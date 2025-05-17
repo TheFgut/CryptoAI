@@ -17,15 +17,6 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
         /// </summary>
         public float walkingProgress { get; private set; }
 
-        public KLine position
-        {
-            get
-            {
-                var currentDataset = datasets[currentDatasetIndex];
-                var currentData = currentDataset.LoadKlinesFromCache().data;
-                return currentData[localDatasetPos];
-            }
-        }
         protected List<LocalKlinesDataset> datasets;
         protected bool finishedWalking;
 
@@ -63,12 +54,22 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
         {
             if (finishedWalking) throw new Exception("DataWalker.Walk error. Cant walk if walking is finished");
 
+            List<KLine> result = getAmountOfFragmentsFromCurrentPosUnsafe(fullWalkSteps);
+
+            MovePositionOneStep();
+            if (checkIfFinished) finishedWalking = checkIfFinishedWalking();
+
+            return result;
+        }
+
+        public List<KLine> getAmountOfFragmentsFromCurrentPosUnsafe(int count)
+        {
             int datasetIndexHolder = currentDatasetIndex;
             int datasetLocalPosHolder = localDatasetPos;
 
             List<KLine> result = new List<KLine>();
 
-            int stepsRemaining = fullWalkSteps;
+            int stepsRemaining = count;
 
             while (stepsRemaining > 0 && currentDatasetIndex < datasets.Count)
             {
@@ -92,15 +93,10 @@ namespace CryptoAI_Upgraded.Datasets.DataWalkers
                     currentDatasetIndex++;
                 }
             }
-
             currentDatasetIndex = datasetIndexHolder;
             localDatasetPos = datasetLocalPosHolder;
-            MovePositionOneStep();
-            if (checkIfFinished) finishedWalking = checkIfFinishedWalking();
-
             return result;
         }
-
 
         protected bool checkIfFinishedWalking(int drag = 0)
         {

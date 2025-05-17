@@ -392,6 +392,24 @@ namespace CryptoAI_Upgraded
                     series.Points.AddXY(i, data[i]);
                 }
             }
+            public static void DisplayDataOnChart(Chart chart, double[] data, string name, Color color)
+            {
+                // Создание и настройка ряда данных
+                var series = new Series
+                {
+                    ChartType = SeriesChartType.Line, // Тип графика: линия
+                    Color = color,
+                    Name = name,
+                    BorderWidth = 2
+                };
+                chart.Series.Add(series);
+
+                // Добавление точек в график
+                for (int i = 0; i < data.Length; i++)
+                {
+                    series.Points.AddXY(i, data[i]);
+                }
+            }
         }
 
         public static double[,,] ConvertListTo3DArray(List<double[,]> list)

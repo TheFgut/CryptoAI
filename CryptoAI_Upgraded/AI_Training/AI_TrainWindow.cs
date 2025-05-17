@@ -196,7 +196,7 @@ namespace CryptoAI_Upgraded.AI_Training
             {
                 StartLearningBut.Enabled = true;
                 TrainingSpeedTextBox.Enabled = true;
-                TrainingSpeedTextBox.Text = neuralNetwork.traaining_speed.ToString();
+                TrainingSpeedTextBox.Text = neuralNetwork.training_speed.ToString();
 
             }
         }
@@ -276,10 +276,10 @@ namespace CryptoAI_Upgraded.AI_Training
             {
                 MessageBox.Show($"Your input: \"{TrainingSpeedTextBox.Text}\" is incorrect. Please write a number", "IputError",
                      MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                TrainingSpeedTextBox.Text = neuralNetwork.traaining_speed.ToString();
+                TrainingSpeedTextBox.Text = neuralNetwork.training_speed.ToString();
                 return;
             }
-            neuralNetwork.traaining_speed = result;
+            neuralNetwork.training_speed = result;
         }
     }
 }

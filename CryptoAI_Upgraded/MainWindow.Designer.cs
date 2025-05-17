@@ -34,6 +34,7 @@
             AIPredictorBut = new Button();
             NormalizeDatasetBut = new Button();
             CloudServiceBut = new Button();
+            RealtimeTradingWindow = new Button();
             SuspendLayout();
             // 
             // OpenLoadDataWindowBut
@@ -95,11 +96,22 @@
             CloudServiceBut.Text = "Cloud service";
             CloudServiceBut.UseVisualStyleBackColor = true;
             // 
+            // RealtimeTradingWindow
+            // 
+            RealtimeTradingWindow.Location = new Point(158, 70);
+            RealtimeTradingWindow.Name = "RealtimeTradingWindow";
+            RealtimeTradingWindow.Size = new Size(99, 23);
+            RealtimeTradingWindow.TabIndex = 10;
+            RealtimeTradingWindow.Text = "RealtimeTrading";
+            RealtimeTradingWindow.UseVisualStyleBackColor = true;
+            RealtimeTradingWindow.Click += RealtimeTradingWindow_Click;
+            // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(420, 78);
+            ClientSize = new Size(420, 94);
+            Controls.Add(RealtimeTradingWindow);
             Controls.Add(CloudServiceBut);
             Controls.Add(NormalizeDatasetBut);
             Controls.Add(AIPredictorBut);
@@ -120,5 +132,6 @@
         private Button AIPredictorBut;
         private Button NormalizeDatasetBut;
         private Button CloudServiceBut;
+        private Button RealtimeTradingWindow;
     }
 }

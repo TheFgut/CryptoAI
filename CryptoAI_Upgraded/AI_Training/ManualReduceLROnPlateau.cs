@@ -36,7 +36,7 @@ namespace CryptoAI_Upgraded.AI_Training
             double minLr = 1e-6)
         {
             _network = network;
-            learning_rate = network.traaining_speed;
+            learning_rate = network.training_speed;
             _patience = patience;
             _factor = factor;
             _minLr = minLr;
@@ -61,7 +61,7 @@ namespace CryptoAI_Upgraded.AI_Training
             if (_wait <= _patience)
                 return;
 
-            _network.traaining_speed = Math.Max(_network.traaining_speed * _factor, _minLr);
+            _network.training_speed = Math.Max(_network.training_speed * _factor, _minLr);
             _wait = 0;
         }
     }

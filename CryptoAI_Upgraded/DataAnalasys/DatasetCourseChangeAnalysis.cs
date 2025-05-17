@@ -49,6 +49,7 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
                 MessageBox.Show($"Datasets count should be more than one", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            AnalyzeBut.Enabled = false;
             StartAnalize();
         }
 
@@ -91,6 +92,8 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
                     analize.real.ToArray(), analize.predict.ToArray(), sma);
                 new MultiSeriesChartForm(analize.real.ToArray(), analize.predict.ToArray(), sma).Show();
             }));
+            analizeTask = null;
+            AnalyzeBut.Enabled = true;
         }
 
         private void AssingModel(NeuralNetwork? model)

@@ -37,7 +37,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating
             WMA99CheckBox.Checked = config.GetBool("WMA99");
 
             InputsCountBox.Text = config.GetStrinOrDefault("InputsCount", "1");
-            TimeFragmentsBox.Text = config.GetStrinOrDefault("TimeFragments", "6");
+            WindowLenBox.Text = config.GetStrinOrDefault("TimeFragments", "6");
         }
 
         private void SaveConfiguration()
@@ -57,7 +57,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating
             config.SetBool("WMA99", WMA99CheckBox.Checked);
 
             config.SetString("InputsCount", InputsCountBox.Text);
-            config.SetString("TimeFragments", TimeFragmentsBox.Text);
+            config.SetString("TimeFragments", WindowLenBox.Text);
             config.SetObject("LayersConfigurations", ((BindingList<NNLayerConfig>)LayersGrid.DataSource).ToList());
             config.Save();
         }
@@ -157,14 +157,14 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworkCreating
                 MessageBox.Show($"Inputs count are in not correct format", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            int timeFragmentsCount = 0;
-            if (!int.TryParse(TimeFragmentsBox.Text, out timeFragmentsCount))
+            int windowLen = 0;
+            if (!int.TryParse(WindowLenBox.Text, out windowLen))
             {
                 MessageBox.Show($"Time fragments count are in not correct format", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             //generating config
-            NNConfigData configData = new NNConfigData(config, features.ToArray(), timeFragmentsCount, inputsCount);
+            NNConfigData configData = new NNConfigData(config, features.ToArray(), windowLen, inputsCount);
             onNetworkCreatedAction?.Invoke(new NeuralNetwork(configData));
             if (closeAfterCreation) Close();
         }
