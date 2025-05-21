@@ -124,10 +124,11 @@ namespace CryptoAI_Upgraded.DataAnalasys
         public bool success;
         public Exception exception;
         //datas
-        public LinkedList<double> errors = new LinkedList<double>();
-        public List<double> real = new List<double>();
-        public List<double> predict = new List<double>();
-        public LinkedList<double> guessedDirections = new LinkedList<double>();//1-guessed, 0-not guessed
+        public LinkedList<double> errors;
+        public List<double> real;
+        public List<double> predict;
+        public LinkedList<double> guessedDirections;//1-guessed, 0-not guessed
+        //public Dictionary<int, List<double>> tendentions;
         //metrics
         public int analizeStepsAmount = 0;
         public int skippedSteps = 0;
@@ -135,5 +136,19 @@ namespace CryptoAI_Upgraded.DataAnalasys
         public double guessedDirPercent = 0;
 
         public float testDurationMillisec;
+
+        public NetworkAccAnalize()
+        {
+            guessedDirections = new LinkedList<double>();
+            predict = new List<double>();
+            real = new List<double>();
+            errors = new LinkedList<double>();
+            //tendentions = new Dictionary<int, List<double>>();
+            //foreach (var tendention in tendentionsToCollect)
+            //{
+            //    if (tendentions.ContainsKey(tendention)) throw new Exception("NetworkAccAnalize.Construction failed. tendentionsToCollect has same nums");
+            //    tendentions.Add(tendention, new List<double>());
+            //}
+        }
     }
 }

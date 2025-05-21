@@ -95,6 +95,7 @@
             CloudServiceBut.TabIndex = 9;
             CloudServiceBut.Text = "Cloud service";
             CloudServiceBut.UseVisualStyleBackColor = true;
+            CloudServiceBut.Click += CloudServiceBut_Click;
             // 
             // RealtimeTradingWindow
             // 

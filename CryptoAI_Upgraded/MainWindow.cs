@@ -1,6 +1,7 @@
 using Binance.Net.Interfaces;
 using CryptoAI_Upgraded.AI_Prediction;
 using CryptoAI_Upgraded.AI_Training;
+using CryptoAI_Upgraded.AI_Training.NeuralNetworks.UI.Upgraded_net_loader;
 using CryptoAI_Upgraded.DataLocalChoosing;
 using CryptoAI_Upgraded.DataSaving;
 using CryptoAI_Upgraded.Datasets;
@@ -25,6 +26,7 @@ namespace CryptoAI_Upgraded
         private AIPredictorForm? aiPredictor;
         private DatasetConvertorAndNormalizerWindow? datasetNormalizerWindow;
         private RealtimeTradeWindow? realtimeTradeWindow;
+        private ModernNetLoader? modernNetLoader;
         public MainWindow()
         {
             choosedLocalDatasets = new List<LocalKlinesDataset>();
@@ -136,6 +138,16 @@ namespace CryptoAI_Upgraded
                 realtimeTradeWindow = new RealtimeTradeWindow();
                 realtimeTradeWindow.FormClosed += (sender, args) => realtimeTradeWindow = null;
                 realtimeTradeWindow.Show();
+            }
+        }
+
+        private void CloudServiceBut_Click(object sender, EventArgs e)
+        {
+            if (modernNetLoader == null)
+            {
+                modernNetLoader = new ModernNetLoader();
+                modernNetLoader.FormClosed += (sender, args) => modernNetLoader = null;
+                modernNetLoader.Show();
             }
         }
     }

@@ -62,9 +62,13 @@ namespace CryptoAI_Upgraded.Datasets
 
     public class NormalizationParams
     {
-        public Dictionary<string, decimal> normalizedGroupsMin;
-        public Dictionary<string, decimal> normalizedGroupsMax;
+        public Dictionary<string, decimal> normalizedGroupsMin { get; set; }
+        public Dictionary<string, decimal> normalizedGroupsMax { get; set; }
 
-
+        public double Denormalize(double value, string key)
+        {
+            return Helpers.Normalization.Denormalize(value,
+                (double)normalizedGroupsMin[key], (double)normalizedGroupsMax[key]);
+        }
     }
 }

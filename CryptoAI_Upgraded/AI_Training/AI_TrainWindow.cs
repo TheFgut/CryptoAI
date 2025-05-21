@@ -20,7 +20,7 @@ namespace CryptoAI_Upgraded.AI_Training
         private NeuralNetwork? neuralNetwork;
         private TrainingConfigData trainingConfig;
         LocalLoaderAndSaverBSON<TrainingConfigData> trainConfigLoader;
-        private AI_SetupWindow? setupWindow;
+        private AI_TrainSetupWindow? setupWindow;
 
         public AI_TrainWindow()
         {
@@ -212,7 +212,7 @@ namespace CryptoAI_Upgraded.AI_Training
         {
             if (setupWindow == null)
             {
-                setupWindow = new AI_SetupWindow(trainingConfig);
+                setupWindow = new AI_TrainSetupWindow(trainingConfig);
                 setupWindow.FormClosed += (sender, args) => setupWindow = null;
                 setupWindow.Show();
             }

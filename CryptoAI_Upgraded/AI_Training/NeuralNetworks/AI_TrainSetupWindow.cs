@@ -10,10 +10,10 @@ using System.Windows.Forms;
 
 namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 {
-    public partial class AI_SetupWindow : Form
+    public partial class AI_TrainSetupWindow : Form
     {
         private TrainingConfigData trainingConfig;
-        public AI_SetupWindow(TrainingConfigData trainingConfig)
+        public AI_TrainSetupWindow(TrainingConfigData trainingConfig)
         {
             this.trainingConfig = trainingConfig;
             InitializeComponent();

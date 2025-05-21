@@ -6,14 +6,12 @@ using System.Windows.Forms.DataVisualization.Charting;
 using System.Diagnostics;
 using static CryptoAI_Upgraded.Helpers;
 using CryptoAI_Upgraded.DataAnalasys;
+using CryptoAI_Upgraded.RealtimeTrading.SimpleTrader;
 
 namespace CryptoAI_Upgraded.DatasetsAnalasys
 {
     public partial class DatasetCourseChangeAnalysis : Form
     {
-        private const float spotTradeBuyComission = 0.001f;//0.1 percent
-        private const float spotTradeSellComission = 0.001f;//0.1 percent
-
         private Task analizeTask;
         private List<LocalKlinesDataset> datasets;
         private NeuralNetwork? neuralNetwork;
@@ -79,12 +77,17 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
                 return;
             }
 
+            SimpleTradingAnalzier netTradeAnalisys = new SimpleTradingAnalzier(false);
+            //to do: use network normalizer
+            string tradingAnalize = netTradeAnalisys.Analize(analize, datasets[0].LoadKlinesFromCache().normalization);
+
             Invoke((Action)(() =>
             {
                 //displaying
                 AnaliseResultDisp.Text += $"Analized steps: {analize.analizeStepsAmount}\n";
                 AnaliseResultDisp.Text += $"Average error: {analize.averageError}\n";
                 AnaliseResultDisp.Text += $"Guessed dir percent: {analize.guessedDirPercent}%\n";
+                AnaliseResultDisp.Text += tradingAnalize;
                 MessageBox.Show($"Analize duration: {analize.testDurationMillisec / 1000f} seconds", 
                     "Analize finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 double[] sma = MovingAverage.Simple(analize.real.ToArray(), 3);

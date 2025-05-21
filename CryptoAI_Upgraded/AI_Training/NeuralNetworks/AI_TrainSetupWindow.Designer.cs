@@ -1,6 +1,6 @@
 ﻿namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
 {
-    partial class AI_SetupWindow
+    partial class AI_TrainSetupWindow
     {
         /// <summary>
         /// Required designer variable.

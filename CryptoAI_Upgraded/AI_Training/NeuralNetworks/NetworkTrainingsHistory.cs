@@ -7,6 +7,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
     {
         private NetworkTrainingsStatsData data;
         public NetworkRunData? lastTrain => data.runs.Count > 0 ? data.runs[data.runs.Count - 1] : null;
+        public NetworkRunData[] allTrains => data.runs.ToArray();
 
         public NetworkTrainingsStats()
         {
@@ -18,7 +19,7 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
             this.data = data;
         }
 
-        public NetworkTrainingsStats(string path)
+        public NetworkTrainingsStats(string path, bool throwErrIfNoData = false)
         {
             LocalLoaderAndSaverBSON<NetworkTrainingsStatsData> loader 
                 = new LocalLoaderAndSaverBSON<NetworkTrainingsStatsData>(path,"trainStats");
@@ -34,7 +35,11 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
-            if (data == null) data = new NetworkTrainingsStatsData();
+            if (data == null)
+            {
+                if (throwErrIfNoData) throw new Exception($"No NetworkTrainingsStatsData at path {path}.\n NetworkTrainingsStats cant be created");
+                data = new NetworkTrainingsStatsData();
+            }
             this.data = data;
         }
 
@@ -68,19 +73,16 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks
     public class NetworkTrainingsStatsData
     {
         public List<NetworkRunData> runs { get; set; }
-        public Dictionary<int, NetworkRunData> testRuns {  get; set; }
 
         public NetworkTrainingsStatsData()
         {
             if (runs == null) runs = new List<NetworkRunData>();
-            if (testRuns == null) testRuns = new Dictionary<int, NetworkRunData>();
         }
 
         public NetworkTrainingsStatsData Clone()
         {
             NetworkTrainingsStatsData clone = new NetworkTrainingsStatsData();
             clone.runs = new(runs);
-            clone.testRuns = new(testRuns);
             return clone;
         }
     }
