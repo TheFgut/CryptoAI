@@ -484,7 +484,7 @@ namespace CryptoAI_Upgraded
             return (1 - (double)(endPrice / startPrice))*100;
         }
 
-        public static float[,,] ConvertToFloat(double[,,] input)
+        public static float[,,] ConvertArrToFloat(double[,,] input)
         {
             int x = input.GetLength(0);
             int y = input.GetLength(1);
@@ -499,7 +499,7 @@ namespace CryptoAI_Upgraded
 
             return result;
         }
-        public static float[,] ConvertToFloat(double[,] input)
+        public static float[,] ConvertArrToFloat(double[,] input)
         {
             int x = input.GetLength(0);
             int y = input.GetLength(1);

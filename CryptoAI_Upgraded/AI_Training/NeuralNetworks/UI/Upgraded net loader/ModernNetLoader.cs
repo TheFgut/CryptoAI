@@ -1,15 +1,7 @@
 ﻿using CryptoAI_Upgraded.DataSaving;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Reflection.Emit;
 using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+
 
 namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks.UI.Upgraded_net_loader
 {
@@ -25,13 +17,14 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks.UI.Upgraded_net_loader
             List<NetParams> listOfNets = loadedNetsInfo.Values.ToList();
 
             var table = new DataTable();
+            table.Columns.Add("Author", typeof(string));
             table.Columns.Add("architectureString", typeof(string));
             table.Columns.Add("trainStatistics", typeof(string));
             table.Columns.Add("accuraccy", typeof(double));
 
             // Заполняем
             foreach (var item in listOfNets)
-                table.Rows.Add(item.architectureString, item.trainStatistics, item.accuraccy);
+                table.Rows.Add(item.author, item.architectureString, item.trainStatistics, item.accuraccy);
             var bs = new BindingSource { DataSource = table };
             AwailableNetSGrid.DataSource = bs;
         }
@@ -46,7 +39,12 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks.UI.Upgraded_net_loader
             //    new NNLayerConfig(50,ActivationFunc.tanh, LayerType.LSTM, true),
             //    new NNLayerConfig(1,ActivationFunc.linear, LayerType.Dense, true)
             //}));
-
+            AwailableNetSGrid.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Author",
+                DataPropertyName = "Author",
+                ValueType = typeof(string)
+            });
             AwailableNetSGrid.Columns.Add(new DataGridViewTextBoxColumn
             {
                 HeaderText = "Architecture",
@@ -118,6 +116,28 @@ namespace CryptoAI_Upgraded.AI_Training.NeuralNetworks.UI.Upgraded_net_loader
                     return stringBuilder.ToString();
                 } 
             }
+
+            public string author
+            {
+                get
+                {
+                    int window = config.window;
+                    switch (window)
+                    {
+                        case 6:
+                            return "Timur";
+                        case 9:
+                            return "Brad";
+                        case 18:
+                            return "David";
+                        case 60:
+                            return "Anna";
+                        default:
+                            return "admin";
+                    }
+                }
+            }
+
 
             public string trainStatistics
             {

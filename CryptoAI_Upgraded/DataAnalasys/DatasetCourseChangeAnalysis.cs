@@ -1,9 +1,5 @@
 ﻿using CryptoAI_Upgraded.AI_Training.NeuralNetworks;
-using CryptoAI_Upgraded.Datasets;
-using CryptoAI_Upgraded.Datasets.DataWalkers;
 using CryptoAI_Upgraded.DatasetsManaging.DataLocalChoosing;
-using System.Windows.Forms.DataVisualization.Charting;
-using System.Diagnostics;
 using static CryptoAI_Upgraded.Helpers;
 using CryptoAI_Upgraded.DataAnalasys;
 using CryptoAI_Upgraded.RealtimeTrading.SimpleTrader;
@@ -12,7 +8,7 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
 {
     public partial class DatasetCourseChangeAnalysis : Form
     {
-        private Task analizeTask;
+        private Task? analizeTask;
         private List<LocalKlinesDataset> datasets;
         private NeuralNetwork? neuralNetwork;
         public DatasetCourseChangeAnalysis()
