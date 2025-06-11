@@ -34,12 +34,13 @@
             OpenConnectionBut = new Button();
             ResultText = new TextBox();
             Graphic = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            networkManagePanel1 = new CryptoAI_Upgraded.AI_Training.NeuralNetworks.UI.NetworkManagePanel();
             ((System.ComponentModel.ISupportInitialize)Graphic).BeginInit();
             SuspendLayout();
             // 
             // OpenConnectionBut
             // 
-            OpenConnectionBut.Location = new Point(12, 415);
+            OpenConnectionBut.Location = new Point(12, 318);
             OpenConnectionBut.Name = "OpenConnectionBut";
             OpenConnectionBut.Size = new Size(131, 23);
             OpenConnectionBut.TabIndex = 0;
@@ -50,7 +51,7 @@
             // ResultText
             // 
             ResultText.Enabled = false;
-            ResultText.Location = new Point(12, 12);
+            ResultText.Location = new Point(149, 319);
             ResultText.Name = "ResultText";
             ResultText.Size = new Size(100, 23);
             ResultText.TabIndex = 1;
@@ -61,7 +62,7 @@
             Graphic.ChartAreas.Add(chartArea1);
             legend1.Name = "Legend1";
             Graphic.Legends.Add(legend1);
-            Graphic.Location = new Point(12, 41);
+            Graphic.Location = new Point(12, 12);
             Graphic.Name = "Graphic";
             series1.ChartArea = "ChartArea1";
             series1.Legend = "Legend1";
@@ -71,11 +72,21 @@
             Graphic.TabIndex = 2;
             Graphic.Text = "chart1";
             // 
+            // networkManagePanel1
+            // 
+            networkManagePanel1.BackColor = SystemColors.ControlDark;
+            networkManagePanel1.Location = new Point(794, 12);
+            networkManagePanel1.Name = "networkManagePanel1";
+            networkManagePanel1.onNetworkChanges = null;
+            networkManagePanel1.Size = new Size(278, 300);
+            networkManagePanel1.TabIndex = 3;
+            // 
             // RealtimeTradeWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1079, 347);
+            Controls.Add(networkManagePanel1);
             Controls.Add(Graphic);
             Controls.Add(ResultText);
             Controls.Add(OpenConnectionBut);
@@ -92,5 +103,6 @@
         private Button OpenConnectionBut;
         private TextBox ResultText;
         private System.Windows.Forms.DataVisualization.Charting.Chart Graphic;
+        private AI_Training.NeuralNetworks.UI.NetworkManagePanel networkManagePanel1;
     }
 }

@@ -40,6 +40,7 @@
             CheckErrorBox = new CheckBox();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             PredictionsGraphic = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            IgnoreCommissinChackBox = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)PredictionsGraphic).BeginInit();
             SuspendLayout();
             // 
@@ -128,11 +129,22 @@
             PredictionsGraphic.TabIndex = 11;
             PredictionsGraphic.Text = "chart1";
             // 
+            // IgnoreCommissinChackBox
+            // 
+            IgnoreCommissinChackBox.AutoSize = true;
+            IgnoreCommissinChackBox.Location = new Point(233, 28);
+            IgnoreCommissinChackBox.Name = "IgnoreCommissinChackBox";
+            IgnoreCommissinChackBox.Size = new Size(128, 19);
+            IgnoreCommissinChackBox.TabIndex = 12;
+            IgnoreCommissinChackBox.Text = "ignore commission";
+            IgnoreCommissinChackBox.UseVisualStyleBackColor = true;
+            // 
             // DatasetCourseChangeAnalysis
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(842, 519);
+            Controls.Add(IgnoreCommissinChackBox);
             Controls.Add(PredictionsGraphic);
             Controls.Add(CheckErrorBox);
             Controls.Add(CheckGuessedDirectionBox);
@@ -159,5 +171,6 @@
         private CheckBox CheckErrorBox;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.DataVisualization.Charting.Chart PredictionsGraphic;
+        private CheckBox IgnoreCommissinChackBox;
     }
 }

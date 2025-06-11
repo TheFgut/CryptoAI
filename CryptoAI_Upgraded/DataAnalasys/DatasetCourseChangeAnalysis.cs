@@ -73,7 +73,7 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
                 return;
             }
 
-            SimpleTradingAnalzier netTradeAnalisys = new SimpleTradingAnalzier(false);
+            SimpleTradingAnalzier netTradeAnalisys = new SimpleTradingAnalzier(IgnoreCommissinChackBox.Checked);
             //to do: use network normalizer
             string tradingAnalize = netTradeAnalisys.Analize(analize, datasets[0].LoadKlinesFromCache().normalization);
 
@@ -89,7 +89,15 @@ namespace CryptoAI_Upgraded.DatasetsAnalasys
                 double[] sma = MovingAverage.Simple(analize.real.ToArray(), 3);
                 Helpers.DataPlotting.PlotMultipleSeries(PredictionsGraphic, new[] { "real" , "predictions", "sma"},
                     analize.real.ToArray(), analize.predict.ToArray(), sma);
-                new MultiSeriesChartForm(analize.real.ToArray(), analize.predict.ToArray(), sma).Show();
+
+                MultiSeriesChartForm multSChartForm = new MultiSeriesChartFormBuilder()
+                .AddPlot(analize.real.ToArray(), "real", Color.Green)
+                .AddMarkersToLastPlot(netTradeAnalisys.trades.Select(t => t.buyIndex).ToArray(), Color.Green)
+                .AddMarkersToLastPlot(netTradeAnalisys.trades.Where(t => t.sold).Select(t => t.sellIndex).ToArray(), Color.Red)
+                .AddPlot(analize.predict.ToArray(), "predict", Color.Red)
+                .AddPlot(sma, "sma", Color.Yellow)
+                .Build();
+                multSChartForm.Show();
             }));
             analizeTask = null;
             AnalyzeBut.Enabled = true;

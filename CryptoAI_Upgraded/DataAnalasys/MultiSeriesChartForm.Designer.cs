@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             DataChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             YZoomUp = new Button();
             YZoomDown = new Button();
@@ -41,22 +41,24 @@
             // 
             // DataChart
             // 
-            chartArea4.Name = "ChartArea1";
-            DataChart.ChartAreas.Add(chartArea4);
-            legend4.Name = "Legend1";
-            DataChart.Legends.Add(legend4);
+            DataChart.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            chartArea1.Name = "MainArea";
+            DataChart.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            DataChart.Legends.Add(legend1);
             DataChart.Location = new Point(12, 12);
             DataChart.Name = "DataChart";
-            series4.ChartArea = "ChartArea1";
-            series4.Legend = "Legend1";
-            series4.Name = "Series1";
-            DataChart.Series.Add(series4);
+            series1.ChartArea = "MainArea";
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            DataChart.Series.Add(series1);
             DataChart.Size = new Size(631, 410);
             DataChart.TabIndex = 0;
             DataChart.Text = "chart1";
             // 
             // YZoomUp
             // 
+            YZoomUp.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             YZoomUp.Location = new Point(649, 12);
             YZoomUp.Name = "YZoomUp";
             YZoomUp.Size = new Size(148, 23);
@@ -67,6 +69,7 @@
             // 
             // YZoomDown
             // 
+            YZoomDown.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             YZoomDown.Location = new Point(649, 41);
             YZoomDown.Name = "YZoomDown";
             YZoomDown.Size = new Size(148, 23);
@@ -77,6 +80,7 @@
             // 
             // XZoomUp
             // 
+            XZoomUp.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             XZoomUp.Location = new Point(649, 70);
             XZoomUp.Name = "XZoomUp";
             XZoomUp.Size = new Size(148, 23);
@@ -87,6 +91,7 @@
             // 
             // XZoomDown
             // 
+            XZoomDown.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             XZoomDown.Location = new Point(649, 99);
             XZoomDown.Name = "XZoomDown";
             XZoomDown.Size = new Size(148, 23);
@@ -99,7 +104,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 467);
+            ClientSize = new Size(800, 435);
             Controls.Add(XZoomDown);
             Controls.Add(XZoomUp);
             Controls.Add(YZoomDown);
